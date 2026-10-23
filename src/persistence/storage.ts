@@ -22,18 +22,28 @@ const VALID_QUOTE_STATUSES = new Set(['draft', 'under_review', 'selected', 'reje
  * Validates complete structural integrity of loaded data before adopting it.
  * Strictly verifies types, valid enums, non-negative numbers, unique IDs, and guards against prototype pollution.
  */
+function hasDangerousKey(obj: unknown): boolean {
+  if (!obj || typeof obj !== 'object') return false;
+  if (
+    Object.prototype.hasOwnProperty.call(obj, '__proto__') ||
+    Object.prototype.hasOwnProperty.call(obj, 'constructor') ||
+    Object.prototype.hasOwnProperty.call(obj, 'prototype')
+  ) {
+    return true;
+  }
+  for (const val of Object.values(obj)) {
+    if (val && typeof val === 'object' && hasDangerousKey(val)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function validateStateSchema(data: unknown): data is AppState {
   if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
-  const s = data as Record<string, unknown>;
+  if (hasDangerousKey(data)) return false;
 
-  // Reject prototype pollution attempts
-  if (
-    Object.prototype.hasOwnProperty.call(s, '__proto__') ||
-    Object.prototype.hasOwnProperty.call(s, 'constructor') ||
-    Object.prototype.hasOwnProperty.call(s, 'prototype')
-  ) {
-    return false;
-  }
+  const s = data as Record<string, unknown>;
 
   if (typeof s.schemaVersion !== 'number' || s.schemaVersion < 1) return false;
   if (!s.event || typeof s.event !== 'object' || Array.isArray(s.event)) return false;
@@ -46,7 +56,8 @@ export function validateStateSchema(data: unknown): data is AppState {
     typeof evt.guestCount !== 'number' || !Number.isFinite(evt.guestCount) || evt.guestCount < 0 ||
     typeof evt.currency !== 'string' || !VALID_CURRENCIES.has(evt.currency) ||
     typeof evt.eventType !== 'string' || !VALID_EVENT_TYPES.has(evt.eventType) ||
-    typeof evt.date !== 'string' || typeof evt.location !== 'string'
+    typeof evt.date !== 'string' || !evt.date.trim() ||
+    typeof evt.location !== 'string' || !evt.location.trim()
   ) {
     return false;
   }

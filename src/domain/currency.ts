@@ -12,7 +12,8 @@ export function toMinorUnits(majorAmount: number): number {
   if (isNaN(majorAmount) || !isFinite(majorAmount)) return 0;
   // Guard against safe integer overflow
   const clamped = Math.max(-MAX_SAFE_MAJOR_AMOUNT, Math.min(MAX_SAFE_MAJOR_AMOUNT, majorAmount));
-  return Math.round(clamped * MINOR_UNIT_MULTIPLIER);
+  const res = Math.round(clamped * MINOR_UNIT_MULTIPLIER);
+  return res === 0 ? 0 : res;
 }
 
 export function toMajorUnits(minorAmount: number): number {
@@ -54,9 +55,10 @@ export function formatCurrency(minorAmount: number, currency: CurrencyCode = 'IN
 
 export function parseDisplayToMinor(input: string): number {
   if (!input) return 0;
-  // Strip currency symbols and commas
-  const cleaned = input.replace(/[^0-9.-]/g, '');
+  // Strip currency symbols and commas, preserving negative sign, decimal point, and exponent
+  const cleaned = input.replace(/[^0-9eE.\-]/g, '');
   const parsed = parseFloat(cleaned);
   if (isNaN(parsed) || !isFinite(parsed)) return 0;
-  return toMinorUnits(parsed);
+  const minor = toMinorUnits(parsed);
+  return minor === 0 ? 0 : minor;
 }

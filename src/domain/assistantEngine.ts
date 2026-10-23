@@ -30,7 +30,7 @@ export function parseUserIntent(input: string): IntentParseResult {
 
   // 1. Guest count change
   const guestMatch = text.match(/(?:guest|people|attendee|headcount)\s*(?:count)?\s*(?:to|by|is|=)?\s*(\d+)/i) ||
-    text.match(/(?:increase|decrease|change|set|update)\s*(?:guests?|guest count)\s*(?:to)?\s*(\d+)/i);
+    text.match(/(?:increase|decrease|change|set|update)\s*(?:guests?|guest count)\s*(?:to|by)?\s*(\d+)/i);
   if (guestMatch) {
     const count = parseInt(guestMatch[1], 10);
     if (!isNaN(count) && count > 0) {
@@ -42,7 +42,8 @@ export function parseUserIntent(input: string): IntentParseResult {
   }
 
   // 2. Suggest reductions vs direct budget reduction
-  if (text.includes('suggest') && (text.includes('reduc') || text.includes('cut') || text.includes('save') || text.includes('expense'))) {
+  if ((text.includes('suggest') || text.includes('how can we') || text.includes('ways to')) &&
+      (text.includes('reduc') || text.includes('cut') || text.includes('save') || text.includes('expense'))) {
     return { intent: 'suggest_expense_reductions' };
   }
   if (text.includes('reduce') && (text.includes('budget') || text.includes('cost') || text.includes('expense') || text.includes('spend'))) {
@@ -58,7 +59,7 @@ export function parseUserIntent(input: string): IntentParseResult {
   }
 
   // 4. Protect priority
-  if (text.includes('protect') || (text.includes('priorit') && text.includes('category'))) {
+  if (text.includes('protect') || (text.includes('priorit') && (text.includes('category') || text.includes('venue')))) {
     return { intent: 'protect_priority' };
   }
 
@@ -73,12 +74,14 @@ export function parseUserIntent(input: string): IntentParseResult {
   }
 
   // 7. Compare vendor quotes
-  if (text.includes('compare') && (text.includes('vendor') || text.includes('quote') || text.includes('quotation'))) {
+  if ((text.includes('compare') || text.includes('comparison')) &&
+      (text.includes('vendor') || text.includes('quote') || text.includes('quotation') || text.includes('supplier'))) {
     return { intent: 'compare_vendor_quotes' };
   }
 
   // 8. Missing vendor info
-  if (text.includes('missing') && (text.includes('vendor') || text.includes('quote') || text.includes('info') || text.includes('detail'))) {
+  if ((text.includes('missing') || text.includes('incomplete')) &&
+      (text.includes('vendor') || text.includes('quote') || text.includes('quotation') || text.includes('info') || text.includes('detail') || text.includes('specification') || text.includes('proposal'))) {
     return { intent: 'identify_missing_vendor_info' };
   }
 
@@ -88,7 +91,7 @@ export function parseUserIntent(input: string): IntentParseResult {
   }
 
   // 10. Summarize plan
-  if (text.includes('summar') || text.includes('overview') || text.includes('plan status') || text.includes('how are we doing')) {
+  if (text.includes('summar') || text.includes('overview') || text.includes('plan status') || text.includes('readiness') || text.includes('how are we doing')) {
     return { intent: 'summarize_plan' };
   }
 
