@@ -275,6 +275,7 @@ export const BudgetPlannerView: React.FC = () => {
                           onClick={() => handleOpenEditCategory(catSummary.category)}
                           className="p-1 rounded text-[#78716C] hover:text-[#1C1917] hover:bg-[#EAE4DB] transition"
                           title="Edit Category Allocation"
+                          aria-label={`Edit ${catSummary.category.name} allocation`}
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
@@ -282,6 +283,7 @@ export const BudgetPlannerView: React.FC = () => {
                           onClick={() => handleOpenAddExpense(catSummary.category.id)}
                           className="p-1 rounded text-[#A2421D] hover:bg-[#FAF0EB] transition"
                           title="Add Expense to Category"
+                          aria-label={`Add expense to ${catSummary.category.name}`}
                         >
                           <Plus className="w-3.5 h-3.5" />
                         </button>
@@ -353,6 +355,7 @@ export const BudgetPlannerView: React.FC = () => {
                           onClick={() => deleteExpense(exp.id)}
                           className="p-1 rounded text-red-600 hover:bg-red-50 transition"
                           title="Delete Expense"
+                          aria-label={`Delete expense: ${exp.title}`}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -375,10 +378,11 @@ export const BudgetPlannerView: React.FC = () => {
       >
         <div className="space-y-4 text-xs">
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">
+            <label htmlFor="edit-category-allocated" className="block font-semibold text-[#1C1917] mb-1">
               Allocated Amount ({state.event.currency})
             </label>
             <input
+              id="edit-category-allocated"
               type="text"
               value={editAllocatedDisplay}
               onChange={(e) => setEditAllocatedDisplay(e.target.value)}
@@ -387,10 +391,11 @@ export const BudgetPlannerView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">
+            <label htmlFor="edit-category-per-guest" className="block font-semibold text-[#1C1917] mb-1">
               Variable Per-Guest Cost ({state.event.currency}/guest, optional)
             </label>
             <input
+              id="edit-category-per-guest"
               type="text"
               value={editPerGuestDisplay}
               onChange={(e) => setEditPerGuestDisplay(e.target.value)}
@@ -403,10 +408,11 @@ export const BudgetPlannerView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">
+            <label htmlFor="edit-category-capacity" className="block font-semibold text-[#1C1917] mb-1">
               Venue Maximum Guest Capacity (optional)
             </label>
             <input
+              id="edit-category-capacity"
               type="number"
               value={editMaxCapacity || ''}
               onChange={(e) => setEditMaxCapacity(e.target.value ? parseInt(e.target.value, 10) : undefined)}
@@ -441,8 +447,9 @@ export const BudgetPlannerView: React.FC = () => {
       >
         <div className="space-y-4 text-xs">
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Expense Title</label>
+            <label htmlFor="expense-title-input" className="block font-semibold text-[#1C1917] mb-1">Expense Title</label>
             <input
+              id="expense-title-input"
               type="text"
               value={expenseTitle}
               onChange={(e) => setExpenseTitle(e.target.value)}
@@ -453,8 +460,9 @@ export const BudgetPlannerView: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold text-[#1C1917] mb-1">Category</label>
+              <label htmlFor="expense-category-select" className="block font-semibold text-[#1C1917] mb-1">Category</label>
               <select
+                id="expense-category-select"
                 value={expenseCategoryId}
                 onChange={(e) => setExpenseCategoryId(e.target.value)}
                 className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
@@ -468,8 +476,9 @@ export const BudgetPlannerView: React.FC = () => {
             </div>
 
             <div>
-              <label className="block font-semibold text-[#1C1917] mb-1">Status</label>
+              <label htmlFor="expense-status-select" className="block font-semibold text-[#1C1917] mb-1">Status</label>
               <select
+                id="expense-status-select"
                 value={expenseStatus}
                 onChange={(e) => setExpenseStatus(e.target.value as CostStatus)}
                 className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
@@ -483,10 +492,11 @@ export const BudgetPlannerView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">
+            <label htmlFor="expense-amount-input" className="block font-semibold text-[#1C1917] mb-1">
               Amount ({state.event.currency})
             </label>
             <input
+              id="expense-amount-input"
               type="text"
               value={expenseAmountDisplay}
               onChange={(e) => setExpenseAmountDisplay(e.target.value)}
@@ -496,10 +506,11 @@ export const BudgetPlannerView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">
+            <label htmlFor="expense-vendor-select" className="block font-semibold text-[#1C1917] mb-1">
               Link to Vendor (optional)
             </label>
             <select
+              id="expense-vendor-select"
               value={expenseVendorId}
               onChange={(e) => setExpenseVendorId(e.target.value)}
               className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
@@ -514,8 +525,9 @@ export const BudgetPlannerView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Notes (optional)</label>
+            <label htmlFor="expense-notes-textarea" className="block font-semibold text-[#1C1917] mb-1">Notes (optional)</label>
             <textarea
+              id="expense-notes-textarea"
               rows={2}
               value={expenseNotes}
               onChange={(e) => setExpenseNotes(e.target.value)}

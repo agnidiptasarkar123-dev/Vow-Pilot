@@ -182,6 +182,7 @@ export const DecisionSimulatorView: React.FC = () => {
               max={capacityLimit ? capacityLimit + 50 : 300}
               value={sandboxGuestCount}
               onChange={(e) => setSandboxGuestCount(parseInt(e.target.value, 10))}
+              aria-label="Simulate guest count"
               className="w-full h-2 bg-[#EAE4DB] rounded-lg appearance-none cursor-pointer accent-[#A2421D]"
             />
 
@@ -252,6 +253,7 @@ export const DecisionSimulatorView: React.FC = () => {
                       onChange={(e) =>
                         handleAllocationChange(cat.id, parseInt(e.target.value, 10) / 100)
                       }
+                      aria-label={`Simulate ${cat.name} allocation`}
                       className="w-full h-1.5 bg-[#EAE4DB] rounded-lg appearance-none cursor-pointer accent-[#A2421D]"
                     />
                   </div>
@@ -419,6 +421,7 @@ export const DecisionSimulatorView: React.FC = () => {
                               onClick={() => setConfirmApplyScenarioId(scen.id)}
                               className="px-2 py-1 rounded bg-[#047857] hover:bg-[#065F46] text-white font-medium text-[11px] transition"
                               title="Commit this scenario to become confirmed plan"
+                              aria-label={`Apply scenario "${scen.name}" to confirmed plan`}
                             >
                               Apply to Plan
                             </button>
@@ -426,6 +429,7 @@ export const DecisionSimulatorView: React.FC = () => {
                               onClick={() => deleteScenario(scen.id)}
                               className="p-1 text-red-600 hover:bg-red-50 rounded transition"
                               title="Delete Scenario"
+                              aria-label={`Delete scenario "${scen.name}"`}
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -450,8 +454,9 @@ export const DecisionSimulatorView: React.FC = () => {
       >
         <div className="space-y-4 text-xs">
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Scenario Name</label>
+            <label htmlFor="save-scenario-name" className="block font-semibold text-[#1C1917] mb-1">Scenario Name</label>
             <input
+              id="save-scenario-name"
               type="text"
               value={scenarioNameInput}
               onChange={(e) => setScenarioNameInput(e.target.value)}
@@ -461,8 +466,9 @@ export const DecisionSimulatorView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Description / Rationale</label>
+            <label htmlFor="save-scenario-desc" className="block font-semibold text-[#1C1917] mb-1">Description / Rationale</label>
             <textarea
+              id="save-scenario-desc"
               rows={2}
               value={scenarioDescriptionInput}
               onChange={(e) => setScenarioDescriptionInput(e.target.value)}

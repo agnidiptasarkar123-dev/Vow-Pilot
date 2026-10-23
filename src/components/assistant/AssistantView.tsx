@@ -123,7 +123,7 @@ export const AssistantView: React.FC = () => {
                       : 'bg-[#FAF8F5] text-[#1C1917] border border-[#E6DFD5]'
                   }`}
                 >
-                  {/* Markdown formatted text */}
+                  {/* Markdown formatted text (rendered safely without dangerouslySetInnerHTML) */}
                   <div className="prose prose-xs max-w-none space-y-2 leading-relaxed">
                     {msg.content.split('\n\n').map((paragraph, pIdx) => {
                       if (paragraph.startsWith('### ')) {
@@ -146,17 +146,16 @@ export const AssistantView: React.FC = () => {
                           <ul key={pIdx} className="list-disc list-inside space-y-1">
                             {items.map((it, itIdx) => (
                               <li key={itIdx}>
-                                <span dangerouslySetInnerHTML={{ __html: formatInline(it.replace('* ', '')) }} />
+                                <span>{renderSafeInline(it.replace(/^\*\s*/, ''))}</span>
                               </li>
                             ))}
                           </ul>
                         );
                       }
                       return (
-                        <p
-                          key={pIdx}
-                          dangerouslySetInnerHTML={{ __html: formatInline(paragraph) }}
-                        />
+                        <p key={pIdx}>
+                          {renderSafeInline(paragraph)}
+                        </p>
                       );
                     })}
                   </div>
@@ -217,6 +216,7 @@ export const AssistantView: React.FC = () => {
                             type="button"
                             onClick={() => dismissProposedAction(msg.id)}
                             className="px-3 py-1.5 rounded text-neutral-600 hover:text-black font-medium text-xs transition"
+                            aria-label={`Dismiss proposed action: ${msg.proposedAction.summary}`}
                           >
                             Dismiss
                           </button>
@@ -224,6 +224,7 @@ export const AssistantView: React.FC = () => {
                             type="button"
                             onClick={() => applyProposedAction(msg.id, msg.proposedAction!)}
                             className="px-3.5 py-1.5 rounded bg-[#A2421D] hover:bg-[#863414] text-white font-semibold text-xs shadow-xs transition flex items-center gap-1"
+                            aria-label={`Confirm and apply proposed action: ${msg.proposedAction.summary}`}
                           >
                             <Check className="w-3.5 h-3.5" />
                             Confirm & Apply
@@ -240,18 +241,24 @@ export const AssistantView: React.FC = () => {
 
         {/* Input Bar */}
         <div className="p-4 border-t border-[#E6DFD5] bg-[#FAF8F5] flex items-center gap-2">
+          <label htmlFor="assistant-prompt-input" className="sr-only">
+            Planning command input
+          </label>
           <input
+            id="assistant-prompt-input"
             type="text"
             value={inputPrompt}
             onChange={(e) => setInputPrompt(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type a planning command, e.g. 'Explain my current budget' or 'Change guest count to 160'..."
+            aria-label="Planning command input"
             className="flex-1 text-xs px-3.5 py-2.5 bg-white border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-1 focus:ring-[#A2421D] text-[#1C1917]"
           />
           <button
             type="button"
             onClick={() => handleSend()}
             disabled={!inputPrompt.trim()}
+            aria-label="Send planning command"
             className="px-4 py-2.5 bg-[#A2421D] hover:bg-[#863414] disabled:opacity-40 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
           >
             <span>Ask</span>
@@ -263,8 +270,40 @@ export const AssistantView: React.FC = () => {
   );
 };
 
-function formatInline(str: string): string {
-  return str
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>');
+/**
+ * Safe tokenized markdown renderer that converts **bold** and *italic*
+ * into React elements without invoking dangerouslySetInnerHTML.
+ */
+function renderSafeInline(text: string): React.ReactNode[] {
+  const tokens: React.ReactNode[] = [];
+  const regex = /(\*\*.*?\*\*|\*[^*]+?\*)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      tokens.push(text.slice(lastIndex, match.index));
+    }
+    const token = match[0];
+    if (token.startsWith('**') && token.endsWith('**')) {
+      tokens.push(
+        <strong key={`b-${lastIndex}`} className="font-semibold text-[#1C1917]">
+          {token.slice(2, -2)}
+        </strong>
+      );
+    } else if (token.startsWith('*') && token.endsWith('*')) {
+      tokens.push(
+        <em key={`i-${lastIndex}`} className="italic">
+          {token.slice(1, -1)}
+        </em>
+      );
+    }
+    lastIndex = match.index + token.length;
+  }
+
+  if (lastIndex < text.length) {
+    tokens.push(text.slice(lastIndex));
+  }
+
+  return tokens.length > 0 ? tokens : [text];
 }

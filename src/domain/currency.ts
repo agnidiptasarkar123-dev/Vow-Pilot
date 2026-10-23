@@ -6,10 +6,13 @@ import { CurrencyCode } from '../types';
  */
 
 export const MINOR_UNIT_MULTIPLIER = 100;
+export const MAX_SAFE_MAJOR_AMOUNT = Math.floor(Number.MAX_SAFE_INTEGER / MINOR_UNIT_MULTIPLIER);
 
 export function toMinorUnits(majorAmount: number): number {
   if (isNaN(majorAmount) || !isFinite(majorAmount)) return 0;
-  return Math.round(majorAmount * MINOR_UNIT_MULTIPLIER);
+  // Guard against safe integer overflow
+  const clamped = Math.max(-MAX_SAFE_MAJOR_AMOUNT, Math.min(MAX_SAFE_MAJOR_AMOUNT, majorAmount));
+  return Math.round(clamped * MINOR_UNIT_MULTIPLIER);
 }
 
 export function toMajorUnits(minorAmount: number): number {

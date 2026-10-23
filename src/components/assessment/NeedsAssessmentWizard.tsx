@@ -205,10 +205,11 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-event-name" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   Event Title <span className="text-[#BE123C]">*</span>
                 </label>
                 <input
+                  id="wizard-event-name"
                   type="text"
                   value={eventName}
                   onChange={(e) => setEventName(e.target.value)}
@@ -221,10 +222,11 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-event-type" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   Event Type <span className="text-[#BE123C]">*</span>
                 </label>
                 <select
+                  id="wizard-event-type"
                   value={eventType}
                   onChange={(e) => setEventType(e.target.value as EventType)}
                   className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
@@ -238,10 +240,11 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-event-date" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   Event Date <span className="text-[#BE123C]">*</span>
                 </label>
                 <input
+                  id="wizard-event-date"
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
@@ -253,10 +256,11 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-event-location" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   City & Destination <span className="text-[#BE123C]">*</span>
                 </label>
                 <input
+                  id="wizard-event-location"
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
@@ -269,10 +273,11 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-event-guests" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   Expected Guest Count <span className="text-[#BE123C]">*</span>
                 </label>
                 <input
+                  id="wizard-event-guests"
                   type="number"
                   min="1"
                   value={guestCount}
@@ -285,13 +290,14 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-event-budget" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   Total Budget ({currency}) <span className="text-[#BE123C]">*</span>
                 </label>
                 <div className="flex gap-2">
                   <select
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
+                    aria-label="Select currency"
                     className="w-24 text-xs px-2 py-2 border border-[#D5CCC0] rounded-md bg-[#FAF8F5]"
                   >
                     <option value="INR">INR (₹)</option>
@@ -300,6 +306,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                     <option value="GBP">GBP (£)</option>
                   </select>
                   <input
+                    id="wizard-event-budget"
                     type="text"
                     value={budgetDisplay}
                     onChange={(e) => setBudgetDisplay(e.target.value)}
@@ -577,6 +584,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                         type="button"
                         disabled={index === 0}
                         onClick={() => movePriority(index, 'up')}
+                        aria-label={`Increase priority for ${labelMap[catKey] || catKey}`}
                         className="p-1 rounded text-[#78716C] hover:text-[#1C1917] disabled:opacity-30"
                       >
                         ▲
@@ -585,6 +593,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                         type="button"
                         disabled={index === planningPriorities.length - 1}
                         onClick={() => movePriority(index, 'down')}
+                        aria-label={`Decrease priority for ${labelMap[catKey] || catKey}`}
                         className="p-1 rounded text-[#78716C] hover:text-[#1C1917] disabled:opacity-30"
                       >
                         ▼
@@ -596,10 +605,11 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+              <label htmlFor="wizard-additional-notes" className="block text-xs font-semibold text-[#1C1917] mb-1">
                 Additional Notes or Specific Instructions (Optional)
               </label>
               <textarea
+                id="wizard-additional-notes"
                 rows={2}
                 value={optionalNotes}
                 onChange={(e) => setOptionalNotes(e.target.value)}

@@ -247,8 +247,10 @@ npm run typecheck
 * **Assistant Engine (`src/test/assistantEngine.test.ts`):** 4 tests (deterministic intent recognition, action proposals, confirmation boundaries, honesty on unsupported input).
 * **Persistence (`src/test/persistence.test.ts`):** 6 tests (save/load, malformed JSON recovery, schema validation, reset to demo, JSON export/import).
 * **UI Integration (`src/test/ui.test.tsx`):** 6 tests (header metrics, tab navigation, dependency blocking rule enforcement, wizard validation, vendor clarification draft, simulator sandboxing).
+* **Security & Edge Cases (`src/test/securityAndEdgeCases.test.ts`):** 19 tests (XSS tag stripping, 5MB upload ceiling, prototype pollution rejection, foreign-key dangling task references, self-referencing dependency cycles, orphaned categories, NaN/overflow arithmetic safety, negative guest counts, multi-currency vendor comparison).
+* **End-to-End User Journeys A–H (`src/test/userJourneys.test.ts`):** 8 tests (Journey A: Event setup & needs assessment; Journey B: Guest headcount change & financial impact; Journey C: Prerequisite blocking rule; Journey D: Quote comparison & clarification message; Journey E: Assistant recommendation, rationale & cancellation; Journey F: Decision scenario sandboxing without baseline mutation; Journey G: JSON export/import round-trip & invalid payload rejection; Journey H: Persistence reload & corrupted storage recovery).
 
-**Result: 35 passing tests across 7 test suites (100% pass rate).**
+**Result: 62 passing tests across 9 test suites (100% pass rate).**
 
 ---
 
@@ -267,11 +269,22 @@ npm run typecheck
 
 ---
 
-## 14. Security & Privacy Notes
+## 14. Security, Privacy & Accessibility Audits
 
-* **Client-Side Isolation:** All calculations and data storage occur entirely on the client side. No personal event schedules or budgets are transmitted to external servers.
-* **Input Sanitization:** Imported JSON backups and text inputs are sanitized to strip `<>` tags and avoid script injection.
-* **Zero Secret Storage:** The application requires no private API keys, payment tokens, or third-party cloud credentials.
+### Security & Privacy Review
+* **Zero Arbitrary HTML Execution:** The chat coordinator avoids `dangerouslySetInnerHTML`, replacing markdown parsing with an AST-tokenized native React renderer (`renderSafeInline`) that safely formats bold, italic, and headers without permitting HTML injection.
+* **5 MB Input Limit:** File imports are strictly capped at `MAX_IMPORT_BYTES` (5 MB) to prevent browser memory exhaustion.
+* **Prototype Pollution Protection:** Schema validator actively rejects JSON objects containing hazardous keys (`__proto__`, `constructor`, `prototype`).
+* **Cross-Field Referential Integrity:** Imported schemas verify that all task dependencies point to existing tasks, reject self-referential cycles, and ensure expenses and quotes map to valid categories and vendors.
+* **Arithmetic Overflow & Boundary Clamping:** All major currency amounts are guarded by `MAX_SAFE_MAJOR_AMOUNT` to prevent integer overflow past `Number.MAX_SAFE_INTEGER`. Calculations explicitly guard against `NaN` and negative inputs.
+* **Client-Side Isolation:** All operations and data persistence execute exclusively in the client's browser. No private event information, budgets, or vendor contacts are transmitted to external servers.
+* **Zero Secret Storage:** No API keys, credentials, or private authentication tokens are stored or required.
+
+### Accessibility (WCAG 2.1 AA) Compliance
+* **Keyboard Focus Traps:** Modal dialogues trap Tab and Shift+Tab navigation within interactive elements, autofocus the primary control on open, and restore focus to the previously active element upon unmount.
+* **Form Control Association:** Every input, select, and textarea is explicitly linked with accessible `<label>` elements via unique `id` and `htmlFor` pairings.
+* **Accessible Screen-Reader Names:** All icon-only buttons (edit, delete, add, priority reordering, and task toggles) include explicit `aria-label` descriptors.
+* **Safe Clipboard Handlers:** Clipboard write calls are safeguarded with asynchronous catch blocks to prevent unhandled promise rejections in non-secure or restricted contexts.
 
 ---
 
@@ -294,26 +307,26 @@ npx vercel deploy --prod
 
 | Requirement | Section | Implementation File | Verification Test |
 | :--- | :--- | :--- | :--- |
-| **Needs Assessment Wizard** | Sec 5 | `src/components/assessment/NeedsAssessmentWizard.tsx` | `src/test/ui.test.tsx` |
-| **Minor Currency Units** | Sec 6 | `src/domain/currency.ts` | `src/test/currency.test.ts` |
-| **Cost Status Segregation** | Sec 6 | `src/domain/budgetEngine.ts` | `src/test/budgetEngine.test.ts` |
-| **Guest-Count Cost Scaling** | Sec 6 | `src/domain/budgetEngine.ts` | `src/test/budgetEngine.test.ts` |
-| **Venue Capacity Checking** | Sec 6 | `src/domain/budgetEngine.ts` | `src/test/budgetEngine.test.ts` |
-| **Priority-Aware Reductions**| Sec 6 | `src/domain/budgetEngine.ts` | `src/test/budgetEngine.test.ts` |
-| **Task Dependency Blocking** | Sec 7 | `src/domain/taskEngine.ts` | `src/test/taskEngine.test.ts`, `src/test/ui.test.tsx` |
-| **DFS Cycle Detection** | Sec 7 | `src/domain/taskEngine.ts` | `src/test/taskEngine.test.ts` |
-| **Deadline Realism Audit** | Sec 7 | `src/domain/taskEngine.ts` | `src/test/taskEngine.test.ts` |
+| **Needs Assessment Wizard** | Sec 5 | `src/components/assessment/NeedsAssessmentWizard.tsx` | `src/test/ui.test.tsx`, `src/test/userJourneys.test.ts` (Journey A) |
+| **Minor Currency Units & Overflow Defense** | Sec 6 | `src/domain/currency.ts` | `src/test/currency.test.ts`, `src/test/securityAndEdgeCases.test.ts` |
+| **Cost Status Segregation** | Sec 6 | `src/domain/budgetEngine.ts` | `src/test/budgetEngine.test.ts`, `src/test/userJourneys.test.ts` (Journey B) |
+| **Guest-Count Cost Scaling** | Sec 6 | `src/domain/budgetEngine.ts` | `src/test/budgetEngine.test.ts`, `src/test/userJourneys.test.ts` (Journey B) |
+| **Venue Capacity Checking** | Sec 6 | `src/domain/budgetEngine.ts` | `src/test/budgetEngine.test.ts`, `src/test/securityAndEdgeCases.test.ts` |
+| **Priority-Aware Reductions**| Sec 6 | `src/domain/budgetEngine.ts` | `src/test/budgetEngine.test.ts`, `src/test/userJourneys.test.ts` (Journey B) |
+| **Task Dependency Blocking** | Sec 7 | `src/domain/taskEngine.ts` | `src/test/taskEngine.test.ts`, `src/test/ui.test.tsx`, `src/test/userJourneys.test.ts` (Journey C) |
+| **DFS Cycle & Self-Cycle Detection** | Sec 7 | `src/domain/taskEngine.ts` | `src/test/taskEngine.test.ts`, `src/test/securityAndEdgeCases.test.ts` |
+| **Deadline Realism & Dangling Ref Audit** | Sec 7 | `src/domain/taskEngine.ts` | `src/test/taskEngine.test.ts`, `src/test/securityAndEdgeCases.test.ts` |
 | **Cascading Risk Analysis** | Sec 7 | `src/domain/taskEngine.ts` | `src/test/taskEngine.test.ts` |
-| **Vendor Quotation Matrix** | Sec 8 | `src/domain/vendorEngine.ts` | `src/test/vendorEngine.test.ts` |
-| **Missing Quote Audit** | Sec 8 | `src/domain/vendorEngine.ts` | `src/test/vendorEngine.test.ts` |
-| **Clarification Drafter** | Sec 8 | `src/domain/vendorEngine.ts` | `src/test/vendorEngine.test.ts`, `src/test/ui.test.tsx` |
+| **Vendor Quotation & Multi-Currency Matrix** | Sec 8 | `src/domain/vendorEngine.ts` | `src/test/vendorEngine.test.ts`, `src/test/securityAndEdgeCases.test.ts` |
+| **Missing Quote Audit** | Sec 8 | `src/domain/vendorEngine.ts` | `src/test/vendorEngine.test.ts`, `src/test/userJourneys.test.ts` (Journey D) |
+| **Clarification Drafter** | Sec 8 | `src/domain/vendorEngine.ts` | `src/test/vendorEngine.test.ts`, `src/test/ui.test.tsx`, `src/test/userJourneys.test.ts` (Journey D) |
 | **Sample Records Demarcation**| Sec 8 | `src/persistence/demoData.ts` | `src/test/vendorEngine.test.ts` |
-| **Deterministic Assistant** | Sec 9 | `src/domain/assistantEngine.ts`| `src/test/assistantEngine.test.ts` |
-| **Action Proposal Cards** | Sec 9 | `src/components/assistant/AssistantView.tsx` | `src/test/assistantEngine.test.ts` |
-| **Decision Simulator** | Sec 10 | `src/components/simulator/DecisionSimulatorView.tsx`| `src/test/ui.test.tsx` |
-| **Side-by-Side Scenarios** | Sec 10 | `src/components/simulator/DecisionSimulatorView.tsx`| `src/test/budgetEngine.test.ts` |
-| **Schema Migration & Recovery**| Sec 12 | `src/persistence/storage.ts` | `src/test/persistence.test.ts` |
-| **JSON Export & Import** | Sec 12 | `src/persistence/importExport.ts` | `src/test/persistence.test.ts` |
+| **Deterministic Assistant & Intent Parser** | Sec 9 | `src/domain/assistantEngine.ts`| `src/test/assistantEngine.test.ts`, `src/test/userJourneys.test.ts` (Journey E) |
+| **Action Proposals & Rationale Preview** | Sec 9 | `src/components/assistant/AssistantView.tsx` | `src/test/assistantEngine.test.ts`, `src/test/userJourneys.test.ts` (Journey E) |
+| **Decision Simulator Sandbox** | Sec 10 | `src/components/simulator/DecisionSimulatorView.tsx`| `src/test/ui.test.tsx`, `src/test/userJourneys.test.ts` (Journey F) |
+| **Side-by-Side Scenarios** | Sec 10 | `src/components/simulator/DecisionSimulatorView.tsx`| `src/test/budgetEngine.test.ts`, `src/test/userJourneys.test.ts` (Journey F) |
+| **Schema Migration & Safe Corruption Fallback**| Sec 12 | `src/persistence/storage.ts` | `src/test/persistence.test.ts`, `src/test/userJourneys.test.ts` (Journey H) |
+| **JSON Export & Sanitized 5MB Import** | Sec 12 | `src/persistence/importExport.ts` | `src/test/persistence.test.ts`, `src/test/securityAndEdgeCases.test.ts`, `src/test/userJourneys.test.ts` (Journey G) |
 | **Clean Jaipur Demo Event** | Sec 11 | `src/persistence/demoData.ts` | `src/test/ui.test.tsx` |
 
 ---

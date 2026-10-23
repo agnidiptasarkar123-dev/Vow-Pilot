@@ -45,6 +45,7 @@ export function calculateBudgetOverview(
   categories: BudgetCategory[],
   expenses: Expense[]
 ): BudgetOverview {
+  const safeTotalBudget = Math.max(0, Number.isFinite(totalBudget) ? totalBudget : 0);
   let sumEstimated = 0;
   let sumQuoted = 0;
   let sumConfirmed = 0;
@@ -62,6 +63,7 @@ export function calculateBudgetOverview(
   }
 
   for (const exp of expenses) {
+    const safeAmount = Math.max(0, Number.isFinite(exp.amount) ? exp.amount : 0);
     let catTotals = categoryMap.get(exp.categoryId);
     if (!catTotals) {
       catTotals = { estimated: 0, quoted: 0, confirmed: 0, actual: 0 };
@@ -70,20 +72,20 @@ export function calculateBudgetOverview(
 
     switch (exp.status) {
       case 'estimated':
-        sumEstimated += exp.amount;
-        catTotals.estimated += exp.amount;
+        sumEstimated += safeAmount;
+        catTotals.estimated += safeAmount;
         break;
       case 'quoted':
-        sumQuoted += exp.amount;
-        catTotals.quoted += exp.amount;
+        sumQuoted += safeAmount;
+        catTotals.quoted += safeAmount;
         break;
       case 'confirmed':
-        sumConfirmed += exp.amount;
-        catTotals.confirmed += exp.amount;
+        sumConfirmed += safeAmount;
+        catTotals.confirmed += safeAmount;
         break;
       case 'actual':
-        sumActual += exp.amount;
-        catTotals.actual += exp.amount;
+        sumActual += safeAmount;
+        catTotals.actual += safeAmount;
         break;
     }
   }
@@ -93,27 +95,26 @@ export function calculateBudgetOverview(
 
   const categorySummaries: CategorySummary[] = categories.map((cat) => {
     const totals = categoryMap.get(cat.id) || { estimated: 0, quoted: 0, confirmed: 0, actual: 0 };
-    totalAllocated += cat.allocatedAmount;
+    const safeAllocated = Math.max(0, Number.isFinite(cat.allocatedAmount) ? cat.allocatedAmount : 0);
+    totalAllocated += safeAllocated;
 
     // Committed is confirmed + actual
     const committedTotal = totals.confirmed + totals.actual;
 
     // Effective projected total for this category:
-    // If actual exists, we use actual; if confirmed exists, confirmed; etc.
-    // If explicit expenses exist, we take the highest commitment or fallback to allocation if no expenses recorded.
     const hasExpenses = totals.actual > 0 || totals.confirmed > 0 || totals.quoted > 0 || totals.estimated > 0;
     const effectiveTotal = hasExpenses
       ? (totals.actual + totals.confirmed + totals.quoted + totals.estimated)
-      : cat.allocatedAmount;
+      : safeAllocated;
 
     effectiveProjectedTotal += effectiveTotal;
 
-    const remainingAllocated = cat.allocatedAmount - effectiveTotal;
-    const isOverBudget = effectiveTotal > cat.allocatedAmount;
+    const remainingAllocated = safeAllocated - effectiveTotal;
+    const isOverBudget = effectiveTotal > safeAllocated;
 
     return {
       category: cat,
-      allocatedAmount: cat.allocatedAmount,
+      allocatedAmount: safeAllocated,
       estimatedAmount: totals.estimated,
       quotedAmount: totals.quoted,
       confirmedAmount: totals.confirmed,
@@ -125,15 +126,15 @@ export function calculateBudgetOverview(
     };
   });
 
-  const unallocatedBudget = totalBudget - totalAllocated;
+  const unallocatedBudget = safeTotalBudget - totalAllocated;
   const committedTotal = sumConfirmed + sumActual;
-  const remainingBudget = totalBudget - effectiveProjectedTotal;
-  const utilizationPercentage = totalBudget > 0 ? (effectiveProjectedTotal / totalBudget) * 100 : 0;
-  const isOverrun = effectiveProjectedTotal > totalBudget;
-  const overrunAmount = isOverrun ? effectiveProjectedTotal - totalBudget : 0;
+  const remainingBudget = safeTotalBudget - effectiveProjectedTotal;
+  const utilizationPercentage = safeTotalBudget > 0 ? (effectiveProjectedTotal / safeTotalBudget) * 100 : 0;
+  const isOverrun = effectiveProjectedTotal > safeTotalBudget;
+  const overrunAmount = isOverrun ? effectiveProjectedTotal - safeTotalBudget : 0;
 
   return {
-    totalBudget,
+    totalBudget: safeTotalBudget,
     totalAllocated,
     unallocatedBudget,
     sumEstimated,
@@ -163,8 +164,18 @@ export function calculateGuestCountImpact(
   capacityViolation?: string;
   missingDataWarnings: string[];
 } {
-  const currentGuestCount = currentState.event.guestCount;
-  const deltaGuests = newGuestCount - currentGuestCount;
+  const missingDataWarnings: string[] = [];
+  let safeGuestCount = newGuestCount;
+
+  if (!Number.isFinite(safeGuestCount) || safeGuestCount < 0) {
+    missingDataWarnings.push(`Invalid guest count (${newGuestCount}) provided. Must be a non-negative number.`);
+    safeGuestCount = Math.max(0, Math.floor(Number.isFinite(safeGuestCount) ? safeGuestCount : 0));
+  } else {
+    safeGuestCount = Math.floor(safeGuestCount);
+  }
+
+  const currentGuestCount = Math.max(0, currentState.event.guestCount || 0);
+  const deltaGuests = safeGuestCount - currentGuestCount;
   const overview = calculateBudgetOverview(
     currentState.event.totalBudget,
     currentState.categories,
@@ -172,15 +183,13 @@ export function calculateGuestCountImpact(
   );
 
   const affectedCategories: string[] = [];
-  const missingDataWarnings: string[] = [];
   let totalDelta = 0;
-
   let capacityViolation: string | undefined;
 
   for (const cat of currentState.categories) {
     // Check venue capacity
-    if (cat.maxCapacity && newGuestCount > cat.maxCapacity) {
-      capacityViolation = `New guest count (${newGuestCount}) exceeds ${cat.name} capacity limit (${cat.maxCapacity} guests).`;
+    if (cat.maxCapacity && safeGuestCount > cat.maxCapacity) {
+      capacityViolation = `New guest count (${safeGuestCount}) exceeds ${cat.name} capacity limit (${cat.maxCapacity} guests).`;
     }
 
     // Check variable costs

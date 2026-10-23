@@ -171,8 +171,11 @@ export const TaskManagementView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-[#78716C]">Category:</span>
+          <label htmlFor="task-category-filter" className="text-[#78716C]">
+            Category:
+          </label>
           <select
+            id="task-category-filter"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="px-2 py-1 border border-[#D5CCC0] rounded-md text-xs bg-[#FAF8F5]"
@@ -221,6 +224,13 @@ export const TaskManagementView: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleToggleComplete(task.id, task.status)}
+                      aria-label={
+                        isBlocked
+                          ? `Task blocked: ${task.title}`
+                          : isCompleted
+                          ? `Reopen task: ${task.title}`
+                          : `Complete task: ${task.title}`
+                      }
                       className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center transition border ${
                         isCompleted
                           ? 'bg-[#047857] border-[#047857] text-white'
@@ -349,6 +359,7 @@ export const TaskManagementView: React.FC = () => {
                       onClick={() => deleteTask(task.id)}
                       className="p-1.5 rounded text-neutral-400 hover:text-red-600 hover:bg-red-50 transition"
                       title="Delete Task"
+                      aria-label={`Delete task: ${task.title}`}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -375,8 +386,9 @@ export const TaskManagementView: React.FC = () => {
           )}
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Task Title *</label>
+            <label htmlFor="new-task-title-input" className="block font-semibold text-[#1C1917] mb-1">Task Title *</label>
             <input
+              id="new-task-title-input"
               type="text"
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
@@ -386,8 +398,9 @@ export const TaskManagementView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Description (optional)</label>
+            <label htmlFor="new-task-description-input" className="block font-semibold text-[#1C1917] mb-1">Description (optional)</label>
             <textarea
+              id="new-task-description-input"
               rows={2}
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
@@ -398,8 +411,9 @@ export const TaskManagementView: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold text-[#1C1917] mb-1">Category</label>
+              <label htmlFor="new-task-category-select" className="block font-semibold text-[#1C1917] mb-1">Category</label>
               <select
+                id="new-task-category-select"
                 value={newCategoryId}
                 onChange={(e) => setNewCategoryId(e.target.value)}
                 className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
@@ -413,8 +427,9 @@ export const TaskManagementView: React.FC = () => {
             </div>
 
             <div>
-              <label className="block font-semibold text-[#1C1917] mb-1">Priority</label>
+              <label htmlFor="new-task-priority-select" className="block font-semibold text-[#1C1917] mb-1">Priority</label>
               <select
+                id="new-task-priority-select"
                 value={newPriority}
                 onChange={(e) => setNewPriority(e.target.value as TaskPriority)}
                 className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
@@ -428,10 +443,11 @@ export const TaskManagementView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">
+            <label htmlFor="new-task-reason-input" className="block font-semibold text-[#1C1917] mb-1">
               Priority Rationale (Why this priority?)
             </label>
             <input
+              id="new-task-reason-input"
               type="text"
               value={newPriorityReason}
               onChange={(e) => setNewPriorityReason(e.target.value)}
@@ -441,8 +457,9 @@ export const TaskManagementView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Target Due Date *</label>
+            <label htmlFor="new-task-duedate-input" className="block font-semibold text-[#1C1917] mb-1">Target Due Date *</label>
             <input
+              id="new-task-duedate-input"
               type="date"
               value={newDueDate}
               onChange={(e) => setNewDueDate(e.target.value)}

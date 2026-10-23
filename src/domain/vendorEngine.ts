@@ -13,12 +13,15 @@ export interface VendorComparisonRow {
   priceDeltaFromAverage: number;
   isExpired: boolean;
   missingDetails: string[];
+  currencyMismatch?: boolean;
 }
 
 export interface CategoryVendorComparison {
   categoryId: string;
   categoryName: string;
   averageQuotedPrice: number;
+  primaryCurrency?: string;
+  hasMixedCurrencies: boolean;
   quotesCount: number;
   rows: VendorComparisonRow[];
 }
@@ -65,10 +68,30 @@ export function compareCategoryVendors(
   const catVendors = vendors.filter((v) => v.categoryId === categoryId);
   const catQuotes = quotes.filter((q) => catVendors.some((v) => v.id === q.vendorId));
 
+  // Determine primary currency (most common currency among category quotes, or INR default)
+  const currencyCounts = new Map<string, number>();
+  for (const q of catQuotes) {
+    if (q.currency) {
+      currencyCounts.set(q.currency, (currencyCounts.get(q.currency) || 0) + 1);
+    }
+  }
+
+  let primaryCurrency = 'INR';
+  let maxCount = 0;
+  for (const [curr, count] of currencyCounts.entries()) {
+    if (count > maxCount) {
+      maxCount = count;
+      primaryCurrency = curr;
+    }
+  }
+
+  const hasMixedCurrencies = currencyCounts.size > 1;
+
   let totalQuoted = 0;
   let quoteCount = 0;
   for (const q of catQuotes) {
-    if (q.quotedAmount > 0) {
+    // Only average quotes matching primary currency to avoid cross-currency skew
+    if (q.quotedAmount > 0 && q.currency === primaryCurrency) {
       totalQuoted += q.quotedAmount;
       quoteCount++;
     }
@@ -84,7 +107,12 @@ export function compareCategoryVendors(
       ? identifyMissingQuoteDetails(vendorQuote, vendor.name)
       : ['No formal quotation submitted yet'];
 
-    const priceDeltaFromAverage = vendorQuote
+    const currencyMismatch = !!(vendorQuote && vendorQuote.currency !== primaryCurrency);
+    if (currencyMismatch && vendorQuote) {
+      missingDetails.push(`Quoted in ${vendorQuote.currency} (differs from category standard ${primaryCurrency})`);
+    }
+
+    const priceDeltaFromAverage = (vendorQuote && !currencyMismatch)
       ? vendorQuote.quotedAmount - averageQuotedPrice
       : 0;
 
@@ -94,6 +122,7 @@ export function compareCategoryVendors(
       priceDeltaFromAverage,
       isExpired,
       missingDetails,
+      currencyMismatch,
     };
   });
 
@@ -101,6 +130,8 @@ export function compareCategoryVendors(
     categoryId,
     categoryName,
     averageQuotedPrice,
+    primaryCurrency,
+    hasMixedCurrencies,
     quotesCount: catQuotes.length,
     rows,
   };

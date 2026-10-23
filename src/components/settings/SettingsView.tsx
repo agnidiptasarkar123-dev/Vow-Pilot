@@ -36,8 +36,13 @@ export const SettingsView: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Storage metric calculation
-  const rawStored = localStorage.getItem(STORAGE_KEY) || '';
-  const storageKb = (new Blob([rawStored]).size / 1024).toFixed(1);
+  let storageKb = '0.0';
+  try {
+    const rawStored = localStorage.getItem(STORAGE_KEY) || '';
+    storageKb = (new Blob([rawStored]).size / 1024).toFixed(1);
+  } catch {
+    storageKb = '0.0';
+  }
 
   const handleSavePreferences = () => {
     const budgetMinor = parseDisplayToMinor(budgetDisplay);
@@ -140,8 +145,9 @@ export const SettingsView: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Event Title</label>
+            <label htmlFor="settings-event-name" className="block font-semibold text-[#1C1917] mb-1">Event Title</label>
             <input
+              id="settings-event-name"
               type="text"
               value={eventName}
               onChange={(e) => setEventName(e.target.value)}
@@ -150,8 +156,9 @@ export const SettingsView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Event Type</label>
+            <label htmlFor="settings-event-type" className="block font-semibold text-[#1C1917] mb-1">Event Type</label>
             <select
+              id="settings-event-type"
               value={eventType}
               onChange={(e) => setEventType(e.target.value as EventType)}
               className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
@@ -165,8 +172,9 @@ export const SettingsView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Date</label>
+            <label htmlFor="settings-event-date" className="block font-semibold text-[#1C1917] mb-1">Date</label>
             <input
+              id="settings-event-date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
@@ -175,8 +183,9 @@ export const SettingsView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">City / Venue Location</label>
+            <label htmlFor="settings-event-location" className="block font-semibold text-[#1C1917] mb-1">City / Venue Location</label>
             <input
+              id="settings-event-location"
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
@@ -185,8 +194,9 @@ export const SettingsView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Confirmed Guest Count</label>
+            <label htmlFor="settings-event-guests" className="block font-semibold text-[#1C1917] mb-1">Confirmed Guest Count</label>
             <input
+              id="settings-event-guests"
               type="number"
               min="1"
               value={guestCount}
@@ -196,11 +206,12 @@ export const SettingsView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Total Target Budget</label>
+            <label htmlFor="settings-event-budget" className="block font-semibold text-[#1C1917] mb-1">Total Target Budget</label>
             <div className="flex gap-2">
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
+                aria-label="Event Currency"
                 className="w-24 text-xs px-2 py-2 border border-[#D5CCC0] rounded-md bg-[#FAF8F5]"
               >
                 <option value="INR">INR (₹)</option>
@@ -209,6 +220,7 @@ export const SettingsView: React.FC = () => {
                 <option value="GBP">GBP (£)</option>
               </select>
               <input
+                id="settings-event-budget"
                 type="text"
                 value={budgetDisplay}
                 onChange={(e) => setBudgetDisplay(e.target.value)}
@@ -218,8 +230,9 @@ export const SettingsView: React.FC = () => {
           </div>
 
           <div className="col-span-1 sm:col-span-2">
-            <label className="block font-semibold text-[#1C1917] mb-1">Event Style & Tone</label>
+            <label htmlFor="settings-event-style" className="block font-semibold text-[#1C1917] mb-1">Event Style & Tone</label>
             <input
+              id="settings-event-style"
               type="text"
               value={style}
               onChange={(e) => setStyle(e.target.value)}
@@ -228,8 +241,9 @@ export const SettingsView: React.FC = () => {
           </div>
 
           <div className="col-span-1 sm:col-span-2">
-            <label className="block font-semibold text-[#1C1917] mb-1">Catering Format</label>
+            <label htmlFor="settings-event-catering" className="block font-semibold text-[#1C1917] mb-1">Catering Format</label>
             <input
+              id="settings-event-catering"
               type="text"
               value={cateringType}
               onChange={(e) => setCateringType(e.target.value)}
@@ -238,8 +252,9 @@ export const SettingsView: React.FC = () => {
           </div>
 
           <div className="col-span-1 sm:col-span-2">
-            <label className="block font-semibold text-[#1C1917] mb-1">Optional Notes</label>
+            <label htmlFor="settings-event-notes" className="block font-semibold text-[#1C1917] mb-1">Optional Notes</label>
             <textarea
+              id="settings-event-notes"
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}

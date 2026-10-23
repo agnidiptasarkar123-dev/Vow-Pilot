@@ -76,11 +76,24 @@ export const VendorCoordinationView: React.FC = () => {
     setHasCopiedDraft(false);
   };
 
-  const handleCopyDraft = () => {
+  const handleCopyDraft = async () => {
     if (clarificationModal) {
-      navigator.clipboard.writeText(clarificationModal.message);
-      setHasCopiedDraft(true);
-      setTimeout(() => setHasCopiedDraft(false), 2500);
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(clarificationModal.message);
+        } else {
+          const textArea = document.createElement('textarea');
+          textArea.value = clarificationModal.message;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+        }
+        setHasCopiedDraft(true);
+        setTimeout(() => setHasCopiedDraft(false), 2500);
+      } catch (err) {
+        console.warn('Clipboard copy error:', err);
+      }
     }
   };
 
@@ -263,6 +276,7 @@ export const VendorCoordinationView: React.FC = () => {
                         onClick={() => handleDeleteVendorWithConfirm(vendor.id, vendor.name)}
                         className="p-1 rounded text-neutral-400 hover:text-red-600 transition"
                         title="Delete Vendor"
+                        aria-label={`Delete vendor: ${vendor.name}`}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -397,39 +411,42 @@ export const VendorCoordinationView: React.FC = () => {
                   </div>
 
                   {/* Bottom Action Strip */}
-                  <div className="pt-4 border-t border-[#F4EFEA] flex items-center justify-between gap-2 mt-4">
-                    {quote ? (
-                      <>
-                        <button
-                          onClick={() => handleOpenClarification(vendor, quote)}
-                          className="px-2.5 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#EAE4DB] text-[#1C1917] text-[11px] font-semibold border border-[#D5CCC0] transition"
-                        >
-                          Draft Clarification
-                        </button>
+                    <div className="pt-4 border-t border-[#F4EFEA] flex items-center justify-between gap-2 mt-4">
+                      {quote ? (
+                        <>
+                          <button
+                            onClick={() => handleOpenClarification(vendor, quote)}
+                            className="px-2.5 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#EAE4DB] text-[#1C1917] text-[11px] font-semibold border border-[#D5CCC0] transition"
+                            aria-label={`Draft clarification message for ${vendor.name}`}
+                          >
+                            Draft Clarification
+                          </button>
 
+                          <button
+                            onClick={() => selectQuote(quote.id)}
+                            aria-label={isSelected ? `Proposal currently selected for ${vendor.name}` : `Select proposal from ${vendor.name}`}
+                            className={`px-3 py-1.5 rounded text-[11px] font-semibold transition ${
+                              isSelected
+                                ? 'bg-[#047857] text-white'
+                                : 'bg-[#1C1917] hover:bg-[#33302B] text-white shadow-xs'
+                            }`}
+                          >
+                            {isSelected ? '✓ Selected' : 'Select Proposal'}
+                          </button>
+                        </>
+                      ) : (
                         <button
-                          onClick={() => selectQuote(quote.id)}
-                          className={`px-3 py-1.5 rounded text-[11px] font-semibold transition ${
-                            isSelected
-                              ? 'bg-[#047857] text-white'
-                              : 'bg-[#1C1917] hover:bg-[#33302B] text-white shadow-xs'
-                          }`}
+                          onClick={() => {
+                            setQuoteVendorId(vendor.id);
+                            setIsAddQuoteOpen(true);
+                          }}
+                          aria-label={`Submit quotation for ${vendor.name}`}
+                          className="w-full py-1.5 rounded bg-[#FAF8F5] hover:bg-[#EAE4DB] text-[#1C1917] text-xs font-semibold border border-[#D5CCC0] transition"
                         >
-                          {isSelected ? '✓ Selected' : 'Select Proposal'}
+                          + Submit Quotation
                         </button>
-                      </>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          setQuoteVendorId(vendor.id);
-                          setIsAddQuoteOpen(true);
-                        }}
-                        className="w-full py-1.5 rounded bg-[#FAF8F5] hover:bg-[#EAE4DB] text-[#1C1917] text-xs font-semibold border border-[#D5CCC0] transition"
-                      >
-                        + Submit Quotation
-                      </button>
-                    )}
-                  </div>
+                      )}
+                    </div>
                 </div>
               );
             })}

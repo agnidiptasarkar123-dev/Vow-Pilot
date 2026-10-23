@@ -38,8 +38,14 @@ export function canCompleteTask(
 
   const blockingTitles: string[] = [];
   for (const depId of target.dependencies) {
+    if (depId === target.id) {
+      blockingTitles.push('Self-dependency cycle detected');
+      continue;
+    }
     const dep = taskMap.get(depId);
-    if (dep && dep.status !== 'completed') {
+    if (!dep) {
+      blockingTitles.push(`Unresolved prerequisite (ID: ${depId})`);
+    } else if (dep.status !== 'completed') {
       blockingTitles.push(dep.title);
     }
   }
@@ -55,6 +61,16 @@ export function canCompleteTask(
  * Returns hasCycle = true and the cycle path if a cycle exists.
  */
 export function detectDependencyCycles(tasks: Task[]): CycleDetectionResult {
+  // First check for direct self-cycles
+  for (const t of tasks) {
+    if (t.dependencies && t.dependencies.includes(t.id)) {
+      return {
+        hasCycle: true,
+        cyclePath: [t.id, t.id],
+      };
+    }
+  }
+
   const adjList = new Map<string, string[]>();
   for (const t of tasks) {
     adjList.set(t.id, t.dependencies || []);
@@ -133,8 +149,14 @@ export function evaluateTasks(
     // 1. Dependency check
     const missingPrerequisites: string[] = [];
     for (const depId of task.dependencies) {
+      if (depId === task.id) {
+        missingPrerequisites.push('Self-referencing dependency');
+        continue;
+      }
       const dep = taskMap.get(depId);
-      if (dep && dep.status !== 'completed') {
+      if (!dep) {
+        missingPrerequisites.push(`Unresolved prerequisite (ID: ${depId})`);
+      } else if (dep.status !== 'completed') {
         missingPrerequisites.push(dep.title);
       }
     }

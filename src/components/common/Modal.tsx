@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 
 interface ModalProps {
@@ -18,19 +18,68 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   maxWidth = 'lg',
 }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
+    if (!isOpen) return;
+
+    // Save previous active element to restore focus on close
+    previouslyFocusedElementRef.current = document.activeElement as HTMLElement;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
+        e.preventDefault();
         onClose();
+        return;
+      }
+
+      // Trap Tab key within modal
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
       }
     };
-    if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = 'hidden';
+
+    // Auto-focus first focusable element or close button
+    const timer = setTimeout(() => {
+      if (modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+          'input:not([disabled]), button:not([disabled]), select:not([disabled]), textarea:not([disabled])'
+        );
+        if (focusableElements.length > 0) {
+          focusableElements[0].focus();
+        }
+      }
+    }, 50);
+
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'auto';
+      if (previouslyFocusedElementRef.current && typeof previouslyFocusedElementRef.current.focus === 'function') {
+        previouslyFocusedElementRef.current.focus();
+      }
     };
   }, [isOpen, onClose]);
 
@@ -45,18 +94,22 @@ export const Modal: React.FC<ModalProps> = ({
     '3xl': 'max-w-3xl',
   }[maxWidth];
 
+  const descriptionId = description ? `modal-desc-${title.toLowerCase().replace(/[^a-z0-9]/g, '-')}` : undefined;
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fadeIn"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
+      aria-describedby={descriptionId}
     >
       {/* Backdrop click dismiss */}
       <div className="fixed inset-0" onClick={onClose} aria-hidden="true" />
 
       {/* Modal Surface */}
       <div
+        ref={modalRef}
         className={`relative w-full ${maxWidthClass} bg-white rounded-xl shadow-xl border border-[#E6DFD5] overflow-hidden z-10`}
       >
         <div className="flex items-start justify-between p-5 border-b border-[#F4EFEA] bg-[#FAF8F5]">
@@ -64,7 +117,11 @@ export const Modal: React.FC<ModalProps> = ({
             <h3 id="modal-title" className="text-lg font-bold text-[#1C1917] font-serif-heading">
               {title}
             </h3>
-            {description && <p className="text-xs text-[#78716C] mt-0.5">{description}</p>}
+            {description && (
+              <p id={descriptionId} className="text-xs text-[#78716C] mt-0.5">
+                {description}
+              </p>
+            )}
           </div>
           <button
             onClick={onClose}
