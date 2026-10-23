@@ -124,15 +124,21 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const deleteCategory = (categoryId: string) => {
     const cat = state.categories.find((c) => c.id === categoryId);
-    setState((prev) => ({
-      ...prev,
-      categories: prev.categories.filter((c) => c.id !== categoryId),
-      expenses: prev.expenses.filter((e) => e.categoryId !== categoryId),
-      changeLog: [
-        recordChange('budget', `Removed budget category: ${cat?.name || categoryId}`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => {
+      const remainingCats = prev.categories.filter((c) => c.id !== categoryId);
+      const fallbackCatId = remainingCats[0]?.id || 'general';
+      return {
+        ...prev,
+        categories: remainingCats,
+        expenses: prev.expenses.filter((e) => e.categoryId !== categoryId),
+        tasks: prev.tasks.map((t) => (t.categoryId === categoryId ? { ...t, categoryId: fallbackCatId } : t)),
+        vendors: prev.vendors.map((v) => (v.categoryId === categoryId ? { ...v, categoryId: fallbackCatId } : v)),
+        changeLog: [
+          recordChange('budget', `Removed budget category: ${cat?.name || categoryId}`),
+          ...prev.changeLog,
+        ],
+      };
+    });
   };
 
   const addExpense = (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
@@ -492,6 +498,15 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           categoryAllocations: allocations,
           notes: 'Auto-generated via planning assistant',
           isBaseline: false,
+        });
+      } else if (action.type === 'rebalance_budget' || action.type === 'cut_category_budget') {
+        const adjustments = (action.payload.adjustments as Array<{
+          categoryId: string;
+          newAllocated: number;
+        }>) || [];
+        nextCategories = prev.categories.map((cat) => {
+          const adj = adjustments.find((a) => a.categoryId === cat.id);
+          return adj ? { ...cat, allocatedAmount: adj.newAllocated } : cat;
         });
       }
 
