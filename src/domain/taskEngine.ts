@@ -267,3 +267,58 @@ function computePriorityRationale(
 
   return 'Standard operational priority.';
 }
+
+/**
+ * Computes topological order of tasks (prerequisites appear before dependents).
+ * If a cycle is present, returns an empty array.
+ */
+export function computeTopologicalOrder(tasks: Task[]): Task[] {
+  const inDegree = new Map<string, number>();
+  const adjList = new Map<string, string[]>();
+  const taskMap = new Map<string, Task>();
+
+  for (const t of tasks) {
+    taskMap.set(t.id, t);
+    inDegree.set(t.id, 0);
+    adjList.set(t.id, []);
+  }
+
+  // Edge: dep -> t (dep must finish before t)
+  for (const t of tasks) {
+    for (const depId of t.dependencies) {
+      if (taskMap.has(depId)) {
+        adjList.get(depId)!.push(t.id);
+        inDegree.set(t.id, (inDegree.get(t.id) || 0) + 1);
+      }
+    }
+  }
+
+  // Queue tasks with 0 dependencies
+  const queue: string[] = [];
+  for (const [id, deg] of inDegree.entries()) {
+    if (deg === 0) {
+      queue.push(id);
+    }
+  }
+
+  const result: Task[] = [];
+  let head = 0;
+  while (head < queue.length) {
+    const currId = queue[head++];
+    const task = taskMap.get(currId);
+    if (task) {
+      result.push(task);
+    }
+
+    const dependents = adjList.get(currId) || [];
+    for (const dep of dependents) {
+      const newDeg = (inDegree.get(dep) || 1) - 1;
+      inDegree.set(dep, newDeg);
+      if (newDeg === 0) {
+        queue.push(dep);
+      }
+    }
+  }
+
+  return result.length === tasks.length ? result : [];
+}

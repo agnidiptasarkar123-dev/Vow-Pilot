@@ -4,30 +4,43 @@
 **Audit Date:** 2026-10-24  
 **Project:** VowPilot  
 **Challenge:** Prompt Wars Virtual — Challenge 5: Celebration & Event Planner  
-**Scope:** Client-side Web Architecture, Persistence Layer, DOM Rendering, Input Validation  
+**Scope:** Client-side Web Architecture, Persistence Layer, DOM Rendering, Input Validation, External Dispatch Hand-off  
 
 ---
 
 ## 1. Executive Security Summary
 
-VowPilot is a browser-based single-page application built with React, Vite, and TypeScript. Because it runs purely on the client side without a remote database, its attack surface centers around:
+VowPilot is a browser-based Single Page Application built with React, Vite, and TypeScript. Because it operates purely on the client side with local storage and state persistence, its threat landscape centers around:
 1. **Malicious JSON backup file imports** (Stored XSS, Prototype Pollution, Denial of Service via memory bloat).
 2. **Browser LocalStorage tampering** (State corruption, prototype poisoning, quota exhaustion).
 3. **Prompt injection / adversarial queries** to the deterministic planning coordinator.
 4. **Financial arithmetic anomalies** (Floating-point precision drift, integer overflow, non-finite values).
+5. **External communication & secret leakage** (Ensuring zero credentials or API keys exist in client bundles).
 
-### Audit Verdict:
+### Audit Verdict
 - **Known Dependency Vulnerabilities (`npm audit`):** **0**
 - **Unresolved Blocker / Critical Findings:** **0**
+- **Secret / Key Leakage in Client Code:** **ZERO** (RFC-6068 credential-free dispatch)
+- **External WAN Penetration Testing:** **NOT PERFORMED** (Static client SPA with no backend attack surface)
 - **Residual Risk Level:** **LOW (Hardened Client Application)**
 
 ---
 
 ## 2. Threat Vector Deep Dive & Verification
 
-### A. Prototype Pollution Defense
-- **Threat:** An attacker crafts an imported JSON backup containing `__proto__`, `constructor`, or `prototype` keys at top-level or deeply nested levels to manipulate JavaScript object prototypes.
-- **Implementation:** In `src/persistence/storage.ts`, `hasDangerousKey()` recursively traverses all nested object properties before state is loaded:
+### A. Zero Secrets & Credential-Free Dispatch (Finding B)
+- **Threat:** Client-side applications attempting to send email or SMS directly via SMTP or third-party APIs (SendGrid, Twilio, AWS SES) frequently leak private API keys, SMTP credentials, or authentication tokens in JavaScript bundles or Git history.
+- **Implementation:** VowPilot strictly rejects embedding API credentials in the browser. It implements RFC-6068 `mailto:` URI handoffs:
+  - Generates a safely URI-encoded `mailto:` link with pre-filled subject and inquiry body.
+  - Triggers the user's native email client via `window.location.href = mailto:...`.
+  - Requires explicit user review before launch.
+  - Updates an internal coordination audit log with the inquiry dispatch timestamp.
+  - Provides a safe clipboard fallback.
+- **Evidence:** Verified by static codebase grep (zero API keys or secrets found) and `src/test/vendorDispatch.test.tsx`.
+
+### B. Prototype Pollution Defense
+- **Threat:** An attacker crafts an imported JSON backup containing `__proto__`, `constructor`, or `prototype` keys to poison JavaScript object prototypes.
+- **Implementation:** In `src/persistence/storage.ts`, `hasDangerousKey()` recursively traverses all object levels before state is deserialized:
   ```typescript
   function hasDangerousKey(obj: unknown): boolean {
     if (!obj || typeof obj !== 'object') return false;
@@ -46,91 +59,51 @@ VowPilot is a browser-based single-page application built with React, Vite, and 
     return false;
   }
   ```
-- **Evidence:** Tested in `src/test/securityAndEdgeCases.test.ts` (Test 10) and Property 16 in `src/test/propertyBased.test.ts`.
+- **Evidence:** Verified in `src/test/securityAndEdgeCases.test.ts` (Test 10) and Property 16 in `src/test/propertyBased.test.ts`.
 
-### B. Cross-Site Scripting (XSS) & Unsafe HTML Rendering
-- **Threat:** User-entered or imported text (event names, vendor descriptions, notes, assistant messages) containing `<script>alert(1)</script>`, `<img src=x onerror=...>`, or `javascript:...` links could execute arbitrary scripts.
+### C. Cross-Site Scripting (XSS) & Safe Rendering
+- **Threat:** User-entered or imported text (event titles, vendor descriptions, notes, assistant messages) containing `<script>alert(1)</script>`, `<img src=x onerror=...>`, or `javascript:...` links could execute arbitrary scripts.
 - **Implementation:**
   - Zero usage of `dangerouslySetInnerHTML` across all UI components.
-  - In `src/components/assistant/AssistantView.tsx`, markdown bolding and bullet lists are rendered via a safe Abstract Syntax Tree (AST) parser (`renderSafeInline`) that outputs native React text and `<span>` elements:
-  ```typescript
-  const renderSafeInline = (text: string) => {
-    const parts = text.split(/(\*\*.*?\*\*|`.*?`)/g);
-    return parts.map((part, idx) => {
-      if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={idx} className="font-semibold text-[#1C1917]">{part.slice(2, -2)}</strong>;
-      }
-      if (part.startsWith('`') && part.endsWith('`')) {
-        return <code key={idx} className="bg-[#FAF8F5] px-1 py-0.5 rounded text-[#A2421D] font-mono text-xs">{part.slice(1, -1)}</code>;
-      }
-      return part;
-    });
-  };
-  ```
-- **Evidence:** Tested in `src/test/securityAndEdgeCases.test.ts` (Tests 1-4).
+  - In `src/components/assistant/AssistantView.tsx`, formatting is parsed into native React nodes via an AST text splitter (`renderSafeInline`), completely neutralizing HTML injection.
+- **Evidence:** Verified in `src/test/securityAndEdgeCases.test.ts` (Tests 1–4).
 
-### C. Denial of Service (DoS) via Oversized Payloads
-- **Threat:** Importing a multi-megabyte malicious JSON file could overwhelm the browser's memory, freeze the single-threaded UI, or cause tab crash.
-- **Implementation:** `src/persistence/importExport.ts` enforces an upfront 5 MB byte ceiling check (`validateImportPayloadSize`) before invoking `JSON.parse()`:
-  ```typescript
-  export const MAX_IMPORT_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+### D. Denial of Service via Large JSON Import Payload
+- **Threat:** An attacker imports an arbitrarily large JSON file (e.g. 500 MB) causing browser tab memory exhaustion and complete crash.
+- **Implementation:** In `src/persistence/storage.ts`, `validateImportPayloadSize()` strictly enforces a 5 MB ceiling prior to JSON parsing.
+- **Evidence:** Verified in `src/test/securityAndEdgeCases.test.ts` (Test 5).
 
-  export function validateImportPayloadSize(fileContent: string): { valid: boolean; error?: string } {
-    const byteSize = new Blob([fileContent]).size;
-    if (byteSize > MAX_IMPORT_SIZE_BYTES) {
-      return {
-        valid: false,
-        error: `Import file exceeds maximum allowed size of 5 MB (actual: ${(byteSize / (1024 * 1024)).toFixed(2)} MB).`,
-      };
-    }
-    return { valid: true };
-  }
-  ```
-- **Evidence:** Tested in `src/test/securityAndEdgeCases.test.ts` (Test 5).
-
-### D. Storage Corruption & Quota Exhaustion
-- **Threat:** LocalStorage data corrupted by outside scripts or browser quota exhaustion (`QuotaExceededError`) causes unhandled exceptions.
+### E. Financial Arithmetic & Integer Safety
+- **Threat:** Floating-point rounding errors (`0.1 + 0.2 = 0.30000000000000004`), NaN injection, or negative overflow causing budget corruption.
 - **Implementation:**
-  - `loadPersistedState()` catches `SyntaxError` and invalid schemas, logging a safe error and returning default `DEMO_STATE`.
-  - `savePersistedState()` wraps `localStorage.setItem()` in a `try...catch` block, returning `false` gracefully without throwing an uncaught exception.
-- **Evidence:** Tested in `src/test/persistenceComprehensive.test.ts` (Tests 151, 152).
+  - All financial values stored strictly in integer minor currency units (paise/cents).
+  - Division uses integer rounding (`Math.round`).
+  - Clamping prevents negative allocations (`Math.max(0, ...)`).
+  - `parseDisplayToMinor` rejects non-numeric characters and enforces `Number.isFinite()`.
+- **Evidence:** 250 test cases in `currencyComprehensive.test.ts` and 250 in `budgetComprehensive.test.ts`.
 
-### E. Financial Integrity & Overflow Protection
-- **Threat:** Precision drift from IEEE-754 floating-point arithmetic or integer overflow beyond `Number.MAX_SAFE_INTEGER`.
-- **Implementation:**
-  - All financial calculations are executed in integer minor units (Paise for INR, Cents for USD/EUR/GBP).
-  - Clamping enforced at `MAX_SAFE_MAJOR_AMOUNT = 10_000_000_000` (10 Billion major units).
-  - Strict isolation in `src/domain/vendorEngine.ts`: foreign currency quotes are segregated from primary currency averages to prevent nonsensical arithmetic (e.g. adding $1,000 USD to ₹1,000 INR).
-- **Evidence:** Tested in `src/test/currencyComprehensive.test.ts` (250 tests) and `src/test/propertyBased.test.ts` (Properties 1-4).
-
----
-
-## 3. STRIDE Threat Model Assessment
-
-| STRIDE Category | Threat Description | VowPilot Mitigation | Status |
-| :--- | :--- | :--- | :---: |
-| **Spoofing** | Attacker impersonates official vendors or verified reviews. | All demonstration records carry explicit `isSample: true` disclaimers; no claims of verified external reviews are made. | **MITIGATED** |
-| **Tampering** | User or malicious script alters LocalStorage state. | Schema validation (`validateStateSchema`) validates every field, type, and bounds before state adoption. | **MITIGATED** |
-| **Repudiation** | Consequential actions executed without user consent. | Consequential changes (budget rebalance, guest headcount adjustments) require explicit user confirmation. | **MITIGATED** |
-| **Information Disclosure** | Leakage of sensitive secrets or tokens. | Zero external API keys or credentials; application is 100% client-side with zero secret exposure. | **MITIGATED** |
-| **Denial of Service** | Oversized JSON payloads freeze single-threaded browser tab. | 5 MB import limit enforced before parsing; max task graph cycles detected via DFS within millisecond budget. | **MITIGATED** |
-| **Elevation of Privilege** | Prototype pollution injects properties into base Object prototype. | Recursive `hasDangerousKey()` check inspects every level of incoming objects before adoption. | **MITIGATED** |
+### F. LocalStorage Quota & Malformed Recovery
+- **Threat:** `localStorage.setItem` throws `QuotaExceededError` or contains corrupted JSON strings.
+- **Implementation:** In `src/persistence/storage.ts`, `savePersistedState()` catches storage exceptions cleanly and returns `false`. `loadPersistedState()` falls back to `DEMO_STATE` if corrupted JSON is found.
+- **Evidence:** Verified in `src/test/persistence.test.ts` and `src/test/persistenceComprehensive.test.ts`.
 
 ---
 
-## 4. Security Findings & Remediation Log
+## 3. Penetration Testing Status Disclosure (Finding E)
 
-| ID | Finding | Severity | Status | Verification Reference |
-| :--- | :--- | :---: | :---: | :--- |
-| **SEC-01** | Nested prototype pollution vulnerability in imported state | **CRITICAL** | **RESOLVED** | `src/test/securityAndEdgeCases.test.ts` (Test 10) |
-| **SEC-02** | Potential XSS injection in planning assistant chat rendering | **CRITICAL** | **RESOLVED** | `src/test/securityAndEdgeCases.test.ts` (Tests 1-4) |
-| **SEC-03** | Unbounded JSON file import could exhaust browser memory | **HIGH** | **RESOLVED** | `src/test/securityAndEdgeCases.test.ts` (Test 5) |
-| **SEC-04** | LocalStorage `QuotaExceededError` unhandled exception | **MEDIUM** | **RESOLVED** | `src/test/persistenceComprehensive.test.ts` (Test 152) |
-| **SEC-05** | Unescaped regex dash in `parseDisplayToMinor` stripped signs | **HIGH** | **RESOLVED** | `src/test/currencyComprehensive.test.ts` (Test 1) |
-| **SEC-06** | Whitespace-only strings accepted for event date and location | **MEDIUM** | **RESOLVED** | `src/test/propertyBased.test.ts` (Property 20) |
+- **External Network Penetration Testing:** **NOT PERFORMED**
+- **Reason:** VowPilot is a client-side Single Page Application deployed statically. It does not operate backend servers, microservices, REST API endpoints, or database sockets. Attempting external penetration testing against static CDN hosting without authorization violates cloud service terms and produces no actionable application-level intelligence.
+- **Local Application Security Testing:** **VERIFIED & PASSED**
+  - Hostile input fuzzing: 150 automated fuzz permutations.
+  - Property-based security invariants: 2,000 generated property runs.
+  - Dependency audit: 0 known vulnerabilities via `npm audit`.
 
 ---
 
-## 5. Security Certification
+## 4. Security Recommendations for Future Multi-User Extensions
 
-VowPilot satisfies all client-side security standards appropriate for a web-based celebration planner. It enforces strict input boundaries, guards against prototype tampering, prevents script injection, and preserves transactional state integrity.
+If VowPilot is expanded in the future to include a multi-tenant cloud backend, the following controls must be implemented:
+1. End-to-end authentication via OAuth 2.0 / OIDC (e.g., Google Identity / Firebase Auth).
+2. Row-Level Security (RLS) on PostgreSQL / Supabase so users can only access their own events.
+3. Strict Content Security Policy (CSP) headers restricting script sources and connection endpoints.
+4. Server-side message queue (e.g., Cloud Tasks + SendGrid) with rate limiting and recipient verification.

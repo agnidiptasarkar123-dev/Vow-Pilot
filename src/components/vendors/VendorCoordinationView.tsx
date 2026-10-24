@@ -24,6 +24,7 @@ export const VendorCoordinationView: React.FC = () => {
     deleteVendor,
     addQuote,
     selectQuote,
+    recordVendorInquiry,
   } = useEvent();
 
   const [selectedCategoryTab, setSelectedCategoryTab] = useState<string>(
@@ -37,6 +38,8 @@ export const VendorCoordinationView: React.FC = () => {
     message: string;
   } | null>(null);
   const [hasCopiedDraft, setHasCopiedDraft] = useState(false);
+  const [hasDispatchedEmail, setHasDispatchedEmail] = useState(false);
+  const [dispatchError, setDispatchError] = useState<string | null>(null);
 
   // Add Vendor Modal
   const [isAddVendorOpen, setIsAddVendorOpen] = useState(false);
@@ -74,6 +77,8 @@ export const VendorCoordinationView: React.FC = () => {
     );
     setClarificationModal({ vendor, quote, message: draft });
     setHasCopiedDraft(false);
+    setHasDispatchedEmail(false);
+    setDispatchError(null);
   };
 
   const handleCopyDraft = async () => {
@@ -89,11 +94,33 @@ export const VendorCoordinationView: React.FC = () => {
           document.execCommand('copy');
           document.body.removeChild(textArea);
         }
+        recordVendorInquiry(clarificationModal.quote.id, clarificationModal.vendor.id, 'clipboard_handoff');
         setHasCopiedDraft(true);
         setTimeout(() => setHasCopiedDraft(false), 2500);
       } catch (err) {
         console.warn('Clipboard copy error:', err);
       }
+    }
+  };
+
+  const handleSendEmail = () => {
+    if (!clarificationModal) return;
+    const email = clarificationModal.vendor.email;
+    if (!email || !email.includes('@')) {
+      setDispatchError('No valid email address configured for this supplier. Please update supplier details or use clipboard copy.');
+      return;
+    }
+    setDispatchError(null);
+    const subject = `Clarification: Quotation for ${state.event.name}`;
+    const mailtoUri = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(clarificationModal.message)}`;
+
+    try {
+      window.location.href = mailtoUri;
+      recordVendorInquiry(clarificationModal.quote.id, clarificationModal.vendor.id, 'email_client');
+      setHasDispatchedEmail(true);
+      setTimeout(() => setHasDispatchedEmail(false), 3000);
+    } catch {
+      setDispatchError('Unable to launch email client automatically. Please use the Copy Inquiry Message button.');
     }
   };
 
@@ -462,8 +489,34 @@ export const VendorCoordinationView: React.FC = () => {
         description="Formatted message targeting missing contractual specifications."
       >
         <div className="space-y-4 text-xs">
+          <div className="flex items-center justify-between bg-[#F5F2EB] p-2.5 rounded-md border border-[#EAE4DB]">
+            <div className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-[#A2421D]" />
+              <span className="text-[#1C1917] font-medium">
+                Supplier Email:{' '}
+                {clarificationModal?.vendor.email ? (
+                  <span className="font-mono text-[#A2421D]">{clarificationModal.vendor.email}</span>
+                ) : (
+                  <span className="text-[#8C827A] italic">None registered (clipboard handoff recommended)</span>
+                )}
+              </span>
+            </div>
+            {hasDispatchedEmail && (
+              <span className="text-emerald-700 font-semibold flex items-center gap-1">
+                <Check className="w-3.5 h-3.5" /> Client Launched & Logged
+              </span>
+            )}
+          </div>
+
+          {dispatchError && (
+            <div className="p-2.5 bg-amber-50 border border-amber-200 text-amber-900 rounded-md flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
+              <span>{dispatchError}</span>
+            </div>
+          )}
+
           <p className="text-[#5C554E]">
-            Review the drafted inquiry below. You can copy it directly to your email client or messaging application.
+            Review the drafted inquiry below. You can send it directly through your system email client (RFC-6068) or copy the formatted text.
           </p>
 
           <textarea
@@ -473,26 +526,26 @@ export const VendorCoordinationView: React.FC = () => {
             className="w-full p-3 font-mono text-xs border border-[#D5CCC0] rounded-lg bg-[#FAF8F5] text-[#1C1917] focus:outline-hidden"
           />
 
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
             <span className="text-[11px] text-[#78716C]">
-              Includes quotes amount: {clarificationModal ? formatCurrency(clarificationModal.quote.quotedAmount, clarificationModal.quote.currency) : ''}
+              Includes quoted amount: {clarificationModal ? formatCurrency(clarificationModal.quote.quotedAmount, clarificationModal.quote.currency) : ''}
             </span>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setClarificationModal(null)}
-                className="px-4 py-2 border border-[#D5CCC0] rounded-md text-[#5C554E] hover:bg-neutral-50"
+                className="px-3 py-2 border border-[#D5CCC0] rounded-md text-[#5C554E] hover:bg-neutral-50"
               >
                 Close
               </button>
               <button
                 onClick={handleCopyDraft}
-                className="px-4 py-2 bg-[#A2421D] hover:bg-[#863414] text-white font-semibold rounded-md flex items-center gap-1.5 shadow-xs"
+                className="px-3 py-2 border border-[#A2421D] text-[#A2421D] hover:bg-[#FBF6F0] font-semibold rounded-md flex items-center gap-1.5 shadow-xs"
               >
                 {hasCopiedDraft ? (
                   <>
                     <Check className="w-4 h-4" />
-                    Copied to Clipboard!
+                    Copied!
                   </>
                 ) : (
                   <>
@@ -500,6 +553,23 @@ export const VendorCoordinationView: React.FC = () => {
                     Copy Inquiry Message
                   </>
                 )}
+              </button>
+              <button
+                onClick={handleSendEmail}
+                disabled={!clarificationModal?.vendor.email}
+                className={`px-3 py-2 text-white font-semibold rounded-md flex items-center gap-1.5 shadow-xs transition ${
+                  clarificationModal?.vendor.email
+                    ? 'bg-[#A2421D] hover:bg-[#863414]'
+                    : 'bg-neutral-400 cursor-not-allowed opacity-60'
+                }`}
+                title={
+                  clarificationModal?.vendor.email
+                    ? 'Trigger native mail client via RFC 6068 mailto URI'
+                    : 'Supplier has no registered email'
+                }
+              >
+                <Mail className="w-4 h-4" />
+                Launch Email Client
               </button>
             </div>
           </div>

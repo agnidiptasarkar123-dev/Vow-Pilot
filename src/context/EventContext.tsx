@@ -1,12 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import {
   AppState,
   BudgetCategory,
   BudgetScenario,
-  ChangeRecord,
   EventDetails,
   Expense,
-  PlanningMessage,
   ProposedAction,
   Task,
   Vendor,
@@ -18,10 +16,42 @@ import {
   resetToDemoState,
   savePersistedState,
 } from '../persistence/storage';
-import { canCompleteTask, detectDependencyCycles } from '../domain/taskEngine';
-import { generateAssistantResponse } from '../domain/assistantEngine';
+import {
+  handleUpdateEvent,
+  handleUpdateCategory,
+  handleAddCategory,
+  handleDeleteCategory,
+  handleAddExpense,
+  handleUpdateExpense,
+  handleDeleteExpense,
+} from './slices/budgetSlice';
+import {
+  handleAddTask,
+  handleUpdateTask,
+  handleCompleteTask,
+  handleDeleteTask,
+} from './slices/taskSlice';
+import {
+  handleAddVendor,
+  handleUpdateVendor,
+  handleDeleteVendor,
+  handleAddQuote,
+  handleUpdateQuote,
+  handleSelectQuote,
+  handleRecordVendorInquiry,
+} from './slices/vendorSlice';
+import {
+  handleCreateScenario,
+  handleApplyScenarioToBaseline,
+  handleDeleteScenario,
+} from './slices/scenarioSlice';
+import {
+  handleSendAssistantMessage,
+  handleApplyProposedAction,
+  handleDismissProposedAction,
+} from './slices/assistantSlice';
 
-interface EventContextType {
+export interface EventContextType {
   state: AppState;
   activeTab: string;
   setActiveTab: (tab: string) => void;
@@ -47,6 +77,7 @@ interface EventContextType {
   addQuote: (quote: Omit<VendorQuote, 'id'>) => void;
   updateQuote: (quote: VendorQuote) => void;
   selectQuote: (quoteId: string) => void;
+  recordVendorInquiry: (quoteId: string, vendorId: string, method: 'email_client' | 'clipboard_handoff') => void;
   // Scenarios
   createScenario: (scenario: Omit<BudgetScenario, 'id' | 'createdAt'>) => void;
   applyScenarioToBaseline: (scenarioId: string) => void;
@@ -75,468 +106,124 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     savePersistedState(state);
   }, [state]);
 
-  const recordChange = (
-    changeType: ChangeRecord['changeType'],
-    description: string,
-    deltaSummary?: string
-  ): ChangeRecord => {
-    return {
-      id: `chg-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      timestamp: new Date().toISOString(),
-      changeType,
-      description,
-      deltaSummary,
-    };
-  };
-
+  // Event & Budget Handlers
   const updateEvent = (updatedEvent: EventDetails) => {
-    setState((prev) => ({
-      ...prev,
-      event: { ...updatedEvent, updatedAt: new Date().toISOString() },
-      changeLog: [
-        recordChange('setup', `Updated event configuration: "${updatedEvent.name}"`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleUpdateEvent(prev, updatedEvent));
   };
 
   const updateCategory = (category: BudgetCategory) => {
-    setState((prev) => ({
-      ...prev,
-      categories: prev.categories.map((c) => (c.id === category.id ? category : c)),
-      changeLog: [
-        recordChange('budget', `Modified budget allocation for ${category.name}`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleUpdateCategory(prev, category));
   };
 
   const addCategory = (category: BudgetCategory) => {
-    setState((prev) => ({
-      ...prev,
-      categories: [...prev.categories, category],
-      changeLog: [
-        recordChange('budget', `Created new budget category: ${category.name}`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleAddCategory(prev, category));
   };
 
   const deleteCategory = (categoryId: string) => {
-    const cat = state.categories.find((c) => c.id === categoryId);
-    setState((prev) => {
-      const remainingCats = prev.categories.filter((c) => c.id !== categoryId);
-      const fallbackCatId = remainingCats[0]?.id || 'general';
-      return {
-        ...prev,
-        categories: remainingCats,
-        expenses: prev.expenses.filter((e) => e.categoryId !== categoryId),
-        tasks: prev.tasks.map((t) => (t.categoryId === categoryId ? { ...t, categoryId: fallbackCatId } : t)),
-        vendors: prev.vendors.map((v) => (v.categoryId === categoryId ? { ...v, categoryId: fallbackCatId } : v)),
-        changeLog: [
-          recordChange('budget', `Removed budget category: ${cat?.name || categoryId}`),
-          ...prev.changeLog,
-        ],
-      };
-    });
+    setState((prev) => handleDeleteCategory(prev, categoryId));
   };
 
   const addExpense = (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
-    const newExpense: Expense = {
-      ...expenseData,
-      id: `exp-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      createdAt: new Date().toISOString(),
-    };
-    setState((prev) => ({
-      ...prev,
-      expenses: [...prev.expenses, newExpense],
-      changeLog: [
-        recordChange('budget', `Added expense "${newExpense.title}" (${newExpense.status})`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleAddExpense(prev, expenseData));
   };
 
   const updateExpense = (expense: Expense) => {
-    setState((prev) => ({
-      ...prev,
-      expenses: prev.expenses.map((e) => (e.id === expense.id ? expense : e)),
-      changeLog: [
-        recordChange('budget', `Updated expense "${expense.title}"`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleUpdateExpense(prev, expense));
   };
 
   const deleteExpense = (expenseId: string) => {
-    const exp = state.expenses.find((e) => e.id === expenseId);
-    setState((prev) => ({
-      ...prev,
-      expenses: prev.expenses.filter((e) => e.id !== expenseId),
-      changeLog: [
-        recordChange('budget', `Deleted expense "${exp?.title || expenseId}"`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleDeleteExpense(prev, expenseId));
   };
 
+  // Task Handlers
   const addTask = (taskData: Omit<Task, 'id'>): { success: boolean; error?: string } => {
-    const newTask: Task = {
-      ...taskData,
-      id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      updatedAt: new Date().toISOString(),
-    };
-
-    const candidateTasks = [...state.tasks, newTask];
-    const cycleCheck = detectDependencyCycles(candidateTasks);
-    if (cycleCheck.hasCycle) {
-      return {
-        success: false,
-        error: `Cannot add task: Cyclic dependency detected (${cycleCheck.cyclePath.join(' ➔ ')})`,
-      };
+    const { nextState, result } = handleAddTask(state, taskData);
+    if (result.success) {
+      setState(nextState);
     }
-
-    setState((prev) => ({
-      ...prev,
-      tasks: candidateTasks,
-      changeLog: [
-        recordChange('task', `Created task "${newTask.title}"`),
-        ...prev.changeLog,
-      ],
-    }));
-    return { success: true };
+    return result;
   };
 
   const updateTask = (task: Task): { success: boolean; error?: string } => {
-    const candidateTasks = state.tasks.map((t) => (t.id === task.id ? task : t));
-    const cycleCheck = detectDependencyCycles(candidateTasks);
-    if (cycleCheck.hasCycle) {
-      return {
-        success: false,
-        error: `Cannot update task: Cyclic dependency detected (${cycleCheck.cyclePath.join(' ➔ ')})`,
-      };
+    const { nextState, result } = handleUpdateTask(state, task);
+    if (result.success) {
+      setState(nextState);
     }
-
-    setState((prev) => ({
-      ...prev,
-      tasks: candidateTasks,
-      changeLog: [
-        recordChange('task', `Updated task "${task.title}"`),
-        ...prev.changeLog,
-      ],
-    }));
-    return { success: true };
+    return result;
   };
 
   const completeTask = (taskId: string): { success: boolean; error?: string } => {
-    const check = canCompleteTask(taskId, state.tasks);
-    if (!check.allowed) {
-      return {
-        success: false,
-        error: `Cannot complete task: Required prerequisite tasks are still incomplete (${check.blockingTaskTitles.join(', ')})`,
-      };
+    const { nextState, result } = handleCompleteTask(state, taskId);
+    if (result.success) {
+      setState(nextState);
     }
-
-    const task = state.tasks.find((t) => t.id === taskId);
-    setState((prev) => ({
-      ...prev,
-      tasks: prev.tasks.map((t) =>
-        t.id === taskId
-          ? { ...t, status: 'completed' as const, completedAt: new Date().toISOString() }
-          : t
-      ),
-      changeLog: [
-        recordChange('task', `Marked task completed: "${task?.title || taskId}"`),
-        ...prev.changeLog,
-      ],
-    }));
-    return { success: true };
+    return result;
   };
 
   const deleteTask = (taskId: string) => {
-    const task = state.tasks.find((t) => t.id === taskId);
-    setState((prev) => ({
-      ...prev,
-      // Remove task and also clean up dependencies from tasks that relied on it
-      tasks: prev.tasks
-        .filter((t) => t.id !== taskId)
-        .map((t) => ({
-          ...t,
-          dependencies: t.dependencies.filter((d) => d !== taskId),
-        })),
-      changeLog: [
-        recordChange('task', `Deleted task "${task?.title || taskId}"`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleDeleteTask(prev, taskId));
   };
 
+  // Vendor & Quote Handlers
   const addVendor = (vendorData: Omit<Vendor, 'id' | 'createdAt'>) => {
-    const newVendor: Vendor = {
-      ...vendorData,
-      id: `ven-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      createdAt: new Date().toISOString(),
-    };
-    setState((prev) => ({
-      ...prev,
-      vendors: [...prev.vendors, newVendor],
-      changeLog: [
-        recordChange('vendor', `Added vendor "${newVendor.name}"`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleAddVendor(prev, vendorData));
   };
 
   const updateVendor = (vendor: Vendor) => {
-    setState((prev) => ({
-      ...prev,
-      vendors: prev.vendors.map((v) => (v.id === vendor.id ? vendor : v)),
-      changeLog: [
-        recordChange('vendor', `Updated vendor details for "${vendor.name}"`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleUpdateVendor(prev, vendor));
   };
 
   const deleteVendor = (vendorId: string) => {
-    const vendor = state.vendors.find((v) => v.id === vendorId);
-    setState((prev) => ({
-      ...prev,
-      vendors: prev.vendors.filter((v) => v.id !== vendorId),
-      quotes: prev.quotes.filter((q) => q.vendorId !== vendorId),
-      changeLog: [
-        recordChange('vendor', `Removed vendor "${vendor?.name || vendorId}"`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleDeleteVendor(prev, vendorId));
   };
 
   const addQuote = (quoteData: Omit<VendorQuote, 'id'>) => {
-    const newQuote: VendorQuote = {
-      ...quoteData,
-      id: `quo-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-    };
-    const vendor = state.vendors.find((v) => v.id === newQuote.vendorId);
-    setState((prev) => ({
-      ...prev,
-      quotes: [...prev.quotes, newQuote],
-      changeLog: [
-        recordChange('vendor', `Added quotation from "${vendor?.name || 'Vendor'}"`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleAddQuote(prev, quoteData));
   };
 
   const updateQuote = (quote: VendorQuote) => {
-    setState((prev) => ({
-      ...prev,
-      quotes: prev.quotes.map((q) => (q.id === quote.id ? quote : q)),
-      changeLog: [
-        recordChange('vendor', `Updated quote ${quote.id}`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleUpdateQuote(prev, quote));
   };
 
   const selectQuote = (quoteId: string) => {
-    const selectedQuote = state.quotes.find((q) => q.id === quoteId);
-    if (!selectedQuote) return;
-    const vendor = state.vendors.find((v) => v.id === selectedQuote.vendorId);
-    const categoryId = vendor?.categoryId;
-
-    setState((prev) => {
-      // Mark selected quote, and mark other quotes in the same category as rejected
-      const updatedQuotes = prev.quotes.map((q) => {
-        if (q.id === quoteId) return { ...q, status: 'selected' as const };
-        const qVendor = prev.vendors.find((v) => v.id === q.vendorId);
-        if (categoryId && qVendor?.categoryId === categoryId && q.status === 'selected') {
-          return { ...q, status: 'rejected' as const };
-        }
-        return q;
-      });
-
-      // Update or create corresponding confirmed/quoted expense
-      const existingExpenseIndex = prev.expenses.findIndex((e) => e.quoteId === quoteId);
-      let updatedExpenses = [...prev.expenses];
-
-      if (existingExpenseIndex >= 0) {
-        updatedExpenses[existingExpenseIndex] = {
-          ...updatedExpenses[existingExpenseIndex],
-          status: 'confirmed',
-          amount: selectedQuote.quotedAmount,
-        };
-      } else if (categoryId) {
-        updatedExpenses.push({
-          id: `exp-${Date.now()}`,
-          categoryId,
-          title: `${vendor?.name || 'Vendor'} Proposal`,
-          amount: selectedQuote.quotedAmount,
-          status: 'confirmed',
-          vendorId: vendor?.id,
-          quoteId: selectedQuote.id,
-          paidAmount: 0,
-          createdAt: new Date().toISOString(),
-        });
-      }
-
-      return {
-        ...prev,
-        quotes: updatedQuotes,
-        expenses: updatedExpenses,
-        changeLog: [
-          recordChange('vendor', `Selected quotation from "${vendor?.name || 'Vendor'}"`),
-          ...prev.changeLog,
-        ],
-      };
-    });
+    setState((prev) => handleSelectQuote(prev, quoteId));
   };
 
+  const recordVendorInquiry = (
+    quoteId: string,
+    vendorId: string,
+    method: 'email_client' | 'clipboard_handoff'
+  ) => {
+    setState((prev) => handleRecordVendorInquiry(prev, quoteId, vendorId, method));
+  };
+
+  // Scenario Handlers
   const createScenario = (scenarioData: Omit<BudgetScenario, 'id' | 'createdAt'>) => {
-    const newScenario: BudgetScenario = {
-      ...scenarioData,
-      id: `scen-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      createdAt: new Date().toISOString(),
-    };
-    setState((prev) => ({
-      ...prev,
-      scenarios: [...prev.scenarios, newScenario],
-      changeLog: [
-        recordChange('scenario', `Created decision scenario "${newScenario.name}"`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleCreateScenario(prev, scenarioData));
   };
 
   const applyScenarioToBaseline = (scenarioId: string) => {
-    const scenario = state.scenarios.find((s) => s.id === scenarioId);
-    if (!scenario) return;
-
-    setState((prev) => {
-      // Update categories based on scenario allocations
-      const updatedCategories = prev.categories.map((cat) => {
-        if (scenario.categoryAllocations[cat.id] !== undefined) {
-          return {
-            ...cat,
-            allocatedAmount: scenario.categoryAllocations[cat.id],
-          };
-        }
-        return cat;
-      });
-
-      return {
-        ...prev,
-        event: {
-          ...prev.event,
-          guestCount: scenario.modifiedGuestCount,
-          updatedAt: new Date().toISOString(),
-        },
-        categories: updatedCategories,
-        changeLog: [
-          recordChange('scenario', `Applied scenario "${scenario.name}" to confirmed plan`),
-          ...prev.changeLog,
-        ],
-      };
-    });
+    setState((prev) => handleApplyScenarioToBaseline(prev, scenarioId));
   };
 
   const deleteScenario = (scenarioId: string) => {
-    const scenario = state.scenarios.find((s) => s.id === scenarioId);
-    setState((prev) => ({
-      ...prev,
-      scenarios: prev.scenarios.filter((s) => s.id !== scenarioId),
-      changeLog: [
-        recordChange('scenario', `Deleted scenario "${scenario?.name || scenarioId}"`),
-        ...prev.changeLog,
-      ],
-    }));
+    setState((prev) => handleDeleteScenario(prev, scenarioId));
   };
 
+  // Assistant Handlers
   const sendAssistantMessage = (userText: string) => {
-    const userMsg: PlanningMessage = {
-      id: `msg-u-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      role: 'user',
-      content: userText,
-    };
-
-    const botResponse = generateAssistantResponse(userText, state);
-
-    setState((prev) => ({
-      ...prev,
-      messages: [...prev.messages, userMsg, botResponse],
-    }));
+    setState((prev) => handleSendAssistantMessage(prev, userText));
   };
 
   const applyProposedAction = (messageId: string, action: ProposedAction) => {
-    setState((prev) => {
-      let nextEvent = { ...prev.event };
-      let nextCategories = [...prev.categories];
-      let nextScenarios = [...prev.scenarios];
-
-      if (action.type === 'adjust_guest_count') {
-        const newCount = action.payload.guestCount as number;
-        nextEvent.guestCount = newCount;
-        nextEvent.updatedAt = new Date().toISOString();
-      } else if (action.type === 'create_scenario') {
-        const scenarioName = (action.payload.scenarioName as string) || 'Assistant Proposed Scenario';
-        const adjustments = action.payload.adjustments as Array<{
-          categoryId: string;
-          newAllocated: number;
-        }>;
-        const allocations: Record<string, number> = {};
-        for (const cat of prev.categories) {
-          const adj = adjustments.find((a) => a.categoryId === cat.id);
-          allocations[cat.id] = adj ? adj.newAllocated : cat.allocatedAmount;
-        }
-
-        nextScenarios.push({
-          id: `scen-${Date.now()}`,
-          name: scenarioName,
-          description: 'Priority-aware rebalance recommended by assistant',
-          createdAt: new Date().toISOString(),
-          modifiedGuestCount: prev.event.guestCount,
-          categoryAllocations: allocations,
-          notes: 'Auto-generated via planning assistant',
-          isBaseline: false,
-        });
-      } else if (action.type === 'rebalance_budget' || action.type === 'cut_category_budget') {
-        const adjustments = (action.payload.adjustments as Array<{
-          categoryId: string;
-          newAllocated: number;
-        }>) || [];
-        nextCategories = prev.categories.map((cat) => {
-          const adj = adjustments.find((a) => a.categoryId === cat.id);
-          return adj ? { ...cat, allocatedAmount: adj.newAllocated } : cat;
-        });
-      }
-
-      const updatedMessages = prev.messages.map((m) =>
-        m.id === messageId ? { ...m, actionStatus: 'applied' as const } : m
-      );
-
-      return {
-        ...prev,
-        event: nextEvent,
-        categories: nextCategories,
-        scenarios: nextScenarios,
-        messages: updatedMessages,
-        changeLog: [
-          recordChange('budget', `Applied assistant action: "${action.summary}"`),
-          ...prev.changeLog,
-        ],
-      };
-    });
+    setState((prev) => handleApplyProposedAction(prev, messageId, action));
   };
 
   const dismissProposedAction = (messageId: string) => {
-    setState((prev) => ({
-      ...prev,
-      messages: prev.messages.map((m) =>
-        m.id === messageId ? { ...m, actionStatus: 'rejected' as const } : m
-      ),
-    }));
+    setState((prev) => handleDismissProposedAction(prev, messageId));
   };
 
+  // Data & Reset Handlers
   const resetToDemo = () => {
     const demo = resetToDemoState();
     setState(demo);
@@ -553,49 +240,135 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setState(cleanState);
   };
 
-  return (
-    <EventContext.Provider
-      value={{
-        state,
-        activeTab,
-        setActiveTab,
-        updateEvent,
-        updateCategory,
-        addCategory,
-        deleteCategory,
-        addExpense,
-        updateExpense,
-        deleteExpense,
-        addTask,
-        updateTask,
-        completeTask,
-        deleteTask,
-        addVendor,
-        updateVendor,
-        deleteVendor,
-        addQuote,
-        updateQuote,
-        selectQuote,
-        createScenario,
-        applyScenarioToBaseline,
-        deleteScenario,
-        sendAssistantMessage,
-        applyProposedAction,
-        dismissProposedAction,
-        resetToDemo,
-        importState,
-        clearAllData,
-      }}
-    >
-      {children}
-    </EventContext.Provider>
+  const contextValue = useMemo<EventContextType>(
+    () => ({
+      state,
+      activeTab,
+      setActiveTab,
+      updateEvent,
+      updateCategory,
+      addCategory,
+      deleteCategory,
+      addExpense,
+      updateExpense,
+      deleteExpense,
+      addTask,
+      updateTask,
+      completeTask,
+      deleteTask,
+      addVendor,
+      updateVendor,
+      deleteVendor,
+      addQuote,
+      updateQuote,
+      selectQuote,
+      recordVendorInquiry,
+      createScenario,
+      applyScenarioToBaseline,
+      deleteScenario,
+      sendAssistantMessage,
+      applyProposedAction,
+      dismissProposedAction,
+      resetToDemo,
+      importState,
+      clearAllData,
+    }),
+    [state, activeTab]
   );
+
+  return <EventContext.Provider value={contextValue}>{children}</EventContext.Provider>;
 };
 
+/**
+ * Universal hook providing unified access to entire event state & dispatchers
+ */
 export function useEvent(): EventContextType {
   const context = useContext(EventContext);
   if (!context) {
     throw new Error('useEvent must be used within an EventProvider');
   }
   return context;
+}
+
+/**
+ * Domain-specific Hook: Budget and Expense tracking
+ */
+export function useBudget() {
+  const ctx = useEvent();
+  return {
+    event: ctx.state.event,
+    categories: ctx.state.categories,
+    expenses: ctx.state.expenses,
+    updateEvent: ctx.updateEvent,
+    updateCategory: ctx.updateCategory,
+    addCategory: ctx.addCategory,
+    deleteCategory: ctx.deleteCategory,
+    addExpense: ctx.addExpense,
+    updateExpense: ctx.updateExpense,
+    deleteExpense: ctx.deleteExpense,
+  };
+}
+
+/**
+ * Domain-specific Hook: Task dependencies, scheduling, and completion
+ */
+export function useTasks() {
+  const ctx = useEvent();
+  return {
+    tasks: ctx.state.tasks,
+    categories: ctx.state.categories,
+    addTask: ctx.addTask,
+    updateTask: ctx.updateTask,
+    completeTask: ctx.completeTask,
+    deleteTask: ctx.deleteTask,
+  };
+}
+
+/**
+ * Domain-specific Hook: Vendor proposal comparison, quotation, and coordination
+ */
+export function useVendors() {
+  const ctx = useEvent();
+  return {
+    vendors: ctx.state.vendors,
+    quotes: ctx.state.quotes,
+    categories: ctx.state.categories,
+    event: ctx.state.event,
+    addVendor: ctx.addVendor,
+    updateVendor: ctx.updateVendor,
+    deleteVendor: ctx.deleteVendor,
+    addQuote: ctx.addQuote,
+    updateQuote: ctx.updateQuote,
+    selectQuote: ctx.selectQuote,
+    recordVendorInquiry: ctx.recordVendorInquiry,
+  };
+}
+
+/**
+ * Domain-specific Hook: What-if decision simulator and trade-off modeling
+ */
+export function useSimulator() {
+  const ctx = useEvent();
+  return {
+    scenarios: ctx.state.scenarios,
+    categories: ctx.state.categories,
+    event: ctx.state.event,
+    createScenario: ctx.createScenario,
+    applyScenarioToBaseline: ctx.applyScenarioToBaseline,
+    deleteScenario: ctx.deleteScenario,
+  };
+}
+
+/**
+ * Domain-specific Hook: Contextual AI planning assistant
+ */
+export function useAssistant() {
+  const ctx = useEvent();
+  return {
+    messages: ctx.state.messages,
+    state: ctx.state,
+    sendAssistantMessage: ctx.sendAssistantMessage,
+    applyProposedAction: ctx.applyProposedAction,
+    dismissProposedAction: ctx.dismissProposedAction,
+  };
 }
