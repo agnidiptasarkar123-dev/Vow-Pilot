@@ -18,13 +18,17 @@ export class VowPilotDatabase {
   constructor(options: DatabaseOptions = {}) {
     const defaultDir = path.resolve(process.cwd(), 'data');
     const defaultPath = path.join(defaultDir, 'vowpilot.db');
-    this.dbPath = options.filename || process.env.DATABASE_PATH || defaultPath;
+    const envPath = process.env.DATABASE_PATH || process.env.SQLITE_PATH;
+    this.dbPath = options.filename || (envPath ? (envPath === ':memory:' ? ':memory:' : path.resolve(process.cwd(), envPath)) : defaultPath);
 
-    // Ensure parent directory exists for file-based database
+    // Ensure parent directory exists for file-based database at runtime
     if (this.dbPath !== ':memory:') {
       const parentDir = path.dirname(this.dbPath);
       if (!fs.existsSync(parentDir)) {
         fs.mkdirSync(parentDir, { recursive: true });
+      }
+      if (process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
+        console.log(`[VowPilot Database] Active database path: ${this.dbPath}`);
       }
     }
 

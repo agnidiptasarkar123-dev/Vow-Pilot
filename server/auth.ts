@@ -64,15 +64,20 @@ export function validateEnvironmentSecurity(): void {
 /**
  * Builds standard HttpOnly, SameSite=Lax session cookie header.
  */
-export function buildSessionCookie(token: string, isProduction: boolean = process.env.NODE_ENV === 'production'): string {
+export function buildSessionCookie(
+  token: string,
+  isProduction: boolean = process.env.NODE_ENV === 'production',
+  sameSiteOverride?: string
+): string {
+  const sameSite = sameSiteOverride || process.env.COOKIE_SAMESITE || 'Lax';
   const parts = [
     `vowpilot_session=${encodeURIComponent(token)}`,
     'Path=/',
     'HttpOnly',
-    'SameSite=Lax',
+    `SameSite=${sameSite}`,
     `Max-Age=${7 * 24 * 60 * 60}`, // 7 days
   ];
-  if (isProduction) {
+  if (isProduction || sameSite.toLowerCase() === 'none') {
     parts.push('Secure');
   }
   return parts.join('; ');
@@ -81,16 +86,20 @@ export function buildSessionCookie(token: string, isProduction: boolean = proces
 /**
  * Builds cookie invalidation header for explicit session logout.
  */
-export function buildLogoutCookie(isProduction: boolean = process.env.NODE_ENV === 'production'): string {
+export function buildLogoutCookie(
+  isProduction: boolean = process.env.NODE_ENV === 'production',
+  sameSiteOverride?: string
+): string {
+  const sameSite = sameSiteOverride || process.env.COOKIE_SAMESITE || 'Lax';
   const parts = [
     'vowpilot_session=',
     'Path=/',
     'HttpOnly',
-    'SameSite=Lax',
+    `SameSite=${sameSite}`,
     'Max-Age=0',
     'Expires=Thu, 01 Jan 1970 00:00:00 GMT',
   ];
-  if (isProduction) {
+  if (isProduction || sameSite.toLowerCase() === 'none') {
     parts.push('Secure');
   }
   return parts.join('; ');

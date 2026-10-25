@@ -40,12 +40,12 @@ export function createServerApp(
     const isProduction = process.env.NODE_ENV === 'production';
     const origin = req.headers['origin'];
     const configuredOrigins = process.env.ALLOWED_ORIGINS
-      ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim().toLowerCase())
+      ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim().toLowerCase().replace(/\/+$/, ''))
       : ['https://vowpilot.vercel.app', 'http://localhost:3000', 'http://localhost:5173'];
 
     let isAllowedOrigin = false;
     if (origin) {
-      const cleanOrigin = origin.trim().toLowerCase();
+      const cleanOrigin = origin.trim().toLowerCase().replace(/\/+$/, '');
       if (!isProduction) {
         // Development / testing: accept request origin with credentials
         isAllowedOrigin = true;
@@ -61,7 +61,7 @@ export function createServerApp(
     }
 
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Expected-Version');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Expected-Version, Last-Event-ID, X-Request-Id');
 
     // Strict Security & Defense-in-Depth Headers
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -230,7 +230,7 @@ export function createServerApp(
       // Health, Liveness, Readiness & Operational Metrics Endpoints
       // ----------------------------------------------------------------------
       // Liveness probe: Verifies the process is responsive and event loop is not blocked
-      if (pathname === '/api/live' && method === 'GET') {
+      if ((pathname === '/live' || pathname === '/api/live') && method === 'GET') {
         sendJson(200, {
           status: 'alive',
           uptime: process.uptime(),
@@ -240,8 +240,15 @@ export function createServerApp(
         return;
       }
 
-      // Readiness probe & legacy /api/health: Verifies actual dependency readiness (SQLite + Email)
-      if ((pathname === '/api/ready' || pathname === '/api/health') && method === 'GET') {
+      // Readiness & health probe: Verifies actual dependency readiness (SQLite + Email)
+      // Exposes /health, /ready, /api/health, and /api/ready for host orchestrators
+      if (
+        (pathname === '/health' ||
+          pathname === '/ready' ||
+          pathname === '/api/health' ||
+          pathname === '/api/ready') &&
+        method === 'GET'
+      ) {
         const dbHealth = authStore.getDbContext().db.healthCheck();
         let emailHealth: { ok: boolean; provider: string; error?: string } = {
           ok: true,
@@ -547,6 +554,7 @@ export function createServerApp(
         res.writeHead(200, {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
+          'X-Accel-Buffering': 'no',
           Connection: 'keep-alive',
           'X-Request-Id': requestId,
         });
