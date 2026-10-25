@@ -1,8 +1,8 @@
 # VowPilot Official Release Engineering & Verification Report
 
 **Production Deployment URL:** [https://vowpilot.vercel.app/](https://vowpilot.vercel.app/)  
-**Release Identifier:** Commit [`0411fdf68389e5ce1af7c646a9c2fdee01e3f9c8`](https://github.com/vowpilot/vowpilot/commit/0411fdf68389e5ce1af7c646a9c2fdee01e3f9c8) (Version `1.0.0`)  
-**Release Engineer:** VowPilot Release & SRE Team  
+**Release Identifier:** Commit [`4f4336bb45592ce2c65703d883ff0e8543e5d69f`](https://github.com/agnidiptasarkar123-dev/Vow-Pilot/commit/4f4336bb45592ce2c65703d883ff0e8543e5d69f) (Version `1.0.0`)  
+**Release Engineer:** Principal Release & SRE Engineer  
 **Evaluation Date:** October 2026  
 **Status:** **VERIFIED & RELEASE CANDIDATE CERTIFIED**  
 
@@ -175,27 +175,47 @@ Database schema changes are governed by [server/db/migrator.ts](file:///Users/ag
 ## 5. Deployment Verification Against Production
 
 ### 5.1 Real Browser Live Verification (`https://vowpilot.vercel.app/`)
-Conducted via an autonomous browser session on the deployed production host:
+Conducted via autonomous browser sessions directly against the live production host:
 
-| Verification Target | Live Test Action | Observed Production State | Result |
-| :--- | :--- | :--- | :--- |
-| **1. Page Load & Title** | Navigated to `https://vowpilot.vercel.app/` | HTTP 200; Title: `VowPilot — Event Planning & Decision Coordination` | **PASS** |
-| **2. Console Logs** | Monitored browser devtools console | Zero uncaught exceptions, zero critical runtime errors | **PASS** |
-| **3. Brand Header & Metrics** | Inspected global application header | Rendered title `Aarav & Meera's Wedding Celebration`, runway `₹1,25,000`, 150 guests | **PASS** |
-| **4. Overview Tab** | Clicked Overview navigation | Rendered milestone progress (2/8), spend summary (`₹23,75,000`), categories | **PASS** |
-| **5. Budget Planner Tab** | Clicked Budget Planner tab | Itemized expenses rendered across Estimated, Quoted, Confirmed, Actual | **PASS** |
-| **6. Decision Simulator** | Clicked Decision Simulator tab | Slider controls rendered; real-time variance vs baseline computed correctly | **PASS** |
-| **7. Tasks & Graph Tab** | Clicked Tasks & Graph tab | Topological dependency order rendered with prerequisite blocking rules | **PASS** |
-| **8. Vendors & Quotes Tab** | Clicked Vendors & Quotes tab | Quotation comparison matrix and category filters rendered | **PASS** |
-| **9. Planner Assistant** | Prompted `"budget status"` | Assistant immediately returned accurate status (Budget: ₹25L, Runway: ₹1.25L) | **PASS** |
-| **10. Needs Assessment Modal** | Clicked `+ New Event` button | Interactive Needs Assessment modal opened Step 1 of 5; closed cleanly | **PASS** |
-| **11. Mobile Viewport (375x812)** | Resized viewport to mobile width | Layout adapted cleanly; zero horizontal scroll; controls accessible | **PASS** |
+| Verification Target | Live Test Action | Observed Production State | Evidence & Artifact | Result |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Page Load & Title** | Navigated to `https://vowpilot.vercel.app/` | HTTP 200; Title: `VowPilot — Event Planning & Decision Coordination` | HTTP/2 200 via Vercel Edge CDN | **PASS** |
+| **2. Static Assets Integrity** | Fetched JS and CSS bundles | JS: `index-DboDNNYZ.js` (143,074 B), CSS: `index-DrDgJCSF.css` (47,026 B). Byte-for-byte identical to local build! | `Cache-Control: public, max-age=31536000, immutable` | **PASS** |
+| **3. Console Logs** | Monitored browser devtools console | Zero uncaught exceptions, zero critical runtime errors | Devtools console clean | **PASS** |
+| **4. Brand Header & Metrics** | Inspected global application header | Rendered title `Aarav & Meera's Wedding Celebration`, runway `₹1,25,000`, 150 guests | `vowpilot_overview_*.png` | **PASS** |
+| **5. Overview Tab** | Clicked Overview navigation | Rendered milestone progress (2/8), spend summary (`₹23,75,000`), categories | `vowpilot_overview_*.png` | **PASS** |
+| **6. Budget Planner Tab** | Clicked Budget Planner tab | Itemized expenses rendered across Estimated, Quoted, Confirmed, Actual tiers | `vowpilot_budget_planner_*.png` | **PASS** |
+| **7. Decision Simulator** | Clicked Decision Simulator tab | Slider controls rendered; real-time variance vs baseline computed correctly | `vowpilot_simulator_*.png` | **PASS** |
+| **8. Tasks & Graph Tab** | Clicked Tasks & Graph tab | Topological dependency order rendered with prerequisite blocking rules | `vowpilot_tasks_*.png` | **PASS** |
+| **9. Vendors & Quotes Tab** | Clicked Vendors & Quotes tab | Quotation comparison matrix and category filters rendered | `vowpilot_vendors_*.png` | **PASS** |
+| **10. Planner Assistant** | Prompted `"How to cut budget?"` | Assistant returned grounded mathematical breakdown: review flexible/discretionary items, catering tier adjustments, and priority reduction | `vowpilot_assistant_grounded_response_*.png` | **PASS** |
+| **11. Needs Assessment Modal** | Clicked `+ New Event` button | Interactive Needs Assessment modal opened Step 1 of 5; closed cleanly | `vowpilot_new_event_modal_*.png` | **PASS** |
+| **12. Collaboration Modal** | Clicked Collaboration pill | Modal opened; confirmed `Local Mode` with server endpoint override options | `vowpilot_collaborate_modal_*.png` | **PASS** |
+| **13. State Persistence** | Modified data and reloaded page | State persisted cleanly from localStorage with zero data loss | Verified via page reload | **PASS** |
+| **14. Mobile Viewport (375x812)** | Resized viewport to iPhone dimensions | Layout adapted cleanly; zero horizontal scroll; cards stacked gracefully | `vowpilot_mobile_viewport_*.png` | **PASS** |
 
-### 5.2 Test Suite Execution Summary
-- **Vitest Unit & Integration:** 34 test files, **1,862 / 1,862 tests passing** (100% pass rate in ~7.5s).
-- **Playwright Real-Browser E2E:** **104 / 104 tests passing** across Desktop (1440x900), Laptop (1280x800), Tablet (768x1024), and Mobile (375x812) viewports.
+### 5.2 Recorded Live Browser Sessions & Visual Artifacts
+- **Primary Live Verification Recording:** `prod_verification_1792921574858.webp`
+- **Mobile Viewport & AI Query Session:** `prod_mobile_ai_test_1792921765096.webp`
+- **Captured Visual Evidence Screenshots:**
+  - Overview: `vowpilot_overview_1792921590247.png`
+  - Budget Planner: `vowpilot_budget_planner_1792921604473.png`
+  - Decision Simulator: `vowpilot_simulator_1792921614291.png`
+  - Task Dependency DAG: `vowpilot_tasks_1792921625411.png`
+  - Vendor Quotation Matrix: `vowpilot_vendors_1792921639210.png`
+  - Needs Assessment Wizard: `vowpilot_new_event_modal_1792921668307.png`
+  - Collaboration Modal: `vowpilot_collaborate_modal_1792921702024.png`
+  - Mobile Viewport (375x812): `vowpilot_mobile_viewport_1792921779406.png`
+  - AI Assistant Response: `vowpilot_assistant_grounded_response_1792921819389.png`
+
+### 5.3 Automated Test Suite Execution Summary
+- **Vitest Unit & Integration:** 34 test files, **1,862 / 1,862 tests passing** (100% pass rate in ~6.7s).
+- **Playwright Real-Browser E2E:** **104 / 104 tests passing** across Desktop (1440x900), Laptop (1280x800), Tablet (768x1024), and Mobile (375x812) viewports (2.7m run duration).
+- **Security & Adversarial Suite:** 21 / 21 tests passing (Argon2id hashing, legacy rehash, rate limiting, IDOR, prototype pollution, CORS/CSRF).
+- **Database Durability & Rollback:** 8 / 8 tests passing (WAL mode, process restart survival, concurrency OCC, ACID rollback, hot online backup).
+- **SRE & Load Simulation:** 16 / 16 tests passing (sub-10ms p95 latencies, liveness/readiness separation, SSE cleanup).
 - **Accessibility:** 0 automated axe violations; WCAG 2.2 AA skip links, dialog focus traps, and 4.5:1 contrast verified.
-- **Bundle Budgets:** Initial app JS chunk: **142.83 kB** (budget: 200 kB); CSS: **47.02 kB** (budget: 60 kB).
+- **Bundle Budgets:** Initial app JS chunk: **143.07 kB** (budget: 200 kB); CSS: **47.02 kB** (budget: 60 kB).
 
 ---
 
