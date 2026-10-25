@@ -32,6 +32,8 @@ coverage
 # Test outputs
 test-results/
 playwright-report/
+artifacts/
+
 
 # Persistent Database files
 data/
