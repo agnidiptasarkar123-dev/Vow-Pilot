@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import fc from 'fast-check';
 import {
   calculateBudgetOverview,
@@ -16,6 +16,7 @@ import { DEMO_STATE } from '../persistence/demoData';
 import { EventStore } from '../../server/events';
 import { EmailDispatchService } from '../../server/email/service';
 import { TestEmailProvider } from '../../server/email/providers';
+import { createTestDatabaseContext } from '../../server/db';
 import { AppState, Task, BudgetCategory } from '../types';
 import { User } from '../../server/types';
 
@@ -164,6 +165,12 @@ describe('Phase 8: Mutation Testing Suite (Kills 10 Representative Mutants)', ()
     passwordHash: 'hash-def-456',
     createdAt: '2026-10-01T00:00:00.000Z',
   };
+
+  beforeEach(() => {
+    const db = createTestDatabaseContext();
+    db.users.createUser(dummyOwner);
+    db.users.createUser(dummyViewer);
+  });
 
   it('Mutant 1 Killed: Reversing budget overrun calculation is caught', () => {
     const categories: BudgetCategory[] = [

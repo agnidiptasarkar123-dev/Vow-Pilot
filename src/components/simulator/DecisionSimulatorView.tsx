@@ -4,6 +4,8 @@ import { calculateBudgetOverview, evaluateScenario } from '../../domain/budgetEn
 import { formatCurrency } from '../../domain/currency';
 import { BudgetScenario } from '../../types';
 import { Modal } from '../common/Modal';
+import { Card } from '../common/Card';
+import { Badge } from '../common/Badge';
 import {
   AlertCircle,
   AlertTriangle,
@@ -113,14 +115,14 @@ export const DecisionSimulatorView: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="max-w-7xl mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#1C1917] font-serif-heading">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#1C1917] font-serif-heading tracking-tight">
             Decision Impact Simulator
           </h1>
-          <p className="text-xs text-[#78716C] mt-1">
+          <p className="text-xs text-[#6E665E] mt-1">
             Stress-test changes in guest count and category spending without touching your confirmed plan.
           </p>
         </div>
@@ -128,41 +130,41 @@ export const DecisionSimulatorView: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleResetSandbox}
-            className="px-3 py-1.5 rounded-md text-xs font-semibold text-[#5C554E] hover:text-[#1C1917] bg-white border border-[#D5CCC0] flex items-center gap-1 transition"
+            className="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#5C554E] hover:text-[#1C1917] bg-white border border-[#D5CCC0] flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            Reset to Baseline
+            <span>Reset to Baseline</span>
           </button>
           <button
             onClick={() => setIsSaveModalOpen(true)}
-            className="px-4 py-1.5 rounded-md text-xs font-semibold bg-[#A2421D] hover:bg-[#863414] text-white flex items-center gap-1.5 transition shadow-xs"
+            className="px-4 py-2 rounded-lg text-xs font-semibold bg-[#A2421D] hover:bg-[#863414] text-white flex items-center gap-1.5 transition shadow-xs cursor-pointer active:scale-[0.98]"
           >
             <Plus className="w-4 h-4" />
-            Save as Scenario
+            <span>Save as Scenario</span>
           </button>
         </div>
       </div>
 
       {/* Main Sandbox Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Left Column: Interactive Controls (2 cols) */}
         <div className="lg:col-span-2 space-y-6">
           {/* Guest Count Slider & Capacity Card */}
-          <div className="bg-white p-6 rounded-xl border border-[#E6DFD5] shadow-xs space-y-4">
+          <Card padding="md" className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-base font-bold text-[#1C1917] font-serif-heading flex items-center gap-2">
                   <Users className="w-4 h-4 text-[#A2421D]" />
                   Simulate Guest Count ({sandboxGuestCount} Guests)
                 </h3>
-                <p className="text-xs text-[#78716C]">
+                <p className="text-xs text-[#6E665E]">
                   Baseline confirmed count: <strong>{state.event.guestCount}</strong> guests.
                 </p>
               </div>
 
               <div className="text-right">
                 <span
-                  className={`text-xs font-bold font-mono px-2.5 py-1 rounded-md ${
+                  className={`text-xs font-bold font-mono px-2.5 py-1 rounded-lg ${
                     sandboxGuestCount > state.event.guestCount
                       ? 'bg-amber-50 text-amber-800 border border-amber-200'
                       : sandboxGuestCount < state.event.guestCount
@@ -183,12 +185,16 @@ export const DecisionSimulatorView: React.FC = () => {
               value={sandboxGuestCount}
               onChange={(e) => setSandboxGuestCount(parseInt(e.target.value, 10))}
               aria-label="Simulate guest count"
+              aria-valuenow={sandboxGuestCount}
+              aria-valuemin={20}
+              aria-valuemax={capacityLimit ? capacityLimit + 50 : 300}
+              aria-valuetext={`${sandboxGuestCount} guests`}
               className="w-full h-2 bg-[#EAE4DB] rounded-lg appearance-none cursor-pointer accent-[#A2421D]"
             />
 
             {/* Capacity Warning Banner */}
             {isCapacityExceeded && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-900 flex items-start gap-2">
+              <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-900 flex items-start gap-2 shadow-2xs">
                 <AlertCircle className="w-4 h-4 text-[#BE123C] shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold">Venue Overcrowding Alert:</span> Modeled count of{' '}
@@ -197,14 +203,14 @@ export const DecisionSimulatorView: React.FC = () => {
                 </div>
               </div>
             )}
-          </div>
+          </Card>
 
           {/* Category Budget Adjusters */}
-          <div className="bg-white p-6 rounded-xl border border-[#E6DFD5] shadow-xs space-y-4">
+          <Card padding="md" className="space-y-4">
             <h3 className="text-base font-bold text-[#1C1917] font-serif-heading">
               Simulate Category Reallocations
             </h3>
-            <p className="text-xs text-[#78716C]">
+            <p className="text-xs text-[#6E665E]">
               Adjust caps to see how trade-offs between categories affect your bottom line.
             </p>
 
@@ -213,15 +219,16 @@ export const DecisionSimulatorView: React.FC = () => {
                 const currentMinor = sandboxAllocations[cat.id] ?? cat.allocatedAmount;
                 const baselineMinor = cat.allocatedAmount;
                 const deltaMinor = currentMinor - baselineMinor;
+                const maxRange = Math.max(baselineMinor * 2, 20000000);
 
                 return (
-                  <div key={cat.id} className="pt-3 first:pt-0 space-y-2">
+                  <div key={cat.id} className="pt-3.5 first:pt-0 space-y-2">
                     <div className="flex items-center justify-between text-xs">
                       <div>
                         <span className="font-semibold text-sm text-[#1C1917] block">
                           {cat.name}
                         </span>
-                        <span className="text-[11px] text-[#78716C]">
+                        <span className="text-[11px] text-[#6E665E]">
                           Baseline: {formatCurrency(baselineMinor, state.event.currency)}
                           {cat.perGuestCost && ` • Scaling: ${formatCurrency(cat.perGuestCost, state.event.currency)}/guest`}
                         </span>
@@ -247,25 +254,29 @@ export const DecisionSimulatorView: React.FC = () => {
                     <input
                       type="range"
                       min="0"
-                      max={Math.max(baselineMinor * 2, 20000000)} // In minor units
+                      max={maxRange} // In minor units
                       step="1000000" // ₹10,000 steps
                       value={currentMinor}
                       onChange={(e) =>
                         handleAllocationChange(cat.id, parseInt(e.target.value, 10) / 100)
                       }
                       aria-label={`Simulate ${cat.name} allocation`}
+                      aria-valuenow={currentMinor}
+                      aria-valuemin={0}
+                      aria-valuemax={maxRange}
+                      aria-valuetext={formatCurrency(currentMinor, state.event.currency)}
                       className="w-full h-1.5 bg-[#EAE4DB] rounded-lg appearance-none cursor-pointer accent-[#A2421D]"
                     />
                   </div>
                 );
               })}
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* Right Column: Real-Time Impact Evaluation Card */}
         <div className="space-y-6">
-          <div className="bg-[#FAF8F5] p-6 rounded-xl border border-[#E6DFD5] shadow-xs space-y-5 sticky top-24">
+          <div className="bg-[#FAF8F5] p-5 sm:p-6 rounded-2xl border border-[#E6DFD5] shadow-xs space-y-5 sticky top-24">
             <div>
               <span className="text-xs font-semibold text-[#A2421D] uppercase tracking-wider">
                 Simulated Impact
@@ -316,12 +327,12 @@ export const DecisionSimulatorView: React.FC = () => {
 
             {/* Overrun Alert */}
             {evaluation.isOverrun && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-900 space-y-1">
-                <div className="font-bold flex items-center gap-1 text-[#BE123C]">
-                  <AlertCircle className="w-3.5 h-3.5" />
+              <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-900 space-y-1 shadow-2xs">
+                <div className="font-bold flex items-center gap-1.5 text-[#BE123C]">
+                  <AlertCircle className="w-4 h-4" />
                   <span>Exceeds Target Budget</span>
                 </div>
-                <p className="text-[11px]">
+                <p className="text-[11px] leading-relaxed">
                   Simulated spend exceeds your ₹{(state.event.totalBudget / 100).toLocaleString()} cap by{' '}
                   <strong>{formatCurrency(evaluation.scenarioTotal - state.event.totalBudget, state.event.currency)}</strong>.
                 </p>
@@ -330,36 +341,37 @@ export const DecisionSimulatorView: React.FC = () => {
 
             <button
               onClick={() => setIsSaveModalOpen(true)}
-              className="w-full py-2.5 bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold rounded-md transition shadow-xs flex items-center justify-center gap-1.5"
+              className="w-full py-2.5 bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold rounded-lg transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98]"
             >
               <Sparkles className="w-4 h-4" />
-              Save As Named Scenario
+              <span>Save As Named Scenario</span>
             </button>
           </div>
         </div>
       </div>
 
       {/* Saved Scenarios Comparison Matrix */}
-      <div className="bg-white rounded-xl border border-[#E6DFD5] shadow-xs overflow-hidden space-y-4 p-6">
+      <Card padding="md" className="space-y-4">
         <div>
           <h3 className="text-base font-bold text-[#1C1917] font-serif-heading">
             Saved Scenarios Comparison ({state.scenarios.length})
           </h3>
-          <p className="text-xs text-[#78716C]">
+          <p className="text-xs text-[#6E665E]">
             Compare alternatives side-by-side or commit a vetted scenario to become the official plan.
           </p>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="overflow-x-auto hidden md:block">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#FAF8F5] text-[#78716C] uppercase font-semibold border-b border-[#E6DFD5]">
+            <thead className="bg-[#FAF8F5] text-[#5C554E] uppercase font-semibold border-b border-[#E6DFD5]">
               <tr>
-                <th className="py-3 px-4">Scenario Name</th>
-                <th className="py-3 px-4 text-center">Guest Count</th>
-                <th className="py-3 px-4 text-right">Projected Spend</th>
-                <th className="py-3 px-4 text-right">Variance vs Baseline</th>
-                <th className="py-3 px-4 text-right">Runway Status</th>
-                <th className="py-3 px-4 text-center">Actions</th>
+                <th scope="col" className="py-3 px-4">Scenario Name</th>
+                <th scope="col" className="py-3 px-4 text-center">Guest Count</th>
+                <th scope="col" className="py-3 px-4 text-right">Projected Spend</th>
+                <th scope="col" className="py-3 px-4 text-right">Variance vs Baseline</th>
+                <th scope="col" className="py-3 px-4 text-right">Runway Status</th>
+                <th scope="col" className="py-3 px-4 text-center">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F4EFEA]">
@@ -370,15 +382,15 @@ export const DecisionSimulatorView: React.FC = () => {
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-2">
                         {scen.isBaseline && (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#FAF0EB] text-[#A2421D] border border-[#F3CEBE]">
+                          <Badge variant="accent" size="sm">
                             Active Plan
-                          </span>
+                          </Badge>
                         )}
                         <div>
                           <span className="font-semibold text-sm text-[#1C1917] block">
                             {scen.name}
                           </span>
-                          <span className="text-[11px] text-[#78716C]">{scen.description}</span>
+                          <span className="text-[11px] text-[#6E665E]">{scen.description}</span>
                         </div>
                       </div>
                     </td>
@@ -410,7 +422,7 @@ export const DecisionSimulatorView: React.FC = () => {
                       <div className="flex items-center justify-center gap-2">
                         <button
                           onClick={() => handleLoadScenarioIntoSandbox(scen)}
-                          className="px-2 py-1 rounded bg-[#F4EFEA] hover:bg-[#EAE4DB] text-[#1C1917] font-medium text-[11px] transition"
+                          className="px-2.5 py-1 rounded-md bg-[#F4EFEA] hover:bg-[#EAE4DB] text-[#1C1917] font-medium text-[11px] transition cursor-pointer"
                         >
                           Load Sandbox
                         </button>
@@ -419,15 +431,19 @@ export const DecisionSimulatorView: React.FC = () => {
                           <>
                             <button
                               onClick={() => setConfirmApplyScenarioId(scen.id)}
-                              className="px-2 py-1 rounded bg-[#047857] hover:bg-[#065F46] text-white font-medium text-[11px] transition"
+                              className="px-2.5 py-1 rounded-md bg-[#047857] hover:bg-[#065F46] text-white font-medium text-[11px] transition cursor-pointer"
                               title="Commit this scenario to become confirmed plan"
                               aria-label={`Apply to Plan: ${scen.name}`}
                             >
                               Apply to Plan
                             </button>
                             <button
-                              onClick={() => deleteScenario(scen.id)}
-                              className="p-1 text-red-600 hover:bg-red-50 rounded transition"
+                              onClick={() => {
+                                if (window.confirm(`Delete scenario "${scen.name}"?`)) {
+                                  deleteScenario(scen.id);
+                                }
+                              }}
+                              className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition cursor-pointer"
                               title="Delete Scenario"
                               aria-label={`Delete scenario "${scen.name}"`}
                             >
@@ -443,7 +459,57 @@ export const DecisionSimulatorView: React.FC = () => {
             </tbody>
           </table>
         </div>
-      </div>
+
+        {/* Mobile View Stacked Scenario Cards (< 768px) */}
+        <div className="block md:hidden divide-y divide-[#F4EFEA] space-y-3">
+          {state.scenarios.map((scen) => {
+            const scenEval = evaluateScenario(state, scen);
+            return (
+              <div key={scen.id} className="pt-3 first:pt-0 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {scen.isBaseline && (
+                      <Badge variant="accent" size="sm">Active</Badge>
+                    )}
+                    <span className="font-semibold text-sm text-[#1C1917]">{scen.name}</span>
+                  </div>
+                  <span className="font-mono text-xs text-[#5C554E]">{scen.modifiedGuestCount} guests</span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E6DFD5]">
+                  <div>
+                    <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Projected Spend</span>
+                    <span className="font-bold text-[#1C1917]">{formatCurrency(scenEval.scenarioTotal, state.event.currency)}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Variance</span>
+                    <span className={scenEval.deltaFromBaseline > 0 ? 'text-[#BE123C]' : 'text-[#047857]'}>
+                      {scenEval.deltaFromBaseline >= 0 ? '+' : ''}{formatCurrency(scenEval.deltaFromBaseline, state.event.currency)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-1">
+                  <button
+                    onClick={() => handleLoadScenarioIntoSandbox(scen)}
+                    className="px-3 py-1.5 rounded-md bg-[#F4EFEA] text-[#1C1917] font-medium text-xs"
+                  >
+                    Load Sandbox
+                  </button>
+                  {!scen.isBaseline && (
+                    <button
+                      onClick={() => setConfirmApplyScenarioId(scen.id)}
+                      className="px-3 py-1.5 rounded-md bg-[#047857] text-white font-medium text-xs"
+                    >
+                      Apply to Plan
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
 
       {/* Save Scenario Modal */}
       <Modal
@@ -461,7 +527,7 @@ export const DecisionSimulatorView: React.FC = () => {
               value={scenarioNameInput}
               onChange={(e) => setScenarioNameInput(e.target.value)}
               placeholder="e.g. Scaled 180 Guests + Drone Cinema Upgrade"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
             />
           </div>
 
@@ -473,11 +539,11 @@ export const DecisionSimulatorView: React.FC = () => {
               value={scenarioDescriptionInput}
               onChange={(e) => setScenarioDescriptionInput(e.target.value)}
               placeholder="e.g. Explores expanding guest list by trimming decor contingency..."
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
             />
           </div>
 
-          <div className="p-3 bg-[#FAF8F5] border border-[#E6DFD5] rounded-lg space-y-1">
+          <div className="p-3.5 bg-[#FAF8F5] border border-[#E6DFD5] rounded-xl space-y-1">
             <span className="font-semibold text-[#1C1917]">Snapshot Highlights:</span>
             <p className="text-[#5C554E]">
               • {sandboxGuestCount} Guests ({sandboxGuestCount - state.event.guestCount >= 0 ? '+' : ''}{sandboxGuestCount - state.event.guestCount} delta)
@@ -487,16 +553,16 @@ export const DecisionSimulatorView: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex justify-end gap-2 pt-3">
+          <div className="flex justify-end gap-2 pt-3 border-t border-[#F4EFEA]">
             <button
               onClick={() => setIsSaveModalOpen(false)}
-              className="px-4 py-2 border border-[#D5CCC0] rounded-md text-[#5C554E] hover:bg-neutral-50"
+              className="px-4 py-2 border border-[#D5CCC0] rounded-lg text-[#5C554E] hover:bg-[#F4EFEA] text-xs font-semibold cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleSaveAsScenario}
-              className="px-4 py-2 bg-[#A2421D] hover:bg-[#863414] text-white font-semibold rounded-md shadow-xs"
+              className="px-4 py-2 bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold rounded-lg shadow-xs cursor-pointer active:scale-[0.98]"
             >
               Save Scenario
             </button>
@@ -512,23 +578,23 @@ export const DecisionSimulatorView: React.FC = () => {
         description="Are you sure you want to apply this scenario to your official confirmed plan?"
       >
         <div className="space-y-4 text-xs">
-          <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 flex items-start gap-2">
+          <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 flex items-start gap-2.5 shadow-2xs">
             <AlertTriangle className="w-4 h-4 text-[#B45309] shrink-0 mt-0.5" />
             <div>
               <span className="font-bold">Consequential State Change:</span> Applying this scenario will update your confirmed guest count and category allocations. Existing contracts and signed vendor records will remain intact.
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-3">
+          <div className="flex justify-end gap-2 pt-3 border-t border-[#F4EFEA]">
             <button
               onClick={() => setConfirmApplyScenarioId(null)}
-              className="px-4 py-2 border border-[#D5CCC0] rounded-md text-[#5C554E] hover:bg-neutral-50"
+              className="px-4 py-2 border border-[#D5CCC0] rounded-lg text-[#5C554E] hover:bg-[#F4EFEA] text-xs font-semibold cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleExecuteApply}
-              className="px-4 py-2 bg-[#047857] hover:bg-[#065F46] text-white font-semibold rounded-md shadow-xs"
+              className="px-4 py-2 bg-[#047857] hover:bg-[#065F46] text-white text-xs font-semibold rounded-lg shadow-xs cursor-pointer active:scale-[0.98]"
             >
               Yes, Apply to Confirmed Plan
             </button>

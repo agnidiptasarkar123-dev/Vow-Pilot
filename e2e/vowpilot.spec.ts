@@ -21,15 +21,26 @@ async function runAxeScan(page: Page, screenName: string) {
     });
   });
 
-  const seriousViolations = results.violations.filter(
-    (v: any) => v.impact === 'critical' || v.impact === 'serious'
-  );
+  const critical = results.violations.filter((v: any) => v.impact === 'critical');
+  const serious = results.violations.filter((v: any) => v.impact === 'serious');
+  const moderate = results.violations.filter((v: any) => v.impact === 'moderate');
+  const minor = results.violations.filter((v: any) => v.impact === 'minor');
 
-  if (seriousViolations.length > 0) {
-    console.error(`Axe violations in ${screenName}:`, JSON.stringify(seriousViolations, null, 2));
+  if (results.violations.length > 0) {
+    console.error(`Axe violations in ${screenName}:`, {
+      total: results.violations.length,
+      critical: critical.length,
+      serious: serious.length,
+      moderate: moderate.length,
+      minor: minor.length,
+      details: results.violations,
+    });
   }
 
-  expect(seriousViolations, `WCAG 2.2 AA violations in ${screenName}`).toEqual([]);
+  expect(
+    results.violations,
+    `WCAG 2.2 AA violations in ${screenName} (Critical: ${critical.length}, Serious: ${serious.length}, Moderate: ${moderate.length}, Minor: ${minor.length})`
+  ).toEqual([]);
 }
 
 test.describe('VowPilot End-to-End Real Browser & Accessibility Verification', () => {
@@ -159,6 +170,62 @@ test.describe('VowPilot End-to-End Real Browser & Accessibility Verification', (
 
     // Run accessibility scan on assistant conversation
     await runAxeScan(page, 'Planner Assistant View');
+  });
+
+  test('E2E Journey 8: Keyboard Navigation, Skip-to-Content & Modal Focus Trapping', async ({ page }) => {
+    // 1. Skip-to-content bypass link verification (WCAG 2.4.1)
+    await page.keyboard.press('Tab');
+    const skipLink = page.locator('a[href="#main-content"]');
+    await expect(skipLink).toBeFocused();
+    await expect(skipLink).toBeVisible();
+
+    // Trigger skip link
+    await page.keyboard.press('Enter');
+    const mainContent = page.locator('#main-content');
+    await expect(mainContent).toBeFocused();
+
+    // 2. Open Needs Assessment Modal using keyboard
+    const newEventBtn = page.locator('button:has-text("+ New Event")');
+    await newEventBtn.focus();
+    await expect(newEventBtn).toBeFocused();
+    await page.keyboard.press('Enter');
+
+    // Verify modal is open and dialog attributes are present (WCAG 4.1.2)
+    const dialog = page.locator('div[role="dialog"]');
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toHaveAttribute('aria-modal', 'true');
+
+    // 3. Test Escape key modal dismissal and focus restoration (WCAG 2.1.2)
+    await page.keyboard.press('Escape');
+    await expect(dialog).not.toBeVisible();
+    // Focus must be restored to the triggering button
+    await expect(newEventBtn).toBeFocused();
+  });
+
+  test('E2E Journey 9: Form Validation Error Announcements & Programmatic Association', async ({ page }) => {
+    // Open Needs Assessment Modal
+    const newEventBtn = page.locator('button:has-text("+ New Event")');
+    await newEventBtn.click();
+
+    // Clear event title if any
+    const titleInput = page.locator('#wizard-event-name');
+    await titleInput.fill('');
+
+    // Attempt to proceed to trigger client-side validation
+    const nextBtn = page.locator('button:has-text("Next Step")');
+    await nextBtn.click();
+
+    // Verify error message is rendered with role="alert" (WCAG 3.3.1, 4.1.3)
+    const errorAlert = page.locator('#wizard-event-name-error');
+    await expect(errorAlert).toBeVisible();
+    await expect(errorAlert).toHaveAttribute('role', 'alert');
+
+    // Verify title input is programmatically associated with error (WCAG 3.3.2)
+    await expect(titleInput).toHaveAttribute('aria-invalid', 'true');
+    await expect(titleInput).toHaveAttribute('aria-describedby', 'wizard-event-name-error');
+
+    // Close modal
+    await page.keyboard.press('Escape');
   });
 
   test('Visual Verification: Capture Viewport Screenshots for Evidence', async ({ page }) => {

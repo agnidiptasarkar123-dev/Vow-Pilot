@@ -7,88 +7,50 @@ import {
   ConcurrencyConflict,
   User,
 } from './types';
+import { AuthPolicy } from './authPolicy';
+import { DatabaseContext, getDatabaseContext } from './db';
 
 export type EventSubscriber = (event: ServerEventRecord) => void;
 
 export class EventStore {
-  private events: Map<string, ServerEventRecord> = new Map();
-  private invites: Map<string, InviteToken> = new Map(); // token -> InviteToken
-  private subscribers: Map<string, Set<EventSubscriber>> = new Map(); // eventId -> callbacks
+  private dbContext: DatabaseContext;
+  private subscribers: Map<string, Set<EventSubscriber>> = new Map(); // eventId -> SSE callbacks
+
+  constructor(dbContext?: DatabaseContext) {
+    this.dbContext = dbContext || getDatabaseContext();
+  }
+
+  public getDbContext(): DatabaseContext {
+    return this.dbContext;
+  }
+
+  public get invites(): { has(key: string): boolean } {
+    return {
+      has: (key: string) => {
+        return !!this.dbContext.invitations.getInviteByHash(key);
+      },
+    };
+  }
 
   public createEvent(owner: User, initialState: AppState): ServerEventRecord {
-    const eventId = initialState.event.id || `evt-${crypto.randomBytes(6).toString('hex')}`;
-    const now = new Date().toISOString();
-
-    const record: ServerEventRecord = {
-      id: eventId,
-      ownerId: owner.id,
-      version: 1,
-      state: {
-        ...initialState,
-        event: {
-          ...initialState.event,
-          id: eventId,
-        },
-      },
-      members: [
-        {
-          userId: owner.id,
-          userName: owner.name,
-          userEmail: owner.email,
-          role: 'owner',
-          joinedAt: now,
-        },
-      ],
-      createdAt: now,
-      updatedAt: now,
-      lastModifiedBy: owner.name,
-    };
-
-    this.events.set(eventId, record);
-    return record;
+    return this.dbContext.events.createEvent(owner, initialState);
   }
 
   public getEvent(eventId: string, requestingUser: User): ServerEventRecord {
-    const event = this.events.get(eventId);
-    if (!event) {
-      throw new Error('Event not found.');
-    }
-
-    const member = event.members.find((m) => m.userId === requestingUser.id);
-    if (!member) {
-      throw new Error('Unauthorized: You are not a member of this event.');
-    }
-
-    return event;
+    return this.dbContext.events.getEvent(eventId, requestingUser);
   }
 
   public getUserRole(eventId: string, userId: string): UserRole | null {
-    const event = this.events.get(eventId);
-    if (!event) return null;
-    const member = event.members.find((m) => m.userId === userId);
-    return member ? member.role : null;
+    return this.dbContext.events.getUserRole(eventId, userId);
   }
 
   public listUserEvents(user: User): Array<{ id: string; name: string; role: UserRole; version: number; updatedAt: string }> {
-    const result: Array<{ id: string; name: string; role: UserRole; version: number; updatedAt: string }> = [];
-    for (const event of this.events.values()) {
-      const member = event.members.find((m) => m.userId === user.id);
-      if (member) {
-        result.push({
-          id: event.id,
-          name: event.state.event.name,
-          role: member.role,
-          version: event.version,
-          updatedAt: event.updatedAt,
-        });
-      }
-    }
-    return result;
+    return this.dbContext.events.listUserEvents(user);
   }
 
   /**
-   * Updates event state using Optimistic Concurrency Control (OCC).
-   * Rejects writes where expectedVersion !== currentVersion to prevent silent overwrites.
+   * Updates event state using Optimistic Concurrency Control (OCC) backed by database transactions.
+   * Rejects stale writes where expectedVersion !== currentVersion to prevent silent overwrites.
    */
   public updateEvent(
     eventId: string,
@@ -96,50 +58,16 @@ export class EventStore {
     expectedVersion: number,
     newState: AppState
   ): { success: true; event: ServerEventRecord } | ConcurrencyConflict {
-    const event = this.events.get(eventId);
-    if (!event) {
-      throw new Error('Event not found.');
+    const result = this.dbContext.events.updateEvent(eventId, requestingUser, expectedVersion, newState);
+    if ('success' in result && result.success) {
+      this.notifySubscribers(eventId, result.event);
     }
-
-    const member = event.members.find((m) => m.userId === requestingUser.id);
-    if (!member) {
-      throw new Error('Unauthorized: You are not a member of this event.');
-    }
-    if (member.role === 'viewer') {
-      throw new Error('Forbidden: Viewer role does not have permission to modify event data.');
-    }
-
-    // OCC Check
-    if (event.version !== expectedVersion) {
-      return {
-        error: 'CONCURRENCY_CONFLICT',
-        message: `Version conflict: Your update was based on version ${expectedVersion}, but the server is already at version ${event.version}. Concurrent edit made by ${event.lastModifiedBy}.`,
-        expectedVersion,
-        currentVersion: event.version,
-        lastModifiedBy: event.lastModifiedBy,
-        currentState: event.state,
-      };
-    }
-
-    const now = new Date().toISOString();
-    event.version += 1;
-    event.state = {
-      ...newState,
-      event: {
-        ...newState.event,
-        id: event.id,
-        updatedAt: now,
-      },
-    };
-    event.updatedAt = now;
-    event.lastModifiedBy = requestingUser.name;
-
-    this.notifySubscribers(eventId, event);
-    return { success: true, event };
+    return result;
   }
 
   /**
-   * Generates a secure invitation token for an event.
+   * Generates a cryptographically secure 256-bit invitation token.
+   * Stores only the SHA-256 digest in server storage to prevent token theft from memory or database dumps.
    */
   public createInvite(
     eventId: string,
@@ -147,43 +75,67 @@ export class EventStore {
     role: UserRole = 'editor',
     expiresInHours: number = 48
   ): InviteToken {
-    const event = this.getEvent(eventId, requestingUser);
-    const member = event.members.find((m) => m.userId === requestingUser.id);
-    if (member?.role !== 'owner' && member?.role !== 'editor') {
-      throw new Error('Forbidden: Only owners and editors can generate invitations.');
+    this.getEvent(eventId, requestingUser);
+    const requesterRole = this.getUserRole(eventId, requestingUser.id);
+    if (!requesterRole) {
+      throw new Error('Unauthorized: You are not a member of this event.');
     }
+
     if (role !== 'owner' && role !== 'editor' && role !== 'viewer') {
       throw new Error('Invalid invitation role: Must be owner, editor, or viewer.');
     }
-    if (role === 'owner' && member?.role !== 'owner') {
-      throw new Error('Forbidden: Only event owners can invite another owner.');
+
+    if (!AuthPolicy.canCreateInvite(requesterRole, role)) {
+      if (requesterRole === 'editor' && role === 'owner') {
+        throw new Error('Forbidden: Only event owners can invite another owner.');
+      }
+      throw new Error('Forbidden: Only owners and editors can generate invitations.');
     }
 
-    const token = `inv_${crypto.randomBytes(20).toString('hex')}`;
+    // 256 bits of cryptographically secure entropy
+    const rawToken = `inv_${crypto.randomBytes(32).toString('hex')}`;
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+
     const now = new Date();
     const expiresAt = new Date(now.getTime() + expiresInHours * 60 * 60 * 1000).toISOString();
 
-    const invite: InviteToken = {
-      token,
+    const storedInvite: InviteToken = {
+      token: `[HASHED:${tokenHash.slice(0, 8)}]`,
+      tokenHash,
       eventId,
       role,
       createdBy: requestingUser.id,
       createdAt: now.toISOString(),
       expiresAt,
       used: false,
+      revoked: false,
     };
 
-    this.invites.set(token, invite);
-    return invite;
+    this.dbContext.invitations.createInvite(storedInvite);
+
+    // Return the unhashed token only once to the issuing caller
+    return {
+      ...storedInvite,
+      token: rawToken,
+    };
   }
 
   /**
-   * Accepts an invitation and joins the event.
+   * Accepts an invitation, validates single-use token consumption, and joins the event.
    */
-  public joinWithInvite(inviteToken: string, user: User): ServerEventRecord {
-    const invite = this.invites.get(inviteToken);
+  public joinWithInvite(rawToken: string, user: User): ServerEventRecord {
+    if (!rawToken || typeof rawToken !== 'string') {
+      throw new Error('Invalid or non-existent invitation token.');
+    }
+
+    const tokenHash = crypto.createHash('sha256').update(rawToken.trim()).digest('hex');
+    const invite = this.dbContext.invitations.getInviteByHash(tokenHash);
+
     if (!invite) {
       throw new Error('Invalid or non-existent invitation token.');
+    }
+    if (invite.revoked) {
+      throw new Error('This invitation token has been revoked.');
     }
     if (invite.used) {
       throw new Error('This invitation token has already been used.');
@@ -192,43 +144,136 @@ export class EventStore {
       throw new Error('This invitation token has expired.');
     }
 
-    const event = this.events.get(invite.eventId);
-    if (!event) {
-      throw new Error('Associated event no longer exists.');
-    }
+    // Add member to event
+    const event = this.dbContext.events.addMember(invite.eventId, user, invite.role);
 
-    // Check if already a member
-    const existingMember = event.members.find((m) => m.userId === user.id);
-    if (!existingMember) {
-      event.members.push({
-        userId: user.id,
-        userName: user.name,
-        userEmail: user.email,
-        role: invite.role,
-        joinedAt: new Date().toISOString(),
-      });
-      invite.used = true;
-      invite.usedBy = user.id;
-    }
+    // Mark as consumed immediately to prevent replay
+    this.dbContext.invitations.markInviteUsed(tokenHash, user.id);
 
     return event;
+  }
+
+  /**
+   * Declines an active invitation. Marks token as consumed without adding user to event members.
+   */
+  public declineInvite(rawToken: string, user?: User): { success: true; message: string } {
+    if (!rawToken || typeof rawToken !== 'string') {
+      throw new Error('Invalid or non-existent invitation token.');
+    }
+
+    const tokenHash = crypto.createHash('sha256').update(rawToken.trim()).digest('hex');
+    const invite = this.dbContext.invitations.getInviteByHash(tokenHash);
+
+    if (!invite) {
+      throw new Error('Invalid or non-existent invitation token.');
+    }
+    if (invite.revoked) {
+      throw new Error('This invitation token has been revoked.');
+    }
+    if (invite.used) {
+      throw new Error('This invitation token has already been used.');
+    }
+    if (new Date(invite.expiresAt) < new Date()) {
+      throw new Error('This invitation token has expired.');
+    }
+
+    this.dbContext.invitations.markInviteUsed(tokenHash, user?.id || 'declined_user');
+    return { success: true, message: 'Invitation declined successfully.' };
+  }
+
+  /**
+   * Previews an invitation before accepting or declining.
+   */
+  public inspectInvite(rawToken: string): {
+    eventId: string;
+    eventName: string;
+    role: UserRole;
+    inviterName: string;
+    expiresAt: string;
+    status: 'valid' | 'expired' | 'revoked' | 'used';
+  } {
+    if (!rawToken || typeof rawToken !== 'string') {
+      throw new Error('Invalid or non-existent invitation token.');
+    }
+
+    const tokenHash = crypto.createHash('sha256').update(rawToken.trim()).digest('hex');
+    const invite = this.dbContext.invitations.getInviteByHash(tokenHash);
+
+    if (!invite) {
+      throw new Error('Invitation token not found.');
+    }
+
+    let status: 'valid' | 'expired' | 'revoked' | 'used' = 'valid';
+    if (invite.revoked) {
+      status = 'revoked';
+    } else if (invite.used) {
+      status = 'used';
+    } else if (new Date(invite.expiresAt) < new Date()) {
+      status = 'expired';
+    }
+
+    const event = this.dbContext.events.getEventMetadata(invite.eventId);
+    const inviter = this.dbContext.users.getUserById(invite.createdBy);
+
+    return {
+      eventId: invite.eventId,
+      eventName: event?.name || 'VowPilot Celebration',
+      role: invite.role,
+      inviterName: inviter?.name || 'Event Coordinator',
+      expiresAt: invite.expiresAt,
+      status,
+    };
+  }
+
+  /**
+   * Lists all invitations for an event.
+   */
+  public listEventInvites(eventId: string, requestingUser: User): InviteToken[] {
+    const role = this.getUserRole(eventId, requestingUser.id);
+    if (!role || (role !== 'owner' && role !== 'editor')) {
+      throw new Error('Forbidden: Only event owners and editors can view invitations.');
+    }
+
+    return this.dbContext.invitations.listEventInvites(eventId);
+  }
+
+  /**
+   * Proactively revokes an active invitation token.
+   * Accepts either rawToken or tokenHash.
+   */
+  public revokeInvite(eventId: string, requestingUser: User, rawTokenOrHash: string): void {
+    const event = this.getEvent(eventId, requestingUser);
+    const requesterRole = this.getUserRole(eventId, requestingUser.id);
+    if (requesterRole !== 'owner') {
+      throw new Error('Forbidden: Only the event owner can revoke invitations.');
+    }
+
+    const trimmed = rawTokenOrHash.trim();
+    let invite = this.dbContext.invitations.getInviteByHash(trimmed);
+    let resolvedHash = trimmed;
+
+    if (!invite) {
+      resolvedHash = crypto.createHash('sha256').update(trimmed).digest('hex');
+      invite = this.dbContext.invitations.getInviteByHash(resolvedHash);
+    }
+
+    if (!invite || invite.eventId !== event.id) {
+      throw new Error('Invitation token not found.');
+    }
+
+    this.dbContext.invitations.revokeInvite(resolvedHash);
   }
 
   /**
    * Removes a member from an event (access revocation).
    */
   public removeMember(eventId: string, requestingUser: User, targetUserId: string): ServerEventRecord {
-    const event = this.getEvent(eventId, requestingUser);
-    const requester = event.members.find((m) => m.userId === requestingUser.id);
-    if (requester?.role !== 'owner') {
-      throw new Error('Forbidden: Only the event owner can remove members.');
-    }
-    if (targetUserId === event.ownerId) {
-      throw new Error('Cannot remove the owner of the event.');
-    }
+    return this.dbContext.events.removeMember(eventId, requestingUser, targetUserId);
+  }
 
-    event.members = event.members.filter((m) => m.userId !== targetUserId);
-    return event;
+  public deleteEvent(eventId: string, requestingUser: User): void {
+    this.dbContext.events.deleteEvent(eventId, requestingUser);
+    this.subscribers.delete(eventId);
   }
 
   public subscribe(eventId: string, callback: EventSubscriber): () => void {
@@ -258,8 +303,7 @@ export class EventStore {
   }
 
   public clear(): void {
-    this.events.clear();
-    this.invites.clear();
+    this.dbContext.clearAll();
     this.subscribers.clear();
   }
 }

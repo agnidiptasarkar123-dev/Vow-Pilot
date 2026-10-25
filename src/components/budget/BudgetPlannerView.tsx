@@ -4,15 +4,20 @@ import { calculateBudgetOverview, generatePriorityAwareRecommendations } from '.
 import { formatCurrency, parseDisplayToMinor } from '../../domain/currency';
 import { BudgetCategory, CostStatus } from '../../types';
 import { Modal } from '../common/Modal';
+import { Card } from '../common/Card';
+import { Badge } from '../common/Badge';
+import { EmptyState } from '../common/EmptyState';
 import {
   Edit2,
+  Lock,
   Plus,
+  Receipt,
   Trash2,
   TrendingDown,
 } from 'lucide-react';
 
 export const BudgetPlannerView: React.FC = () => {
-  const { state, updateCategory, addExpense, deleteExpense } = useEvent();
+  const { state, updateCategory, addExpense, deleteExpense, isReadOnly } = useEvent();
   const overview = calculateBudgetOverview(state.event.totalBudget, state.categories, state.expenses);
   const recs = generatePriorityAwareRecommendations(overview, state.event.preferences.planningPriorities);
 
@@ -35,6 +40,7 @@ export const BudgetPlannerView: React.FC = () => {
   const [editMaxCapacity, setEditMaxCapacity] = useState<number | undefined>();
 
   const handleOpenAddExpense = (catId?: string) => {
+    if (isReadOnly) return;
     setExpenseTitle('');
     setExpenseCategoryId(catId || state.categories[0]?.id || '');
     setExpenseAmountDisplay('');
@@ -45,23 +51,25 @@ export const BudgetPlannerView: React.FC = () => {
   };
 
   const handleSaveExpense = () => {
+    if (isReadOnly) return;
     if (!expenseTitle.trim()) return;
     const amountMinor = parseDisplayToMinor(expenseAmountDisplay);
     if (amountMinor <= 0) return;
 
     addExpense({
       categoryId: expenseCategoryId,
-      title: expenseTitle,
+      title: expenseTitle.trim(),
       amount: amountMinor,
       status: expenseStatus,
       vendorId: expenseVendorId || undefined,
       paidAmount: expenseStatus === 'actual' ? amountMinor : 0,
-      notes: expenseNotes,
+      notes: expenseNotes.trim(),
     });
     setIsAddExpenseOpen(false);
   };
 
   const handleOpenEditCategory = (cat: BudgetCategory) => {
+    if (isReadOnly) return;
     setSelectedCategory(cat);
     setEditAllocatedDisplay((cat.allocatedAmount / 100).toString());
     setEditPerGuestDisplay(cat.perGuestCost ? (cat.perGuestCost / 100).toString() : '');
@@ -70,6 +78,7 @@ export const BudgetPlannerView: React.FC = () => {
   };
 
   const handleSaveCategory = () => {
+    if (isReadOnly) return;
     if (!selectedCategory) return;
     const allocatedMinor = parseDisplayToMinor(editAllocatedDisplay);
     const perGuestMinor = editPerGuestDisplay ? parseDisplayToMinor(editPerGuestDisplay) : undefined;
@@ -87,84 +96,106 @@ export const BudgetPlannerView: React.FC = () => {
   const statusBadge = (status: CostStatus) => {
     switch (status) {
       case 'confirmed':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Confirmed</span>;
+        return <Badge variant="success" size="sm">Confirmed</Badge>;
       case 'actual':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">Actual (Paid)</span>;
+        return <Badge variant="info" size="sm">Actual (Paid)</Badge>;
       case 'quoted':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">Quoted</span>;
+        return <Badge variant="accent" size="sm">Quoted</Badge>;
       case 'estimated':
       default:
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-neutral-100 text-neutral-600 border border-neutral-200">Estimated</span>;
+        return <Badge variant="neutral" size="sm">Estimated</Badge>;
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="max-w-7xl mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+      {/* Read-Only Viewer Alert Banner */}
+      {isReadOnly && (
+        <div
+          data-testid="viewer-readonly-banner"
+          className="p-3.5 rounded-xl bg-stone-100 border border-stone-300 flex items-center justify-between text-xs text-stone-700 shadow-2xs"
+        >
+          <div className="flex items-center gap-2">
+            <Lock className="w-4 h-4 text-stone-500 shrink-0" />
+            <span>
+              <strong>Viewer Permissions (Read-Only):</strong> You can inspect budget allocations, telemetry, and itemized records. Modifying budget items or creating expenses is restricted to Editors and Owners.
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Header and Quick Stats */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#1C1917] font-serif-heading">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#1C1917] font-serif-heading tracking-tight">
             Budget & Trade-Off Planner
           </h1>
-          <p className="text-xs text-[#78716C] mt-1">
+          <p className="text-xs text-[#6E665E] mt-1">
             Strict separation of Estimated, Quoted, Confirmed, and Actual commitments. No guesswork.
           </p>
         </div>
 
-        <button
-          onClick={() => handleOpenAddExpense()}
-          className="px-4 py-2 rounded-md bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
-        >
-          <Plus className="w-4 h-4" />
-          Add Expense Record
-        </button>
+        {!isReadOnly ? (
+          <button
+            onClick={() => handleOpenAddExpense()}
+            className="px-4 py-2 rounded-lg bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer active:scale-[0.98]"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Expense Record</span>
+          </button>
+        ) : (
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-100 text-stone-500 text-xs font-medium border border-stone-200">
+            <Lock className="w-3.5 h-3.5" />
+            <span>Read-Only Mode</span>
+          </div>
+        )}
       </div>
 
       {/* Top Telemetry Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 bg-white p-5 rounded-xl border border-[#E6DFD5] shadow-xs">
+      <Card padding="md" className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         <div className="space-y-0.5">
-          <span className="text-[11px] text-[#78716C] font-medium">Total Budget</span>
-          <p className="font-mono text-base font-bold text-[#1C1917]">
+          <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Total Budget</span>
+          <p className="font-mono text-base sm:text-lg font-bold text-[#1C1917]">
             {formatCurrency(overview.totalBudget, state.event.currency)}
           </p>
         </div>
 
         <div className="space-y-0.5">
-          <span className="text-[11px] text-[#78716C] font-medium">Total Allocated</span>
-          <p className="font-mono text-base font-semibold text-[#5C554E]">
+          <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Total Allocated</span>
+          <p className="font-mono text-base sm:text-lg font-semibold text-[#5C554E]">
             {formatCurrency(overview.totalAllocated, state.event.currency)}
           </p>
         </div>
 
         <div className="space-y-0.5">
-          <span className="text-[11px] text-[#78716C] font-medium">Committed (Actual/Conf.)</span>
-          <p className="font-mono text-base font-semibold text-[#047857]">
+          <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Committed (Actual/Conf.)</span>
+          <p className="font-mono text-base sm:text-lg font-semibold text-[#047857]">
             {formatCurrency(overview.committedTotal, state.event.currency)}
           </p>
         </div>
 
         <div className="space-y-0.5">
-          <span className="text-[11px] text-[#78716C] font-medium">Projected Total</span>
-          <p className="font-mono text-base font-semibold text-[#1C1917]">
+          <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Projected Total</span>
+          <p className="font-mono text-base sm:text-lg font-semibold text-[#1C1917]">
             {formatCurrency(overview.effectiveProjectedTotal, state.event.currency)}
           </p>
         </div>
 
-        <div className="space-y-0.5 col-span-2 md:col-span-1">
-          <span className="text-[11px] text-[#78716C] font-medium">Remaining Runway</span>
+        <div className="space-y-0.5 col-span-2 sm:col-span-1">
+          <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Remaining Runway</span>
           <p
-            className={`font-mono text-base font-bold ${
+            className={`font-mono text-base sm:text-lg font-bold ${
               overview.isOverrun ? 'text-[#BE123C]' : 'text-[#047857]'
             }`}
           >
             {formatCurrency(overview.remainingBudget, state.event.currency)}
           </p>
         </div>
-      </div>
+      </Card>
 
       {/* Priority Reduction Recommendations (if overrun or user seeks buffer) */}
       {recs.recommendations.length > 0 && (
-        <div className="bg-[#FAF0EB] p-5 rounded-xl border border-[#F3CEBE] space-y-3">
+        <div className="bg-[#FAF0EB] p-5 sm:p-6 rounded-xl border border-[#F3CEBE] space-y-3.5 shadow-2xs">
           <div className="flex items-center gap-2 text-[#A2421D]">
             <TrendingDown className="w-4 h-4" />
             <h3 className="text-sm font-bold">
@@ -176,16 +207,17 @@ export const BudgetPlannerView: React.FC = () => {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
             {recs.recommendations.map((rec) => (
-              <div key={rec.categoryId} className="bg-white p-3 rounded-lg border border-[#F3CEBE] text-xs space-y-1">
+              <div key={rec.categoryId} className="bg-white p-3.5 rounded-lg border border-[#F3CEBE] text-xs space-y-1.5 shadow-2xs">
                 <div className="flex items-center justify-between font-semibold text-[#1C1917]">
                   <span>{rec.categoryName} (Priority #{rec.priorityRank})</span>
-                  <span className="text-[#BE123C]">
+                  <span className="text-[#BE123C] font-mono">
                     -{formatCurrency(rec.suggestedReduction, state.event.currency)}
                   </span>
                 </div>
-                <p className="text-[11px] text-[#78716C]">{rec.rationale}</p>
-                <div className="text-[11px] text-[#5C554E] pt-1">
-                  New Allocation: <span className="font-mono font-semibold">{formatCurrency(rec.newAllocated, state.event.currency)}</span>
+                <p className="text-[11px] text-[#6E665E]">{rec.rationale}</p>
+                <div className="text-[11px] text-[#5C554E] pt-1 border-t border-[#F4EFEA] flex items-center justify-between">
+                  <span>New Allocation Cap:</span>
+                  <span className="font-mono font-semibold">{formatCurrency(rec.newAllocated, state.event.currency)}</span>
                 </div>
               </div>
             ))}
@@ -193,30 +225,31 @@ export const BudgetPlannerView: React.FC = () => {
         </div>
       )}
 
-      {/* Category Allocations Breakdown Table */}
+      {/* Category Allocations Breakdown Card */}
       <div className="bg-white rounded-xl border border-[#E6DFD5] shadow-xs overflow-hidden">
         <div className="p-5 border-b border-[#F4EFEA] flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-[#1C1917] font-serif-heading">
               Category Allocations
             </h3>
-            <p className="text-xs text-[#78716C]">
+            <p className="text-xs text-[#6E665E]">
               Real-time balance of category caps vs recorded commitments.
             </p>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Desktop View: Full Data Table */}
+        <div className="overflow-x-auto hidden md:block">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#FAF8F5] text-[#78716C] uppercase font-semibold border-b border-[#E6DFD5]">
+            <thead className="bg-[#FAF8F5] text-[#5C554E] uppercase font-semibold border-b border-[#E6DFD5]">
               <tr>
-                <th className="py-3 px-4">Priority & Category</th>
-                <th className="py-3 px-4 text-right">Allocated Cap</th>
-                <th className="py-3 px-4 text-right">Confirmed / Actual</th>
-                <th className="py-3 px-4 text-right">Quoted / Est.</th>
-                <th className="py-3 px-4 text-right">Effective Total</th>
-                <th className="py-3 px-4 text-right">Headroom</th>
-                <th className="py-3 px-4 text-center">Actions</th>
+                <th scope="col" className="py-3 px-4">Priority & Category</th>
+                <th scope="col" className="py-3 px-4 text-right">Allocated Cap</th>
+                <th scope="col" className="py-3 px-4 text-right">Confirmed / Actual</th>
+                <th scope="col" className="py-3 px-4 text-right">Quoted / Est.</th>
+                <th scope="col" className="py-3 px-4 text-right">Effective Total</th>
+                <th scope="col" className="py-3 px-4 text-right">Headroom</th>
+                <th scope="col" className="py-3 px-4 text-center">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F4EFEA]">
@@ -234,12 +267,12 @@ export const BudgetPlannerView: React.FC = () => {
                             {catSummary.category.name}
                           </span>
                           {catSummary.category.perGuestCost && (
-                            <span className="text-[10px] text-[#78716C]">
+                            <span className="text-[10px] text-[#6E665E]">
                               Scales at {formatCurrency(catSummary.category.perGuestCost, state.event.currency)}/guest
                             </span>
                           )}
                           {catSummary.category.maxCapacity && (
-                            <span className="text-[10px] text-[#78716C] block">
+                            <span className="text-[10px] text-[#6E665E] block">
                               Max capacity: {catSummary.category.maxCapacity} guests
                             </span>
                           )}
@@ -270,30 +303,100 @@ export const BudgetPlannerView: React.FC = () => {
                     </td>
 
                     <td className="py-3.5 px-4 text-center">
-                      <div className="flex items-center justify-center gap-1.5">
-                        <button
-                          onClick={() => handleOpenEditCategory(catSummary.category)}
-                          className="p-1 rounded text-[#78716C] hover:text-[#1C1917] hover:bg-[#EAE4DB] transition"
-                          title="Edit Category Allocation"
-                          aria-label={`Edit ${catSummary.category.name} allocation`}
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleOpenAddExpense(catSummary.category.id)}
-                          className="p-1 rounded text-[#A2421D] hover:bg-[#FAF0EB] transition"
-                          title="Add Expense to Category"
-                          aria-label={`Add expense to ${catSummary.category.name}`}
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
+                      {!isReadOnly ? (
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            onClick={() => handleOpenEditCategory(catSummary.category)}
+                            className="p-1.5 rounded-md text-[#6E665E] hover:text-[#1C1917] hover:bg-[#EAE4DB] transition cursor-pointer"
+                            title="Edit Category Allocation"
+                            aria-label={`Edit ${catSummary.category.name} allocation`}
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleOpenAddExpense(catSummary.category.id)}
+                            className="p-1.5 rounded-md text-[#A2421D] hover:bg-[#FAF0EB] transition cursor-pointer"
+                            title="Add Expense to Category"
+                            aria-label={`Add expense to ${catSummary.category.name}`}
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="text-[11px] text-[#A8A29E] italic">Read-only</span>
+                      )}
                     </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View: Responsive Stacked Cards (< 768px) */}
+        <div className="block md:hidden divide-y divide-[#F4EFEA] p-4 space-y-3">
+          {overview.categories.map((catSummary) => {
+            const isOver = catSummary.isOverBudget;
+            return (
+              <div key={catSummary.category.id} className="pt-3 first:pt-0 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-[#FAF0EB] text-[#A2421D] text-[10px] font-bold flex items-center justify-center border border-[#F3CEBE]">
+                      {catSummary.category.priorityRank}
+                    </span>
+                    <span className="font-semibold text-sm text-[#1C1917]">
+                      {catSummary.category.name}
+                    </span>
+                  </div>
+                  {!isReadOnly && (
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleOpenEditCategory(catSummary.category)}
+                        className="p-2 rounded-md text-[#6E665E] hover:bg-[#F4EFEA] min-h-[36px] min-w-[36px] flex items-center justify-center"
+                        aria-label={`Edit ${catSummary.category.name} allocation`}
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleOpenAddExpense(catSummary.category.id)}
+                        className="p-2 rounded-md text-[#A2421D] hover:bg-[#FAF0EB] min-h-[36px] min-w-[36px] flex items-center justify-center"
+                        aria-label={`Add expense to ${catSummary.category.name}`}
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E6DFD5]">
+                  <div>
+                    <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Allocated Cap</span>
+                    <span className="font-bold text-[#1C1917]">
+                      {formatCurrency(catSummary.allocatedAmount, state.event.currency)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Committed</span>
+                    <span className="font-semibold text-[#047857]">
+                      {formatCurrency(catSummary.committedTotal, state.event.currency)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Effective Total</span>
+                    <span className="font-semibold text-[#1C1917]">
+                      {formatCurrency(catSummary.effectiveTotal, state.event.currency)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Headroom</span>
+                    <span className={isOver ? 'text-[#BE123C] font-bold' : 'text-[#5C554E]'}>
+                      {formatCurrency(catSummary.remainingAllocated, state.event.currency)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -304,68 +407,138 @@ export const BudgetPlannerView: React.FC = () => {
             <h3 className="text-base font-bold text-[#1C1917] font-serif-heading">
               Recorded Expense Items ({state.expenses.length})
             </h3>
-            <p className="text-xs text-[#78716C]">
+            <p className="text-xs text-[#6E665E]">
               Itemized entries linked to vendors or internal estimates.
             </p>
           </div>
+
+          {!isReadOnly && state.expenses.length > 0 && (
+            <button
+              onClick={() => handleOpenAddExpense()}
+              className="text-xs font-semibold text-[#A2421D] hover:underline flex items-center gap-1 cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Add Record</span>
+            </button>
+          )}
         </div>
 
         {state.expenses.length === 0 ? (
-          <div className="p-8 text-center text-xs text-[#78716C]">
-            No expenses recorded yet. Click <strong>Add Expense Record</strong> to log costs.
-          </div>
+          <EmptyState
+            icon={Receipt}
+            title="No expenses recorded yet"
+            description="Log your first confirmed invoice, quotation commitment, or estimated operational cost."
+            action={!isReadOnly ? {
+              label: 'Add First Expense',
+              icon: Plus,
+              onClick: () => handleOpenAddExpense(),
+            } : undefined}
+          />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-[#FAF8F5] text-[#78716C] uppercase font-semibold border-b border-[#E6DFD5]">
-                <tr>
-                  <th className="py-3 px-4">Title & Notes</th>
-                  <th className="py-3 px-4">Category</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-right">Amount</th>
-                  <th className="py-3 px-4 text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#F4EFEA]">
-                {state.expenses.map((exp) => {
-                  const cat = state.categories.find((c) => c.id === exp.categoryId);
-                  return (
-                    <tr key={exp.id} className="hover:bg-[#FAF8F5]/60 transition">
-                      <td className="py-3 px-4">
+          <>
+            {/* Desktop View Table */}
+            <div className="overflow-x-auto hidden md:block">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[#FAF8F5] text-[#5C554E] uppercase font-semibold border-b border-[#E6DFD5]">
+                  <tr>
+                    <th scope="col" className="py-3 px-4">Title & Notes</th>
+                    <th scope="col" className="py-3 px-4">Category</th>
+                    <th scope="col" className="py-3 px-4">Status</th>
+                    <th scope="col" className="py-3 px-4 text-right">Amount</th>
+                    <th scope="col" className="py-3 px-4 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#F4EFEA]">
+                  {state.expenses.map((exp) => {
+                    const cat = state.categories.find((c) => c.id === exp.categoryId);
+                    return (
+                      <tr key={exp.id} className="hover:bg-[#FAF8F5]/60 transition">
+                        <td className="py-3 px-4">
+                          <span className="font-semibold text-sm text-[#1C1917] block">
+                            {exp.title}
+                          </span>
+                          {exp.notes && <span className="text-[11px] text-[#6E665E]">{exp.notes}</span>}
+                        </td>
+
+                        <td className="py-3 px-4 text-[#5C554E] font-medium">
+                          {cat?.name || exp.categoryId}
+                        </td>
+
+                        <td className="py-3 px-4">
+                          {statusBadge(exp.status)}
+                        </td>
+
+                        <td className="py-3 px-4 text-right font-mono font-bold text-[#1C1917]">
+                          {formatCurrency(exp.amount, state.event.currency)}
+                        </td>
+
+                        <td className="py-3 px-4 text-center">
+                          {!isReadOnly ? (
+                            <button
+                              onClick={() => {
+                                if (window.confirm(`Delete expense record "${exp.title}"?`)) {
+                                  deleteExpense(exp.id);
+                                }
+                              }}
+                              className="p-1.5 rounded-md text-red-600 hover:bg-red-50 transition cursor-pointer"
+                              title="Delete Expense"
+                              aria-label={`Delete expense: ${exp.title}`}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          ) : (
+                            <span className="text-[11px] text-[#A8A29E] italic">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile View Stacked Cards (< 768px) */}
+            <div className="block md:hidden divide-y divide-[#F4EFEA] p-4 space-y-3">
+              {state.expenses.map((exp) => {
+                const cat = state.categories.find((c) => c.id === exp.categoryId);
+                return (
+                  <div key={exp.id} className="pt-3 first:pt-0 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
                         <span className="font-semibold text-sm text-[#1C1917] block">
                           {exp.title}
                         </span>
-                        {exp.notes && <span className="text-[11px] text-[#78716C]">{exp.notes}</span>}
-                      </td>
-
-                      <td className="py-3 px-4 text-[#5C554E] font-medium">
-                        {cat?.name || exp.categoryId}
-                      </td>
-
-                      <td className="py-3 px-4">
+                        <span className="text-[11px] text-[#6E665E]">
+                          {cat?.name || exp.categoryId} {exp.notes ? `• ${exp.notes}` : ''}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
                         {statusBadge(exp.status)}
-                      </td>
+                        {!isReadOnly && (
+                          <button
+                            onClick={() => {
+                              if (window.confirm(`Delete expense record "${exp.title}"?`)) {
+                                deleteExpense(exp.id);
+                              }
+                            }}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-md min-h-[36px] min-w-[36px] flex items-center justify-center"
+                            aria-label={`Delete expense: ${exp.title}`}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
 
-                      <td className="py-3 px-4 text-right font-mono font-bold text-[#1C1917]">
-                        {formatCurrency(exp.amount, state.event.currency)}
-                      </td>
-
-                      <td className="py-3 px-4 text-center">
-                        <button
-                          onClick={() => deleteExpense(exp.id)}
-                          className="p-1 rounded text-red-600 hover:bg-red-50 transition"
-                          title="Delete Expense"
-                          aria-label={`Delete expense: ${exp.title}`}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                    <div className="flex items-center justify-between font-mono text-sm font-bold text-[#1C1917] bg-[#FAF8F5] px-3 py-1.5 rounded-md border border-[#E6DFD5]">
+                      <span className="text-xs font-sans font-medium text-[#6E665E]">Recorded Cost</span>
+                      <span>{formatCurrency(exp.amount, state.event.currency)}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
 
@@ -386,7 +559,7 @@ export const BudgetPlannerView: React.FC = () => {
               type="text"
               value={editAllocatedDisplay}
               onChange={(e) => setEditAllocatedDisplay(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
             />
           </div>
 
@@ -400,9 +573,9 @@ export const BudgetPlannerView: React.FC = () => {
               value={editPerGuestDisplay}
               onChange={(e) => setEditPerGuestDisplay(e.target.value)}
               placeholder="e.g. 3500"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
             />
-            <p className="text-[11px] text-[#78716C] mt-1">
+            <p className="text-[11px] text-[#6E665E] mt-1">
               Leave blank if cost does not automatically scale with guest count changes.
             </p>
           </div>
@@ -415,57 +588,70 @@ export const BudgetPlannerView: React.FC = () => {
               id="edit-category-capacity"
               type="number"
               value={editMaxCapacity || ''}
-              onChange={(e) => setEditMaxCapacity(e.target.value ? parseInt(e.target.value, 10) : undefined)}
+              onChange={(e) => setEditMaxCapacity(e.target.value ? Number(e.target.value) : undefined)}
               placeholder="e.g. 200"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-3">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#F4EFEA]">
             <button
+              type="button"
               onClick={() => setIsEditCategoryOpen(false)}
-              className="px-4 py-2 border border-[#D5CCC0] rounded-md text-[#5C554E] hover:bg-neutral-50"
+              className="px-4 py-2 rounded-lg border border-[#D5CCC0] text-[#5C554E] hover:bg-[#F4EFEA] text-xs font-semibold cursor-pointer"
             >
               Cancel
             </button>
             <button
+              type="button"
               onClick={handleSaveCategory}
-              className="px-4 py-2 bg-[#A2421D] hover:bg-[#863414] text-white font-semibold rounded-md shadow-xs"
+              className="px-4 py-2 rounded-lg bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold shadow-xs cursor-pointer active:scale-[0.98]"
             >
-              Save Allocation
+              Save Allocation Changes
             </button>
           </div>
         </div>
       </Modal>
 
-      {/* Add Expense Modal */}
+      {/* Add Expense Record Modal */}
       <Modal
         isOpen={isAddExpenseOpen}
         onClose={() => setIsAddExpenseOpen(false)}
         title="Add Expense Record"
-        description="Record a new cost with explicit status distinction."
+        description="Record a committed invoice, actual payment, or estimated operational cost."
       >
-        <div className="space-y-4 text-xs">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSaveExpense();
+          }}
+          className="space-y-4 text-xs"
+        >
           <div>
-            <label htmlFor="expense-title-input" className="block font-semibold text-[#1C1917] mb-1">Expense Title</label>
+            <label htmlFor="expense-title-input" className="block font-semibold text-[#1C1917] mb-1">
+              Expense Item Description *
+            </label>
             <input
               id="expense-title-input"
               type="text"
+              required
               value={expenseTitle}
               onChange={(e) => setExpenseTitle(e.target.value)}
-              placeholder="e.g. Stage Floral Deposit"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              placeholder="e.g. Catering Advance Deposit 50%"
+              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor="expense-category-select" className="block font-semibold text-[#1C1917] mb-1">Category</label>
+              <label htmlFor="expense-category-select" className="block font-semibold text-[#1C1917] mb-1">
+                Target Category *
+              </label>
               <select
                 id="expense-category-select"
                 value={expenseCategoryId}
                 onChange={(e) => setExpenseCategoryId(e.target.value)}
-                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
               >
                 {state.categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -476,81 +662,89 @@ export const BudgetPlannerView: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="expense-status-select" className="block font-semibold text-[#1C1917] mb-1">Status</label>
+              <label htmlFor="expense-amount-input" className="block font-semibold text-[#1C1917] mb-1">
+                Amount ({state.event.currency}) *
+              </label>
+              <input
+                id="expense-amount-input"
+                type="text"
+                required
+                value={expenseAmountDisplay}
+                onChange={(e) => setExpenseAmountDisplay(e.target.value)}
+                placeholder="e.g. 500000"
+                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="expense-status-select" className="block font-semibold text-[#1C1917] mb-1">
+                Cost Commitment Status *
+              </label>
               <select
                 id="expense-status-select"
                 value={expenseStatus}
                 onChange={(e) => setExpenseStatus(e.target.value as CostStatus)}
-                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
               >
-                <option value="estimated">Estimated (Internal approximation)</option>
-                <option value="quoted">Quoted (Vendor proposal under review)</option>
-                <option value="confirmed">Confirmed (Contract signed / committed)</option>
-                <option value="actual">Actual (Paid expense)</option>
+                <option value="estimated">Estimated (Rough Planning Budget)</option>
+                <option value="quoted">Quoted (Vendor Formal Offer)</option>
+                <option value="confirmed">Confirmed (Contract Signed)</option>
+                <option value="actual">Actual (Paid / Transferred)</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="expense-vendor-select" className="block font-semibold text-[#1C1917] mb-1">
+                Linked Supplier (Optional)
+              </label>
+              <select
+                id="expense-vendor-select"
+                value={expenseVendorId}
+                onChange={(e) => setExpenseVendorId(e.target.value)}
+                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
+              >
+                <option value="">None / Direct Procurement</option>
+                {state.vendors.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
 
           <div>
-            <label htmlFor="expense-amount-input" className="block font-semibold text-[#1C1917] mb-1">
-              Amount ({state.event.currency})
+            <label htmlFor="expense-notes-input" className="block font-semibold text-[#1C1917] mb-1">
+              Internal Notes / Invoice Reference
             </label>
             <input
-              id="expense-amount-input"
+              id="expense-notes-input"
               type="text"
-              value={expenseAmountDisplay}
-              onChange={(e) => setExpenseAmountDisplay(e.target.value)}
-              placeholder="e.g. 50000"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="expense-vendor-select" className="block font-semibold text-[#1C1917] mb-1">
-              Link to Vendor (optional)
-            </label>
-            <select
-              id="expense-vendor-select"
-              value={expenseVendorId}
-              onChange={(e) => setExpenseVendorId(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
-            >
-              <option value="">None / Internal Estimate</option>
-              {state.vendors.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="expense-notes-textarea" className="block font-semibold text-[#1C1917] mb-1">Notes (optional)</label>
-            <textarea
-              id="expense-notes-textarea"
-              rows={2}
               value={expenseNotes}
               onChange={(e) => setExpenseNotes(e.target.value)}
-              placeholder="Payment milestone or contract details..."
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              placeholder="e.g. Invoice #2026-INV-091 verified"
+              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-3">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#F4EFEA]">
             <button
+              type="button"
               onClick={() => setIsAddExpenseOpen(false)}
-              className="px-4 py-2 border border-[#D5CCC0] rounded-md text-[#5C554E] hover:bg-neutral-50"
+              className="px-4 py-2 rounded-lg border border-[#D5CCC0] text-[#5C554E] hover:bg-[#F4EFEA] text-xs font-semibold cursor-pointer"
             >
               Cancel
             </button>
             <button
-              onClick={handleSaveExpense}
-              className="px-4 py-2 bg-[#A2421D] hover:bg-[#863414] text-white font-semibold rounded-md shadow-xs"
+              type="submit"
+              className="px-4 py-2 rounded-lg bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold shadow-xs cursor-pointer active:scale-[0.98]"
             >
-              Add Expense
+              Save Expense Record
             </button>
           </div>
-        </div>
+        </form>
       </Modal>
     </div>
   );

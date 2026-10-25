@@ -214,11 +214,17 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   value={eventName}
                   onChange={(e) => setEventName(e.target.value)}
                   placeholder="e.g. Diya & Kabir's Wedding"
+                  aria-invalid={!!errors.eventName}
+                  aria-describedby={errors.eventName ? 'wizard-event-name-error' : undefined}
                   className={`w-full text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D] ${
                     errors.eventName ? 'border-[#BE123C] bg-red-50/20' : 'border-[#D5CCC0]'
                   }`}
                 />
-                {errors.eventName && <p className="text-xs text-[#BE123C] mt-1">{errors.eventName}</p>}
+                {errors.eventName && (
+                  <p id="wizard-event-name-error" role="alert" className="text-xs text-[#BE123C] mt-1 font-medium">
+                    {errors.eventName}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -248,11 +254,17 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
+                  aria-invalid={!!errors.date}
+                  aria-describedby={errors.date ? 'wizard-event-date-error' : undefined}
                   className={`w-full text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D] ${
                     errors.date ? 'border-[#BE123C] bg-red-50/20' : 'border-[#D5CCC0]'
                   }`}
                 />
-                {errors.date && <p className="text-xs text-[#BE123C] mt-1">{errors.date}</p>}
+                {errors.date && (
+                  <p id="wizard-event-date-error" role="alert" className="text-xs text-[#BE123C] mt-1 font-medium">
+                    {errors.date}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -265,11 +277,17 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="e.g. Udaipur, Rajasthan"
+                  aria-invalid={!!errors.location}
+                  aria-describedby={errors.location ? 'wizard-event-location-error' : undefined}
                   className={`w-full text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D] ${
                     errors.location ? 'border-[#BE123C] bg-red-50/20' : 'border-[#D5CCC0]'
                   }`}
                 />
-                {errors.location && <p className="text-xs text-[#BE123C] mt-1">{errors.location}</p>}
+                {errors.location && (
+                  <p id="wizard-event-location-error" role="alert" className="text-xs text-[#BE123C] mt-1 font-medium">
+                    {errors.location}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -282,11 +300,17 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   min="1"
                   value={guestCount}
                   onChange={(e) => setGuestCount(parseInt(e.target.value, 10) || 0)}
+                  aria-invalid={!!errors.guestCount}
+                  aria-describedby={errors.guestCount ? 'wizard-event-guests-error' : undefined}
                   className={`w-full text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D] ${
                     errors.guestCount ? 'border-[#BE123C] bg-red-50/20' : 'border-[#D5CCC0]'
                   }`}
                 />
-                {errors.guestCount && <p className="text-xs text-[#BE123C] mt-1">{errors.guestCount}</p>}
+                {errors.guestCount && (
+                  <p id="wizard-event-guests-error" role="alert" className="text-xs text-[#BE123C] mt-1 font-medium">
+                    {errors.guestCount}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -311,13 +335,17 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                     value={budgetDisplay}
                     onChange={(e) => setBudgetDisplay(e.target.value)}
                     placeholder="2500000"
+                    aria-invalid={!!errors.budgetDisplay}
+                    aria-describedby={errors.budgetDisplay ? 'wizard-event-budget-error' : undefined}
                     className={`flex-1 text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D] ${
                       errors.budgetDisplay ? 'border-[#BE123C] bg-red-50/20' : 'border-[#D5CCC0]'
                     }`}
                   />
                 </div>
                 {errors.budgetDisplay && (
-                  <p className="text-xs text-[#BE123C] mt-1">{errors.budgetDisplay}</p>
+                  <p id="wizard-event-budget-error" role="alert" className="text-xs text-[#BE123C] mt-1 font-medium">
+                    {errors.budgetDisplay}
+                  </p>
                 )}
               </div>
             </div>
@@ -360,10 +388,11 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-style-input" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   Overall Aesthetic & Style <span className="text-[#BE123C]">*</span>
                 </label>
                 <input
+                  id="wizard-style-input"
                   type="text"
                   value={style}
                   onChange={(e) => setStyle(e.target.value)}
@@ -373,10 +402,11 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-catering-select" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   Catering Format <span className="text-[#BE123C]">*</span>
                 </label>
                 <select
+                  id="wizard-catering-select"
                   value={cateringType}
                   onChange={(e) => setCateringType(e.target.value)}
                   className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
@@ -389,11 +419,12 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-dietary-input" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   Dietary Requirements & Kitchen Specifications (Optional)
                 </label>
                 <div className="flex gap-2 mb-2">
                   <input
+                    id="wizard-dietary-input"
                     type="text"
                     value={newDietaryInput}
                     onChange={(e) => setNewDietaryInput(e.target.value)}
@@ -418,7 +449,8 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                       <button
                         type="button"
                         onClick={() => handleRemoveDietary(d)}
-                        className="hover:text-black"
+                        aria-label={`Remove dietary requirement: ${d}`}
+                        className="hover:text-black focus-visible:outline-2 focus-visible:outline-[#A2421D] rounded"
                       >
                         ×
                       </button>
@@ -428,10 +460,11 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-photo-select" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   Photography & Documentation Preference
                 </label>
                 <select
+                  id="wizard-photo-select"
                   value={photographyTier}
                   onChange={(e) => setPhotographyTier(e.target.value)}
                   className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
@@ -460,10 +493,11 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-venue-pref" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   Venue Setting Preference
                 </label>
                 <input
+                  id="wizard-venue-pref"
                   type="text"
                   value={venuePreference}
                   onChange={(e) => setVenuePreference(e.target.value)}
@@ -473,10 +507,11 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-decor-pref" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   Decoration & Floral Direction
                 </label>
                 <input
+                  id="wizard-decor-pref"
                   type="text"
                   value={decorationPreference}
                   onChange={(e) => setDecorationPreference(e.target.value)}
@@ -486,11 +521,12 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-access-input" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   Accessibility & Inclusivity Needs
                 </label>
                 <div className="flex gap-2 mb-2">
                   <input
+                    id="wizard-access-input"
                     type="text"
                     value={newAccessInput}
                     onChange={(e) => setNewAccessInput(e.target.value)}
@@ -515,7 +551,8 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                       <button
                         type="button"
                         onClick={() => handleRemoveAccess(a)}
-                        className="hover:text-red-600"
+                        aria-label={`Remove accessibility need: ${a}`}
+                        className="hover:text-red-600 focus-visible:outline-2 focus-visible:outline-[#A2421D] rounded"
                       >
                         ×
                       </button>
@@ -525,10 +562,11 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1C1917] mb-1">
+                <label htmlFor="wizard-special-constraints" className="block text-xs font-semibold text-[#1C1917] mb-1">
                   Special Constraints or Curfews (Optional)
                 </label>
                 <input
+                  id="wizard-special-constraints"
                   type="text"
                   value={specialConstraints}
                   onChange={(e) => setSpecialConstraints(e.target.value)}

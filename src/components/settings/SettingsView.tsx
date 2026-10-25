@@ -117,21 +117,21 @@ export const SettingsView: React.FC = () => {
       </div>
 
       {saveSuccessNotice && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-900 flex items-center gap-2">
+        <div role="status" aria-live="polite" className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-900 flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-[#047857]" />
           <span>Event preferences and budget constraints successfully saved!</span>
         </div>
       )}
 
       {importSuccess && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-900 flex items-center gap-2">
+        <div role="status" aria-live="polite" className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-900 flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-[#047857]" />
           <span>JSON event state imported and validated successfully!</span>
         </div>
       )}
 
       {importError && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-xs text-red-900 flex items-center gap-2">
+        <div role="alert" aria-live="assertive" className="p-4 bg-red-50 border border-red-200 rounded-lg text-xs text-red-900 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-[#BE123C]" />
           <span>{importError}</span>
         </div>

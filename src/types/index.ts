@@ -142,6 +142,13 @@ export type AssistantIntent =
   | 'suggest_expense_reductions'
   | 'create_budget_scenario'
   | 'summarize_plan'
+  | 'query_event_schedule'
+  | 'query_category_budget'
+  | 'detect_schedule_conflicts'
+  | 'interpret_quote_terms'
+  | 'clarify_ambiguous_request'
+  | 'refuse_unsupported_request'
+  | 'detect_conflicting_constraints'
   | 'unsupported';
 
 export interface FinancialImpact {
@@ -177,6 +184,13 @@ export interface PlanningMessage {
   requiresConfirmation?: boolean;
   actionStatus?: 'pending' | 'applied' | 'rejected';
   rationale?: string;
+  dataGrounding?:
+    | 'verified_application_data'
+    | 'derived_estimate'
+    | 'missing_information'
+    | 'unsupported_request'
+    | 'ambiguous_clarification';
+  languageDetected?: 'en' | 'bn' | 'benglish';
 }
 
 export interface ChangeRecord {

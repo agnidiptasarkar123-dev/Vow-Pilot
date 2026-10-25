@@ -1,0 +1,113 @@
+name: VowPilot Continuous Integration & Release Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: 'Deployment Environment Target'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - staging
+          - production
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: 🛡️ Release-Blocking Quality, Security & Performance Verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    env:
+      NODE_ENV: test
+      PORT: 3001
+      SESSION_SECRET: ci_pipeline_ephemeral_token_secret_32_characters_min
+      ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173,https://vowpilot.vercel.app
+
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 2. Setup Node.js Runtime (v20 LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 3. Clean Reproducible Dependency Installation (Lockfile Integrity)
+        run: npm ci
+
+      - name: 4. Static Type Checking
+        run: npx tsc --noEmit
+
+      - name: 5. Full Unit & Domain Mathematics Test Suite (1,862 Tests)
+        run: npm test -- --run
+
+      - name: 6. Production Optimized Bundle Build (Vite)
+        run: npm run build
+
+      - name: 7. Performance Budget & Bundle Chunk Regression Gate
+        run: npx vitest run src/test/performanceBudget.test.ts
+
+      - name: 8. Database Migrations, WAL Durability & Rollback Validation
+        run: npx vitest run src/test/databaseDurablePersistence.test.ts
+
+      - name: 9. Security, KDF Hashing & Hostile Payload Audit
+        run: npx vitest run src/test/securityAndAdversarialAudit.test.ts
+
+      - name: 10. SRE Observability, Resilience & Concurrency Load Simulation
+        run: npx vitest run src/test/sreResilienceAndLoad.test.ts
+
+      - name: 11. Cache Playwright Browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: 12. Install Playwright Chromium with OS Dependencies
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: 13. Critical Real-Browser E2E Multi-Viewport & Accessibility Tests
+        run: npx playwright test
+
+      - name: 14. Upload Test Artifacts & Failure Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vowpilot-test-reports
+          path: |
+            test-results/
+            artifacts/
+            coverage/
+          retention-days: 7
+
+  release_gate:
+    name: 🚀 Production Release Gate
+    needs: verify
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Verify Release Identity & Commit Digest
+        run: |
+          echo "========================================================"
+          echo "VowPilot Release Gate: ALL GATES PASSED"
+          echo "Commit SHA: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Timestamp: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          echo "========================================================"

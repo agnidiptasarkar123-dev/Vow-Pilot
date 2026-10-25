@@ -29,36 +29,36 @@ describe('VowPilot End-to-End User Journeys and UI Integration', () => {
     // 2. Budget Planner Tab
     const budgetTab = within(nav).getByRole('button', { name: /Budget Planner/i });
     fireEvent.click(budgetTab);
-    expect(screen.getByText(/Budget & Trade-Off Planner/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Budget & Trade-Off Planner/i)).toBeInTheDocument();
     expect(screen.getByText(/Category Allocations/i)).toBeInTheDocument();
 
     // 3. Decision Simulator Tab
     const simTab = within(nav).getByRole('button', { name: /Decision Simulator/i });
     fireEvent.click(simTab);
-    expect(screen.getByText(/Simulate Guest Count/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Simulate Guest Count/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Variance vs Baseline/i)[0]).toBeInTheDocument();
 
     // 4. Tasks & Graph Tab
     const tasksTab = within(nav).getByRole('button', { name: /Tasks & Graph/i });
     fireEvent.click(tasksTab);
-    expect(screen.getByText(/Tasks & Dependency Graph/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Tasks & Dependency Graph/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Schedule Catering Tasting & Menu Approval/i)[0]).toBeInTheDocument();
 
     // 5. Vendors & Quotes Tab
     const vendorsTab = within(nav).getByRole('button', { name: /Vendors & Quotes/i });
     fireEvent.click(vendorsTab);
-    expect(screen.getByText(/Vendor Directory & Quotation Matrix/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Vendor Directory & Quotation Matrix/i)).toBeInTheDocument();
     expect(screen.getByText(/Jaipur Heritage Palace Estates/i)).toBeInTheDocument();
 
     // 6. Planner Assistant Tab
     const assistantTab = within(nav).getByRole('button', { name: /Planner Assistant/i });
     fireEvent.click(assistantTab);
-    expect(screen.getByText(/Context-Aware Planning Coordinator/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Context-Aware Planning Coordinator/i)).toBeInTheDocument();
 
     // 7. Event & Data Settings Tab
     const settingsTab = within(nav).getByRole('button', { name: /Event & Data/i });
     fireEvent.click(settingsTab);
-    expect(screen.getByText(/Event Settings & Local Data Management/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Event Settings & Local Data Management/i)).toBeInTheDocument();
   });
 
   it('enforces dependency blocking rule when user attempts to complete a blocked task', async () => {
@@ -69,7 +69,7 @@ describe('VowPilot End-to-End User Journeys and UI Integration', () => {
     fireEvent.click(tasksTab);
 
     // Task "Sign Catering Contract & Lock Per-Plate Price"
-    const blockedElements = screen.getAllByText(/Sign Catering Contract & Lock Per-Plate Price/i);
+    const blockedElements = await screen.findAllByText(/Sign Catering Contract & Lock Per-Plate Price/i);
     const blockedTaskHeading = blockedElements[0];
     expect(blockedTaskHeading).toBeInTheDocument();
 
@@ -96,7 +96,7 @@ describe('VowPilot End-to-End User Journeys and UI Integration', () => {
     fireEvent.click(newEventBtn);
 
     // Wizard modal opens
-    expect(screen.getByText(/Define Event Foundation/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Define Event Foundation/i)).toBeInTheDocument();
 
     // Attempt to proceed without required fields
     const nextBtn = screen.getByRole('button', { name: /Next Step/i });
@@ -115,18 +115,18 @@ describe('VowPilot End-to-End User Journeys and UI Integration', () => {
     fireEvent.click(vendorsTab);
 
     // Switch to Photography category tab
-    const photoCategoryBtn = screen.getByRole('button', { name: /Photography & Cinema/i });
+    const photoCategoryBtn = await screen.findByRole('button', { name: /Photography & Cinema/i });
     fireEvent.click(photoCategoryBtn);
 
     // Find ShutterCraft Visuals (which has missing validity and omissions)
-    expect(screen.getByText(/ShutterCraft Visuals/i)).toBeInTheDocument();
+    expect(await screen.findByText(/ShutterCraft Visuals/i)).toBeInTheDocument();
 
     // Click Draft Clarification
     const draftBtns = screen.getAllByRole('button', { name: /Draft Clarification/i });
     fireEvent.click(draftBtns[0]);
 
     // Modal opens with drafted inquiry
-    expect(screen.getByText(/Clarification Inquiry:/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Clarification Inquiry:/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Copy Inquiry Message/i })).toBeInTheDocument();
   });
 
@@ -137,13 +137,13 @@ describe('VowPilot End-to-End User Journeys and UI Integration', () => {
     const simTab = screen.getByRole('button', { name: /Decision Simulator/i });
     fireEvent.click(simTab);
 
-    expect(screen.getByText(/Simulate Guest Count \(150 Guests\)/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Simulate Guest Count \(150 Guests\)/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Variance vs Baseline/i)[0]).toBeInTheDocument();
 
     // Save as scenario modal can open
     const saveBtn = screen.getByRole('button', { name: /Save as Scenario/i });
     fireEvent.click(saveBtn);
 
-    expect(screen.getByText(/Save Simulation as Scenario/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Save Simulation as Scenario/i)).toBeInTheDocument();
   });
 });

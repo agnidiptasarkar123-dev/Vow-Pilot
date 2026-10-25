@@ -20,7 +20,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
-  const { state, activeTab, setActiveTab, resetToDemo } = useEvent();
+  const { state, activeTab, setActiveTab, resetToDemo, collabState, setCollabModalOpen, userRole } = useEvent();
   const overview = calculateBudgetOverview(state.event.totalBudget, state.categories, state.expenses);
   const evaluations = evaluateTasks(state.tasks, state.event.date);
   const overdueCount = evaluations.filter((e) => e.risks.isOverdue).length;
@@ -40,6 +40,49 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
       resetToDemo();
     }
   };
+
+  const getCollabBadge = () => {
+    switch (collabState.status) {
+      case 'synced':
+        return {
+          bg: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+          dot: 'bg-emerald-600',
+          label: 'Live Synced',
+        };
+      case 'syncing':
+        return {
+          bg: 'bg-blue-50 text-blue-800 border-blue-200',
+          dot: 'bg-blue-600 animate-pulse',
+          label: 'Syncing...',
+        };
+      case 'connecting':
+        return {
+          bg: 'bg-amber-50 text-amber-800 border-amber-200',
+          dot: 'bg-amber-600 animate-pulse',
+          label: 'Connecting...',
+        };
+      case 'conflict':
+        return {
+          bg: 'bg-rose-50 text-rose-800 border-rose-300 animate-pulse',
+          dot: 'bg-rose-600',
+          label: 'Conflict Detected',
+        };
+      case 'error':
+        return {
+          bg: 'bg-red-50 text-red-800 border-red-200',
+          dot: 'bg-red-600',
+          label: 'Sync Offline',
+        };
+      default:
+        return {
+          bg: 'bg-stone-50 text-stone-700 border-stone-200',
+          dot: 'bg-stone-400',
+          label: 'Local Mode',
+        };
+    }
+  };
+
+  const collabBadge = getCollabBadge();
 
   return (
     <header className="border-b border-[#E6DFD5] bg-[#FFFFFF] sticky top-0 z-30 shadow-xs">
@@ -66,7 +109,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
         </div>
 
         {/* Event Quick Info */}
-        <div className="flex items-center space-x-6 text-sm">
+        <div className="flex items-center space-x-4 sm:space-x-6 text-sm">
           <div className="hidden md:flex flex-col text-right">
             <span className="font-semibold text-[#1C1917] truncate max-w-[240px]">
               {state.event.name}
@@ -81,7 +124,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
 
           {/* Budget Health Pill */}
           <div className="flex flex-col text-right">
-            <span className="text-xs text-[#78716C]">Remaining Runway</span>
+            <span className="text-xs text-[#5C554E]">
+              {overview.isOverrun ? 'Deficit Overrun' : 'Remaining Runway'}
+            </span>
             <span
               className={`font-mono text-sm font-semibold ${
                 overview.isOverrun ? 'text-[#BE123C]' : 'text-[#047857]'
@@ -91,22 +136,46 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
             </span>
           </div>
 
-          {/* Real-time Collaboration Status Badge */}
-          <div
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-semibold border border-emerald-200 shadow-2xs"
-            title="State persistence & real-time sync active (OCC Protected)"
+          {/* Interactive Real-time Collaboration Status Badge */}
+          <button
+            onClick={() => setCollabModalOpen(true)}
+            data-testid="collab-status-badge"
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border shadow-2xs hover:opacity-90 transition cursor-pointer ${collabBadge.bg}`}
+            title={`Collaboration status: ${collabBadge.label} (Version ${collabState.serverVersion}). Click to manage collaborators & invitations.`}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
-            <span className="hidden sm:inline">Synced</span>
-            <span className="font-mono text-[10px] text-emerald-700 font-bold">v1</span>
-          </div>
+            <span className="sr-only">Collaboration status: </span>
+            <span className={`w-1.5 h-1.5 rounded-full ${collabBadge.dot}`} />
+            <span className="hidden sm:inline">{collabBadge.label}</span>
+            <span className="font-mono text-[10px] opacity-75 font-bold">v{collabState.serverVersion}</span>
+            {userRole && (
+              <span className="ml-1 uppercase text-[9px] px-1.5 py-0.2 rounded bg-black/5 font-extrabold tracking-wider">
+                {userRole}
+              </span>
+            )}
+          </button>
 
           {/* Quick Header Actions */}
           <div className="flex items-center space-x-2">
             <button
+              onClick={() => setCollabModalOpen(true)}
+              data-testid="open-collab-btn"
+              title="Invite collaborators or view active members"
+              aria-label={`Collaborate${collabState.members.length > 0 ? ` (${collabState.members.length})` : ''}`}
+              className="px-2.5 py-1.5 rounded bg-[#FAF0EB] hover:bg-[#F3CEBE] text-[#A2421D] border border-[#F3CEBE] text-xs font-semibold flex items-center gap-1.5 transition"
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Collaborate</span>
+              {collabState.members.length > 0 && (
+                <span className="bg-[#A2421D] text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold">
+                  {collabState.members.length}
+                </span>
+              )}
+            </button>
+            <button
               onClick={handleResetWithConfirm}
+              aria-label="Reset Demo to Jaipur data"
               title="Reset to default Jaipur demo data"
-              className="p-1.5 rounded text-[#78716C] hover:text-[#1C1917] hover:bg-[#F4EFEA] border border-transparent hover:border-[#E6DFD5] text-xs flex items-center gap-1 transition"
+              className="p-1.5 rounded text-[#5C554E] hover:text-[#1C1917] hover:bg-[#F4EFEA] border border-transparent hover:border-[#E6DFD5] text-xs flex items-center gap-1 transition"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span className="hidden lg:inline">Reset Demo</span>
@@ -133,6 +202,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
                 data-testid={`tab-${tab.id}`}
                 id={`tab-${tab.id}`}
                 onClick={() => setActiveTab(tab.id)}
+                aria-current={isActive ? 'page' : undefined}
                 className={`flex items-center space-x-2 px-3 py-2 rounded-md text-xs font-medium whitespace-nowrap transition-colors ${
                   isActive
                     ? 'bg-[#FAF0EB] text-[#A2421D] font-semibold border border-[#F3CEBE]'
@@ -142,7 +212,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
                 <Icon className={`w-4 h-4 ${isActive ? 'text-[#A2421D]' : 'text-[#78716C]'}`} />
                 <span>{tab.label}</span>
                 {tab.badge && (
-                  <span className="ml-1 px-1.5 py-0.2 bg-[#BE123C] text-white text-[10px] font-bold rounded-full">
+                  <span
+                    aria-label={`${tab.badge} overdue tasks`}
+                    className="ml-1 px-1.5 py-0.2 bg-[#BE123C] text-white text-[10px] font-bold rounded-full"
+                  >
                     {tab.badge}
                   </span>
                 )}

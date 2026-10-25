@@ -1,38 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { EventProvider, useEvent } from './context/EventContext';
 import { Header } from './components/common/Header';
 import { LandingView } from './components/landing/LandingView';
 import { DashboardView } from './components/dashboard/DashboardView';
-import { BudgetPlannerView } from './components/budget/BudgetPlannerView';
-import { DecisionSimulatorView } from './components/simulator/DecisionSimulatorView';
-import { TaskManagementView } from './components/tasks/TaskManagementView';
-import { VendorCoordinationView } from './components/vendors/VendorCoordinationView';
-import { AssistantView } from './components/assistant/AssistantView';
-import { SettingsView } from './components/settings/SettingsView';
-import { NeedsAssessmentWizard } from './components/assessment/NeedsAssessmentWizard';
 import { Modal } from './components/common/Modal';
+import { ViewLoadingFallback } from './components/common/ViewLoadingFallback';
+
+// Route-level code splitting: dynamic imports for secondary heavy views
+const BudgetPlannerView = lazy(() =>
+  import('./components/budget/BudgetPlannerView').then((m) => ({ default: m.BudgetPlannerView }))
+);
+const DecisionSimulatorView = lazy(() =>
+  import('./components/simulator/DecisionSimulatorView').then((m) => ({ default: m.DecisionSimulatorView }))
+);
+const TaskManagementView = lazy(() =>
+  import('./components/tasks/TaskManagementView').then((m) => ({ default: m.TaskManagementView }))
+);
+const VendorCoordinationView = lazy(() =>
+  import('./components/vendors/VendorCoordinationView').then((m) => ({ default: m.VendorCoordinationView }))
+);
+const AssistantView = lazy(() =>
+  import('./components/assistant/AssistantView').then((m) => ({ default: m.AssistantView }))
+);
+const SettingsView = lazy(() =>
+  import('./components/settings/SettingsView').then((m) => ({ default: m.SettingsView }))
+);
+const NeedsAssessmentWizard = lazy(() =>
+  import('./components/assessment/NeedsAssessmentWizard').then((m) => ({ default: m.NeedsAssessmentWizard }))
+);
+const CollaborationModal = lazy(() =>
+  import('./components/collaboration/CollaborationModal').then((m) => ({ default: m.CollaborationModal }))
+);
+const ConflictModal = lazy(() =>
+  import('./components/collaboration/ConflictModal').then((m) => ({ default: m.ConflictModal }))
+);
 
 const AppContent: React.FC = () => {
-  const { activeTab, setActiveTab } = useEvent();
+  const {
+    state,
+    activeTab,
+    setActiveTab,
+    collabState,
+    isCollabModalOpen,
+    setCollabModalOpen,
+    isConflictModalOpen,
+    resolveConflictAcceptServer,
+    resolveConflictReapplyLocal,
+  } = useEvent();
   const [isWizardOpen, setIsWizardOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#1F1D1A] flex flex-col font-sans selection:bg-[#E8DCCF] selection:text-[#5B291A]">
+      {/* WCAG 2.2 AA Skip to Main Content Bypass Link */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#A2421D] focus:text-white focus:rounded-md focus:shadow-lg focus:outline-2 focus:outline-white focus:font-semibold text-xs"
+      >
+        Skip to main content
+      </a>
+
       {/* Global Application Header */}
       <Header onOpenNewEventWizard={() => setIsWizardOpen(true)} />
 
       {/* Main Content Area */}
-      <main className="flex-1 pb-16">
+      <main id="main-content" tabIndex={-1} className="flex-1 pb-16 focus:outline-hidden">
         {activeTab === 'landing' && (
           <LandingView onStartNewEvent={() => setIsWizardOpen(true)} />
         )}
         {activeTab === 'dashboard' && <DashboardView />}
-        {activeTab === 'budget' && <BudgetPlannerView />}
-        {activeTab === 'simulator' && <DecisionSimulatorView />}
-        {activeTab === 'tasks' && <TaskManagementView />}
-        {activeTab === 'vendors' && <VendorCoordinationView />}
-        {activeTab === 'assistant' && <AssistantView />}
-        {activeTab === 'settings' && <SettingsView />}
+        <Suspense fallback={<ViewLoadingFallback label="Loading planner module..." />}>
+          {activeTab === 'budget' && <BudgetPlannerView />}
+          {activeTab === 'simulator' && <DecisionSimulatorView />}
+          {activeTab === 'tasks' && <TaskManagementView />}
+          {activeTab === 'vendors' && <VendorCoordinationView />}
+          {activeTab === 'assistant' && <AssistantView />}
+          {activeTab === 'settings' && <SettingsView />}
+        </Suspense>
       </main>
 
       {/* Needs Assessment Wizard Modal */}
@@ -43,17 +86,44 @@ const AppContent: React.FC = () => {
         description="Establish verified event constraints, budget caps, and scheduling priorities."
         maxWidth="3xl"
       >
-        <NeedsAssessmentWizard
-          onComplete={() => {
-            setIsWizardOpen(false);
-            setActiveTab('dashboard');
-          }}
-          onCancel={() => setIsWizardOpen(false)}
-        />
+        <Suspense fallback={<ViewLoadingFallback label="Loading assessment wizard..." />}>
+          {isWizardOpen && (
+            <NeedsAssessmentWizard
+              onComplete={() => {
+                setIsWizardOpen(false);
+                setActiveTab('dashboard');
+              }}
+              onCancel={() => setIsWizardOpen(false)}
+            />
+          )}
+        </Suspense>
       </Modal>
 
+      {/* Multi-User Collaboration & Invitation Modal */}
+      {isCollabModalOpen && (
+        <Suspense fallback={null}>
+          <CollaborationModal
+            isOpen={isCollabModalOpen}
+            onClose={() => setCollabModalOpen(false)}
+            eventId={collabState.activeEventId || state.event.id}
+          />
+        </Suspense>
+      )}
+
+      {/* OCC Concurrency Conflict Resolution Modal */}
+      {isConflictModalOpen && (
+        <Suspense fallback={null}>
+          <ConflictModal
+            isOpen={isConflictModalOpen}
+            conflict={collabState.lastConflict}
+            onAcceptServer={resolveConflictAcceptServer}
+            onKeepLocal={resolveConflictReapplyLocal}
+          />
+        </Suspense>
+      )}
+
       {/* Subtle Footer */}
-      <footer className="border-t border-[#E6DFD5] bg-[#FFFFFF] py-4 text-center text-xs text-[#78716C]">
+      <footer className="border-t border-[#E6DFD5] bg-[#FFFFFF] py-4 text-center text-xs text-[#5C554E]">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="font-bold text-[#1C1917] font-serif-heading">VowPilot</span>

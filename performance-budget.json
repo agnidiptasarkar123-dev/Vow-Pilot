@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VowPilot Performance & SRE Budgets",
+  "version": "1.0.0",
+  "description": "Production performance thresholds, bundle budgets, latency limits, and Core Web Vitals targets for CI enforcement.",
+  "budgets": {
+    "bundleSizes": {
+      "initialAppJsBytes": 200000,
+      "vendorReactJsBytes": 250000,
+      "totalInitialJsBytes": 420000,
+      "globalCssBytes": 60000,
+      "maxIndividualRouteChunkBytes": 35000,
+      "notes": "Ensures no monolithic bundle warnings and sub-120kB gzip transfer on first visit."
+    },
+    "apiLatencies": {
+      "liveProbeP95Ms": 15,
+      "readyProbeP95Ms": 30,
+      "authenticatedReadP95Ms": 50,
+      "occStateUpdateP95Ms": 100,
+      "notes": "In-memory / local SQLite latency bounds allowing for measurement variance in CI environments."
+    },
+    "reliability": {
+      "max5xxErrorRatePercent": 0.1,
+      "maxSseConnectionsPerInstance": 1000,
+      "requestTimeoutMs": 15000,
+      "emailDispatchConcurrencyLimit": 5,
+      "sqliteBusyTimeoutMs": 5000
+    },
+    "coreWebVitals": {
+      "lcpMs": {
+        "good": 2500,
+        "needsImprovement": 4000
+      },
+      "clsScore": {
+        "good": 0.1,
+        "needsImprovement": 0.25
+      },
+      "inpMs": {
+        "good": 200,
+        "needsImprovement": 500
+      },
+      "fcpMs": {
+        "good": 1800,
+        "needsImprovement": 3000
+      },
+      "ttfbMs": {
+        "good": 800,
+        "needsImprovement": 1800
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { AppState, PlanningMessage, ProposedAction } from '../../types';
 import { generateAssistantResponse } from '../../domain/assistantEngine';
+import { validateProposedAction } from '../../domain/assistantValidation';
 import { createChangeRecord } from './recordChange';
 
 export const handleSendAssistantMessage = (state: AppState, userText: string): AppState => {
@@ -23,6 +24,22 @@ export const handleApplyProposedAction = (
   messageId: string,
   action: ProposedAction
 ): AppState => {
+  const validation = validateProposedAction(action, state);
+  if (!validation.isValid) {
+    const errorMsg = `Action validation failed: ${validation.error || 'Domain invariant violated'}`;
+    const rejectedMessages = state.messages.map((m) =>
+      m.id === messageId ? { ...m, actionStatus: 'rejected' as const, rationale: errorMsg } : m
+    );
+    return {
+      ...state,
+      messages: rejectedMessages,
+      changeLog: [
+        createChangeRecord('budget', `Rejected invalid assistant action: ${errorMsg}`),
+        ...state.changeLog,
+      ],
+    };
+  }
+
   let nextEvent = { ...state.event };
   let nextCategories = [...state.categories];
   let nextScenarios = [...state.scenarios];

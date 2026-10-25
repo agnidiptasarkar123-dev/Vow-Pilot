@@ -4,18 +4,29 @@ import { compareCategoryVendors, draftClarificationMessage } from '../../domain/
 import { formatCurrency, parseDisplayToMinor } from '../../domain/currency';
 import { Vendor, VendorQuote } from '../../types';
 import { Modal } from '../common/Modal';
+import { EmptyState } from '../common/EmptyState';
 import {
   AlertCircle,
   AlertTriangle,
   Check,
   Copy,
+  ExternalLink,
   FileText,
+  Loader2,
+  Lock,
   Mail,
   Phone,
   Plus,
+  RefreshCw,
+  Send,
   Star,
   Trash2,
 } from 'lucide-react';
+import {
+  dispatchEmailViaServer,
+  launchManualMailtoHandoff,
+  type DispatchEmailResponse,
+} from '../../services/emailClient';
 
 export const VendorCoordinationView: React.FC = () => {
   const {
@@ -25,6 +36,7 @@ export const VendorCoordinationView: React.FC = () => {
     addQuote,
     selectQuote,
     recordVendorInquiry,
+    isReadOnly,
   } = useEvent();
 
   const [selectedCategoryTab, setSelectedCategoryTab] = useState<string>(
@@ -40,6 +52,11 @@ export const VendorCoordinationView: React.FC = () => {
   const [hasCopiedDraft, setHasCopiedDraft] = useState(false);
   const [hasDispatchedEmail, setHasDispatchedEmail] = useState(false);
   const [dispatchError, setDispatchError] = useState<string | null>(null);
+  const [isDispatching, setIsDispatching] = useState(false);
+  const [serverDeliveryResult, setServerDeliveryResult] = useState<DispatchEmailResponse | null>(null);
+  const [serverDeliveryStatus, setServerDeliveryStatus] = useState<
+    'idle' | 'accepted_by_provider' | 'delivered' | 'failed'
+  >('idle');
 
   // Add Vendor Modal
   const [isAddVendorOpen, setIsAddVendorOpen] = useState(false);
@@ -79,6 +96,9 @@ export const VendorCoordinationView: React.FC = () => {
     setHasCopiedDraft(false);
     setHasDispatchedEmail(false);
     setDispatchError(null);
+    setServerDeliveryStatus('idle');
+    setServerDeliveryResult(null);
+    setIsDispatching(false);
   };
 
   const handleCopyDraft = async () => {
@@ -103,6 +123,39 @@ export const VendorCoordinationView: React.FC = () => {
     }
   };
 
+  const handleSendServerEmail = async () => {
+    if (!clarificationModal) return;
+    const email = clarificationModal.vendor.email;
+    if (!email || !email.includes('@')) {
+      setDispatchError('No valid email address configured for this supplier. Please update supplier details or use clipboard copy.');
+      return;
+    }
+    setIsDispatching(true);
+    setDispatchError(null);
+    setServerDeliveryStatus('idle');
+
+    const subject = `Clarification: Quotation for ${state.event.name}`;
+    const result = await dispatchEmailViaServer({
+      eventId: state.event.id || 'default_event',
+      vendorId: clarificationModal.vendor.id,
+      recipientEmail: email,
+      recipientName: clarificationModal.vendor.name,
+      subject,
+      bodyText: clarificationModal.message,
+    });
+
+    setIsDispatching(false);
+    if (result.status === 'accepted_by_provider' || result.status === 'delivered') {
+      setServerDeliveryStatus(result.status as 'accepted_by_provider' | 'delivered');
+      setServerDeliveryResult(result);
+      recordVendorInquiry(clarificationModal.quote.id, clarificationModal.vendor.id, 'email_client');
+    } else {
+      setServerDeliveryStatus('failed');
+      setDispatchError(result.error || 'Server email dispatch failed. Please check your credentials or network.');
+      // The draft in clarificationModal.message is preserved so user doesn't lose it!
+    }
+  };
+
   const handleSendEmail = () => {
     if (!clarificationModal) return;
     const email = clarificationModal.vendor.email;
@@ -112,15 +165,18 @@ export const VendorCoordinationView: React.FC = () => {
     }
     setDispatchError(null);
     const subject = `Clarification: Quotation for ${state.event.name}`;
-    const mailtoUri = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(clarificationModal.message)}`;
+    const res = launchManualMailtoHandoff({
+      recipientEmail: email,
+      subject,
+      bodyText: clarificationModal.message,
+    });
 
-    try {
-      window.location.href = mailtoUri;
+    if (res.status === 'opened_in_client') {
       recordVendorInquiry(clarificationModal.quote.id, clarificationModal.vendor.id, 'email_client');
       setHasDispatchedEmail(true);
-      setTimeout(() => setHasDispatchedEmail(false), 3000);
-    } catch {
-      setDispatchError('Unable to launch email client automatically. Please use the Copy Inquiry Message button.');
+      setTimeout(() => setHasDispatchedEmail(false), 5000);
+    } else {
+      setDispatchError(res.error || 'Unable to launch email client automatically. Please use the Copy Inquiry Message button.');
     }
   };
 
@@ -180,6 +236,21 @@ export const VendorCoordinationView: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
+      {/* Read-Only Viewer Alert Banner */}
+      {isReadOnly && (
+        <div
+          data-testid="viewer-readonly-banner"
+          className="p-3.5 rounded-lg bg-stone-100 border border-stone-300 flex items-center justify-between text-xs text-stone-700 shadow-2xs"
+        >
+          <div className="flex items-center gap-2">
+            <Lock className="w-4 h-4 text-stone-500 shrink-0" />
+            <span>
+              <strong>Viewer Permissions (Read-Only):</strong> You can review vendor directories, quotations, and compare contract terms. Adding vendors, logging quotes, selecting proposals, and sending communications requires Editor or Owner permissions.
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Header and Quick Actions */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -191,25 +262,32 @@ export const VendorCoordinationView: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => {
-              setQuoteVendorId(comparison.rows[0]?.vendor.id || state.vendors[0]?.id || '');
-              setIsAddQuoteOpen(true);
-            }}
-            className="px-3.5 py-2 rounded-md bg-white border border-[#D5CCC0] text-[#1C1917] hover:bg-[#FAF8F5] text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
-          >
-            <FileText className="w-3.5 h-3.5 text-[#A2421D]" />
-            Log Quotation
-          </button>
-          <button
-            onClick={() => setIsAddVendorOpen(true)}
-            className="px-4 py-2 rounded-md bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
-          >
-            <Plus className="w-4 h-4" />
-            Add Supplier
-          </button>
-        </div>
+        {!isReadOnly ? (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setQuoteVendorId(comparison.rows[0]?.vendor.id || state.vendors[0]?.id || '');
+                setIsAddQuoteOpen(true);
+              }}
+              className="px-3.5 py-2 rounded-md bg-white border border-[#D5CCC0] text-[#1C1917] hover:bg-[#FAF8F5] text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+            >
+              <FileText className="w-3.5 h-3.5 text-[#A2421D]" />
+              Log Quotation
+            </button>
+            <button
+              onClick={() => setIsAddVendorOpen(true)}
+              className="px-4 py-2 rounded-md bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+            >
+              <Plus className="w-4 h-4" />
+              Add Supplier
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-stone-100 text-stone-500 text-xs font-medium border border-stone-200">
+            <Lock className="w-3.5 h-3.5" />
+            <span>Read-Only Mode</span>
+          </div>
+        )}
       </div>
 
       {/* Category Tabs */}
@@ -253,16 +331,16 @@ export const VendorCoordinationView: React.FC = () => {
         </div>
 
         {comparison.rows.length === 0 ? (
-          <div className="bg-white p-12 text-center rounded-xl border border-[#E6DFD5] text-xs text-[#78716C] space-y-3">
-            <p>No vendor records registered under {activeCategory.name}.</p>
-            <button
-              onClick={() => setIsAddVendorOpen(true)}
-              className="px-4 py-2 rounded-md bg-[#A2421D] text-white text-xs font-semibold inline-flex items-center gap-1"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              Add First Supplier in {activeCategory.name}
-            </button>
-          </div>
+          <EmptyState
+            icon={FileText}
+            title={`No vendor records registered under ${activeCategory.name}`}
+            description="Add suppliers and log quotation terms to compare pricing, inclusions, and contract coverage."
+            action={!isReadOnly ? {
+              label: `Add First Supplier in ${activeCategory.name}`,
+              icon: Plus,
+              onClick: () => setIsAddVendorOpen(true),
+            } : undefined}
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {comparison.rows.map((row) => {
@@ -299,14 +377,16 @@ export const VendorCoordinationView: React.FC = () => {
                         )}
                       </div>
 
-                      <button
-                        onClick={() => handleDeleteVendorWithConfirm(vendor.id, vendor.name)}
-                        className="p-1 rounded text-neutral-400 hover:text-red-600 transition"
-                        title="Delete Vendor"
-                        aria-label={`Delete vendor: ${vendor.name}`}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      {!isReadOnly && (
+                        <button
+                          onClick={() => handleDeleteVendorWithConfirm(vendor.id, vendor.name)}
+                          className="p-1 rounded text-neutral-400 hover:text-red-600 transition"
+                          title="Delete Vendor"
+                          aria-label={`Delete vendor: ${vendor.name}`}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                     </div>
 
                     {/* Contact & Rating info */}
@@ -442,6 +522,7 @@ export const VendorCoordinationView: React.FC = () => {
                       {quote ? (
                         <>
                           <button
+                            data-testid="draft-clarification-btn"
                             onClick={() => handleOpenClarification(vendor, quote)}
                             className="px-2.5 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#EAE4DB] text-[#1C1917] text-[11px] font-semibold border border-[#D5CCC0] transition"
                             aria-label={`Draft clarification message for ${vendor.name}`}
@@ -449,19 +530,25 @@ export const VendorCoordinationView: React.FC = () => {
                             Draft Clarification
                           </button>
 
-                          <button
-                            onClick={() => selectQuote(quote.id)}
-                            aria-label={isSelected ? `Proposal currently selected for ${vendor.name}` : `Select proposal from ${vendor.name}`}
-                            className={`px-3 py-1.5 rounded text-[11px] font-semibold transition ${
-                              isSelected
-                                ? 'bg-[#047857] text-white'
-                                : 'bg-[#1C1917] hover:bg-[#33302B] text-white shadow-xs'
-                            }`}
-                          >
-                            {isSelected ? '✓ Selected' : 'Select Proposal'}
-                          </button>
+                          {!isReadOnly ? (
+                            <button
+                              onClick={() => selectQuote(quote.id)}
+                              aria-label={isSelected ? `Proposal currently selected for ${vendor.name}` : `Select proposal from ${vendor.name}`}
+                              className={`px-3 py-1.5 rounded text-[11px] font-semibold transition ${
+                                isSelected
+                                  ? 'bg-[#047857] text-white'
+                                  : 'bg-[#1C1917] hover:bg-[#33302B] text-white shadow-xs'
+                              }`}
+                            >
+                              {isSelected ? '✓ Selected' : 'Select Proposal'}
+                            </button>
+                          ) : (
+                            <span className={`px-2.5 py-1 rounded text-[11px] font-semibold ${isSelected ? 'text-[#047857] font-bold' : 'text-[#78716C]'}`}>
+                              {isSelected ? '✓ Selected' : 'Proposal Logged'}
+                            </span>
+                          )}
                         </>
-                      ) : (
+                      ) : !isReadOnly ? (
                         <button
                           onClick={() => {
                             setQuoteVendorId(vendor.id);
@@ -472,6 +559,10 @@ export const VendorCoordinationView: React.FC = () => {
                         >
                           + Submit Quotation
                         </button>
+                      ) : (
+                        <span className="w-full text-center py-1 text-xs text-[#A8A29E] italic">
+                          No quotation submitted
+                        </span>
                       )}
                     </div>
                 </div>
@@ -501,29 +592,117 @@ export const VendorCoordinationView: React.FC = () => {
                 )}
               </span>
             </div>
-            {hasDispatchedEmail && (
-              <span className="text-emerald-700 font-semibold flex items-center gap-1">
-                <Check className="w-3.5 h-3.5" /> Client Launched & Logged
-              </span>
-            )}
           </div>
 
+          {/* Delivery In-Flight Spinner */}
+          {isDispatching && (
+            <div role="status" aria-live="polite" className="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-md flex items-center gap-2">
+              <Loader2 className="w-4 h-4 text-amber-700 animate-spin shrink-0" />
+              <span>Connecting to email provider and dispatching message...</span>
+            </div>
+          )}
+
+          {/* Accepted by Provider Banner */}
+          {serverDeliveryStatus === 'accepted_by_provider' && (
+            <div role="status" aria-live="polite" className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-md space-y-1">
+              <div className="flex items-center gap-1.5 font-semibold text-emerald-800">
+                <Check className="w-4 h-4 text-emerald-700 shrink-0" />
+                <span>Accepted by Email Provider</span>
+              </div>
+              <div className="text-[11px] text-emerald-700">
+                Handoff confirmed. Provider Message ID:{' '}
+                <code className="font-mono bg-emerald-100 px-1 py-0.5 rounded text-emerald-900">
+                  {serverDeliveryResult?.providerMessageId}
+                </code>
+              </div>
+              <div className="text-[10px] text-emerald-600">
+                Queued for SMTP relay transmission (attempts: {serverDeliveryResult?.attempts || 1}).
+              </div>
+            </div>
+          )}
+
+          {/* Delivered to Test Mailbox Banner */}
+          {serverDeliveryStatus === 'delivered' && (
+            <div role="status" aria-live="polite" className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-md space-y-1.5">
+              <div className="flex items-center gap-1.5 font-semibold text-emerald-800">
+                <Check className="w-4 h-4 text-emerald-700 shrink-0" />
+                <span>Delivered to Test Mailbox</span>
+              </div>
+              <div className="text-[11px] text-emerald-700">
+                Provider Message ID:{' '}
+                <code className="font-mono bg-emerald-100 px-1 py-0.5 rounded text-emerald-900">
+                  {serverDeliveryResult?.providerMessageId}
+                </code>
+              </div>
+              {serverDeliveryResult?.previewUrl && (
+                <div>
+                  <a
+                    href={serverDeliveryResult.previewUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 text-[#A2421D] underline font-medium text-xs hover:text-[#863414]"
+                  >
+                    <span>View Delivered Message in Test Inbox</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Manual Mailto Client Handoff Banner */}
+          {hasDispatchedEmail && (
+            <div role="status" aria-live="polite" className="p-3 bg-blue-50 border border-blue-200 text-blue-900 rounded-md space-y-0.5">
+              <div className="flex items-center gap-1.5 font-semibold text-blue-800">
+                <Check className="w-3.5 h-3.5 text-blue-700 shrink-0" />
+                <span>Client Launched & Logged</span>
+              </div>
+              <div className="text-[11px] text-blue-700">
+                Inquiry transferred to your local mail client (RFC-6068). Check your mail client outbox to confirm sending.
+              </div>
+            </div>
+          )}
+
+          {/* Dispatch Error Banner with Safe Retry */}
           {dispatchError && (
-            <div className="p-2.5 bg-amber-50 border border-amber-200 text-amber-900 rounded-md flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
-              <span>{dispatchError}</span>
+            <div role="alert" aria-live="assertive" className="p-3 bg-rose-50 border border-rose-200 text-rose-900 rounded-md flex items-start justify-between gap-2">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-700 shrink-0 mt-0.5" />
+                <div>
+                  <div className="font-semibold text-rose-800">Dispatch Failed</div>
+                  <div>{dispatchError}</div>
+                  <div className="text-[11px] text-rose-700 mt-0.5">
+                    Your draft has been preserved below. You can edit the text or retry.
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={handleSendServerEmail}
+                disabled={isDispatching}
+                className="px-2.5 py-1 bg-rose-100 hover:bg-rose-200 text-rose-800 rounded font-semibold text-[11px] shrink-0 flex items-center gap-1"
+              >
+                <RefreshCw className="w-3 h-3" />
+                <span>Retry</span>
+              </button>
             </div>
           )}
 
           <p className="text-[#5C554E]">
-            Review the drafted inquiry below. You can send it directly through your system email client (RFC-6068) or copy the formatted text.
+            Review or customize the drafted inquiry below. You can send it directly through VowPilot&apos;s server email service, launch your system mail client (RFC-6068), or copy the text.
           </p>
 
+          <label htmlFor="vendor-clarification-textarea" className="sr-only">
+            Clarification inquiry message draft
+          </label>
           <textarea
-            rows={10}
-            readOnly
+            id="vendor-clarification-textarea"
+            rows={8}
             value={clarificationModal?.message || ''}
-            className="w-full p-3 font-mono text-xs border border-[#D5CCC0] rounded-lg bg-[#FAF8F5] text-[#1C1917] focus:outline-hidden"
+            onChange={(e) =>
+              setClarificationModal((prev) => (prev ? { ...prev, message: e.target.value } : null))
+            }
+            aria-label="Clarification inquiry message draft"
+            className="w-full p-3 font-mono text-xs border border-[#D5CCC0] rounded-lg bg-[#FAF8F5] text-[#1C1917] focus:outline-hidden focus:border-[#A2421D]"
           />
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
@@ -531,16 +710,17 @@ export const VendorCoordinationView: React.FC = () => {
               Includes quoted amount: {clarificationModal ? formatCurrency(clarificationModal.quote.quotedAmount, clarificationModal.quote.currency) : ''}
             </span>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setClarificationModal(null)}
-                className="px-3 py-2 border border-[#D5CCC0] rounded-md text-[#5C554E] hover:bg-neutral-50"
+                className="px-3 py-2 border border-[#D5CCC0] rounded-md text-[#5C554E] hover:bg-neutral-50 text-xs"
               >
                 Close
               </button>
               <button
+                data-testid="copy-draft-btn"
                 onClick={handleCopyDraft}
-                className="px-3 py-2 border border-[#A2421D] text-[#A2421D] hover:bg-[#FBF6F0] font-semibold rounded-md flex items-center gap-1.5 shadow-xs"
+                className="px-3 py-2 border border-[#A2421D] text-[#A2421D] hover:bg-[#FBF6F0] font-semibold rounded-md flex items-center gap-1.5 shadow-xs text-xs"
               >
                 {hasCopiedDraft ? (
                   <>
@@ -557,19 +737,42 @@ export const VendorCoordinationView: React.FC = () => {
               <button
                 onClick={handleSendEmail}
                 disabled={!clarificationModal?.vendor.email}
-                className={`px-3 py-2 text-white font-semibold rounded-md flex items-center gap-1.5 shadow-xs transition ${
+                className={`px-3 py-2 border border-[#78716C] text-[#44403C] hover:bg-neutral-50 font-semibold rounded-md flex items-center gap-1.5 text-xs transition ${
                   clarificationModal?.vendor.email
+                    ? 'cursor-pointer'
+                    : 'cursor-not-allowed opacity-60'
+                }`}
+                title="Launch native email client via RFC 6068 mailto URI"
+              >
+                <Mail className="w-3.5 h-3.5 text-[#78716C]" />
+                <span>Launch Email Client</span>
+              </button>
+              <button
+                data-testid="send-server-email-btn"
+                onClick={handleSendServerEmail}
+                disabled={!clarificationModal?.vendor.email || isDispatching}
+                className={`px-3 py-2 text-white font-semibold rounded-md flex items-center gap-1.5 shadow-xs transition text-xs ${
+                  clarificationModal?.vendor.email && !isDispatching
                     ? 'bg-[#A2421D] hover:bg-[#863414]'
                     : 'bg-neutral-400 cursor-not-allowed opacity-60'
                 }`}
                 title={
                   clarificationModal?.vendor.email
-                    ? 'Trigger native mail client via RFC 6068 mailto URI'
+                    ? 'Dispatch directly via VowPilot transactional email service'
                     : 'Supplier has no registered email'
                 }
               >
-                <Mail className="w-4 h-4" />
-                Launch Email Client
+                {isDispatching ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Sending...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Send via Server</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

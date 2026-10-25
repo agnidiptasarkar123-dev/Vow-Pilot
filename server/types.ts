@@ -28,6 +28,7 @@ export interface EventMember {
 
 export interface InviteToken {
   token: string;
+  tokenHash?: string;
   eventId: string;
   role: UserRole;
   createdBy: string;
@@ -35,6 +36,7 @@ export interface InviteToken {
   expiresAt: string;
   used: boolean;
   usedBy?: string;
+  revoked?: boolean;
 }
 
 export interface ServerEventRecord {
@@ -60,8 +62,11 @@ export interface ConcurrencyConflict {
 export type EmailDeliveryStatus =
   | 'draft'
   | 'queued'
+  | 'sending'
   | 'accepted_by_provider'
+  | 'delivered'
   | 'delivery_confirmed'
+  | 'delivery_unknown'
   | 'failed'
   | 'rejected';
 
@@ -74,9 +79,13 @@ export interface EmailDeliveryRecord {
   status: EmailDeliveryStatus;
   provider: string;
   providerMessageId?: string;
+  previewUrl?: string;
   dispatchedAt: string;
   dispatchedBy: string;
   idempotencyKey?: string;
+  attempts: number;
+  replyTo?: string;
+  htmlBody?: string;
   error?: string;
 }
 
@@ -87,6 +96,8 @@ export interface EmailDeliveryRequest {
   recipientName: string;
   subject: string;
   bodyText: string;
+  htmlBody?: string;
+  replyTo?: string;
   idempotencyKey?: string;
 }
 
@@ -94,5 +105,8 @@ export interface EmailDeliveryResult {
   success: boolean;
   status: EmailDeliveryStatus;
   providerMessageId?: string;
+  previewUrl?: string;
+  attempts?: number;
+  isRetryable?: boolean;
   error?: string;
 }

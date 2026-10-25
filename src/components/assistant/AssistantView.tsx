@@ -94,7 +94,14 @@ export const AssistantView: React.FC = () => {
       {/* Message Feed Container */}
       <div className="bg-white rounded-xl border border-[#E6DFD5] shadow-xs overflow-hidden flex flex-col h-[520px]">
         {/* Messages Scroll Area */}
-        <div className="flex-1 p-6 overflow-y-auto space-y-5 divide-y divide-[#F4EFEA]/60">
+        <div
+          role="log"
+          aria-live="polite"
+          aria-atomic="false"
+          aria-label="Planning assistant conversation history"
+          tabIndex={0}
+          className="flex-1 p-6 overflow-y-auto space-y-5 divide-y divide-[#F4EFEA]/60 focus:outline-hidden"
+        >
           {state.messages.map((msg) => {
             const isUser = msg.role === 'user';
             return (

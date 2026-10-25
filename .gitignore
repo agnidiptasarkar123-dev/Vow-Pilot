@@ -32,3 +32,9 @@ coverage
 # Test outputs
 test-results/
 playwright-report/
+
+# Persistent Database files
+data/
+*.db
+*.db-wal
+*.db-shm

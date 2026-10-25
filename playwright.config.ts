@@ -14,7 +14,7 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:5173',
     trace: 'on-first-retry',
-    screenshot: 'off',
+    screenshot: 'only-on-failure',
   },
   projects: [
     {
@@ -29,6 +29,14 @@ export default defineConfig({
       use: {
         browserName: 'chromium',
         viewport: { width: 1280, height: 800 },
+      },
+    },
+    {
+      name: 'Tablet Chrome 768x1024',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 768, height: 1024 },
+        hasTouch: true,
       },
     },
     {

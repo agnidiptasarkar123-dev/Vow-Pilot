@@ -5,6 +5,7 @@ import { AuthStore } from '../../server/auth';
 import { EventStore } from '../../server/events';
 import { EmailDispatchService } from '../../server/email/service';
 import { TestEmailProvider, SmtpEmailProvider } from '../../server/email/providers';
+import { createTestDatabaseContext } from '../../server/db';
 import { DEMO_STATE } from '../persistence/demoData';
 
 describe('VowPilot Multi-User Collaboration & Email Delivery Integration Suite', () => {
@@ -16,10 +17,11 @@ describe('VowPilot Multi-User Collaboration & Email Delivery Integration Suite',
   let emailService: EmailDispatchService;
 
   beforeEach(async () => {
-    authStore = new AuthStore();
-    eventStore = new EventStore();
+    const testDb = createTestDatabaseContext();
+    authStore = new AuthStore(testDb);
+    eventStore = new EventStore(testDb);
     emailProvider = new TestEmailProvider();
-    emailService = new EmailDispatchService(emailProvider);
+    emailService = new EmailDispatchService(emailProvider, testDb);
 
     const handler = createServerApp(authStore, eventStore, emailService);
     server = http.createServer(handler);

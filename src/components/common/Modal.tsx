@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 
 interface ModalProps {
+  id?: string;
   isOpen: boolean;
   onClose: () => void;
   title: string;
@@ -11,6 +12,7 @@ interface ModalProps {
 }
 
 export const Modal: React.FC<ModalProps> = ({
+  id,
   isOpen,
   onClose,
   title,
@@ -18,6 +20,10 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   maxWidth = 'lg',
 }) => {
+  const instanceId = React.useId().replace(/[^a-zA-Z0-9_-]/g, '');
+  const titleId = id ? `modal-title-${id}` : 'modal-title';
+  const descriptionId = description ? `modal-desc-${id || instanceId}` : undefined;
+
   const modalRef = useRef<HTMLDivElement>(null);
   const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
 
@@ -94,14 +100,12 @@ export const Modal: React.FC<ModalProps> = ({
     '3xl': 'max-w-3xl',
   }[maxWidth];
 
-  const descriptionId = description ? `modal-desc-${title.toLowerCase().replace(/[^a-z0-9]/g, '-')}` : undefined;
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fadeIn"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="modal-title"
+      aria-labelledby={titleId}
       aria-describedby={descriptionId}
     >
       {/* Backdrop click dismiss */}
@@ -114,25 +118,32 @@ export const Modal: React.FC<ModalProps> = ({
       >
         <div className="flex items-start justify-between p-5 border-b border-[#F4EFEA] bg-[#FAF8F5]">
           <div>
-            <h3 id="modal-title" className="text-lg font-bold text-[#1C1917] font-serif-heading">
+            <h3 id={titleId} className="text-lg font-bold text-[#1C1917] font-serif-heading">
               {title}
             </h3>
             {description && (
-              <p id={descriptionId} className="text-xs text-[#78716C] mt-0.5">
+              <p id={descriptionId} className="text-xs text-[#5C554E] mt-0.5">
                 {description}
               </p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-[#78716C] hover:text-[#1C1917] hover:bg-[#EAE4DB] transition"
+            className="p-1.5 rounded-md text-[#5C554E] hover:text-[#1C1917] hover:bg-[#EAE4DB] transition"
             aria-label="Close dialog"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-6 max-h-[80vh] overflow-y-auto">{children}</div>
+        <div
+          tabIndex={0}
+          role="region"
+          aria-label={`${title} content`}
+          className="p-6 max-h-[80vh] overflow-y-auto focus:outline-hidden"
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

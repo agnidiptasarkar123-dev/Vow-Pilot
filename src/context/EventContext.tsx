@@ -50,6 +50,10 @@ import {
   handleApplyProposedAction,
   handleDismissProposedAction,
 } from './slices/assistantSlice';
+import {
+  collaborationClient,
+  CollaborationState,
+} from '../services/collaborationClient';
 
 export interface EventContextType {
   state: AppState;
@@ -90,6 +94,16 @@ export interface EventContextType {
   resetToDemo: () => void;
   importState: (newState: AppState) => void;
   clearAllData: () => void;
+  // Multi-User Collaboration & OCC
+  collabState: CollaborationState;
+  userRole: 'owner' | 'editor' | 'viewer' | null;
+  isReadOnly: boolean;
+  isCollabModalOpen: boolean;
+  setCollabModalOpen: (open: boolean) => void;
+  isConflictModalOpen: boolean;
+  resolveConflictAcceptServer: () => void;
+  resolveConflictReapplyLocal: () => Promise<boolean>;
+  connectToCollabEvent: (eventId: string) => Promise<void>;
 }
 
 const EventContext = createContext<EventContextType | undefined>(undefined);
@@ -100,93 +114,202 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   const [activeTab, setActiveTab] = useState<string>('dashboard');
+  const [collabState, setCollabState] = useState<CollaborationState>(() => collaborationClient.getState());
+  const [isCollabModalOpen, setCollabModalOpen] = useState(false);
 
   // Sync to localStorage on state changes
   useEffect(() => {
     savePersistedState(state);
   }, [state]);
 
+  // Subscribe to collaboration state updates
+  useEffect(() => {
+    const unsubscribe = collaborationClient.subscribe((latest) => {
+      setCollabState(latest);
+    });
+    return unsubscribe;
+  }, []);
+
+  // Check URL query parameters on mount (e.g. invite token or event deep-link)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const inviteToken = urlParams.get('inviteToken');
+      const eventId = urlParams.get('eventId');
+      if (inviteToken) {
+        setCollabModalOpen(true);
+      } else if (eventId && eventId !== collabState.activeEventId) {
+        connectToCollabEvent(eventId);
+      }
+    }
+  }, []);
+
+  const pushUpdateIfConnected = (nextState: AppState) => {
+    if (collabState.activeEventId && collabState.status !== 'local_only') {
+      if (collabState.role !== 'viewer') {
+        collaborationClient.pushStateUpdate(collabState.activeEventId, nextState);
+      }
+    }
+  };
+
+  const isReadOnly = collabState.role === 'viewer';
+  const userRole = collabState.role;
+
+  const connectToCollabEvent = async (eventId: string) => {
+    await collaborationClient.connectToEvent(eventId, (remoteState) => {
+      setState(remoteState);
+    });
+  };
+
+  const isConflictModalOpen = collabState.status === 'conflict' && !!collabState.lastConflict;
+
+  const resolveConflictAcceptServer = () => {
+    collaborationClient.resolveConflictWithServer((serverState) => {
+      setState(serverState);
+    });
+  };
+
+  const resolveConflictReapplyLocal = async (): Promise<boolean> => {
+    if (!collabState.activeEventId) return false;
+    const res = await collaborationClient.resolveConflictWithLocal(collabState.activeEventId, state);
+    return res.success;
+  };
+
   // Event & Budget Handlers
   const updateEvent = (updatedEvent: EventDetails) => {
-    setState((prev) => handleUpdateEvent(prev, updatedEvent));
+    if (isReadOnly) return;
+    const next = handleUpdateEvent(state, updatedEvent);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const updateCategory = (category: BudgetCategory) => {
-    setState((prev) => handleUpdateCategory(prev, category));
+    if (isReadOnly) return;
+    const next = handleUpdateCategory(state, category);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const addCategory = (category: BudgetCategory) => {
-    setState((prev) => handleAddCategory(prev, category));
+    if (isReadOnly) return;
+    const next = handleAddCategory(state, category);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const deleteCategory = (categoryId: string) => {
-    setState((prev) => handleDeleteCategory(prev, categoryId));
+    if (isReadOnly) return;
+    const next = handleDeleteCategory(state, categoryId);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const addExpense = (expenseData: Omit<Expense, 'id' | 'createdAt'>) => {
-    setState((prev) => handleAddExpense(prev, expenseData));
+    if (isReadOnly) return;
+    const next = handleAddExpense(state, expenseData);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const updateExpense = (expense: Expense) => {
-    setState((prev) => handleUpdateExpense(prev, expense));
+    if (isReadOnly) return;
+    const next = handleUpdateExpense(state, expense);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const deleteExpense = (expenseId: string) => {
-    setState((prev) => handleDeleteExpense(prev, expenseId));
+    if (isReadOnly) return;
+    const next = handleDeleteExpense(state, expenseId);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   // Task Handlers
   const addTask = (taskData: Omit<Task, 'id'>): { success: boolean; error?: string } => {
+    if (isReadOnly) {
+      return { success: false, error: 'Viewer role is read-only and cannot create tasks.' };
+    }
     const { nextState, result } = handleAddTask(state, taskData);
     if (result.success) {
       setState(nextState);
+      pushUpdateIfConnected(nextState);
     }
     return result;
   };
 
   const updateTask = (task: Task): { success: boolean; error?: string } => {
+    if (isReadOnly) {
+      return { success: false, error: 'Viewer role is read-only and cannot update tasks.' };
+    }
     const { nextState, result } = handleUpdateTask(state, task);
     if (result.success) {
       setState(nextState);
+      pushUpdateIfConnected(nextState);
     }
     return result;
   };
 
   const completeTask = (taskId: string): { success: boolean; error?: string } => {
+    if (isReadOnly) {
+      return { success: false, error: 'Viewer role is read-only and cannot complete tasks.' };
+    }
     const { nextState, result } = handleCompleteTask(state, taskId);
     if (result.success) {
       setState(nextState);
+      pushUpdateIfConnected(nextState);
     }
     return result;
   };
 
   const deleteTask = (taskId: string) => {
-    setState((prev) => handleDeleteTask(prev, taskId));
+    if (isReadOnly) return;
+    const next = handleDeleteTask(state, taskId);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   // Vendor & Quote Handlers
   const addVendor = (vendorData: Omit<Vendor, 'id' | 'createdAt'>) => {
-    setState((prev) => handleAddVendor(prev, vendorData));
+    if (isReadOnly) return;
+    const next = handleAddVendor(state, vendorData);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const updateVendor = (vendor: Vendor) => {
-    setState((prev) => handleUpdateVendor(prev, vendor));
+    if (isReadOnly) return;
+    const next = handleUpdateVendor(state, vendor);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const deleteVendor = (vendorId: string) => {
-    setState((prev) => handleDeleteVendor(prev, vendorId));
+    if (isReadOnly) return;
+    const next = handleDeleteVendor(state, vendorId);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const addQuote = (quoteData: Omit<VendorQuote, 'id'>) => {
-    setState((prev) => handleAddQuote(prev, quoteData));
+    if (isReadOnly) return;
+    const next = handleAddQuote(state, quoteData);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const updateQuote = (quote: VendorQuote) => {
-    setState((prev) => handleUpdateQuote(prev, quote));
+    if (isReadOnly) return;
+    const next = handleUpdateQuote(state, quote);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const selectQuote = (quoteId: string) => {
-    setState((prev) => handleSelectQuote(prev, quoteId));
+    if (isReadOnly) return;
+    const next = handleSelectQuote(state, quoteId);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const recordVendorInquiry = (
@@ -194,20 +317,32 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     vendorId: string,
     method: 'email_client' | 'clipboard_handoff'
   ) => {
-    setState((prev) => handleRecordVendorInquiry(prev, quoteId, vendorId, method));
+    if (isReadOnly) return;
+    const next = handleRecordVendorInquiry(state, quoteId, vendorId, method);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   // Scenario Handlers
   const createScenario = (scenarioData: Omit<BudgetScenario, 'id' | 'createdAt'>) => {
-    setState((prev) => handleCreateScenario(prev, scenarioData));
+    if (isReadOnly) return;
+    const next = handleCreateScenario(state, scenarioData);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const applyScenarioToBaseline = (scenarioId: string) => {
-    setState((prev) => handleApplyScenarioToBaseline(prev, scenarioId));
+    if (isReadOnly) return;
+    const next = handleApplyScenarioToBaseline(state, scenarioId);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const deleteScenario = (scenarioId: string) => {
-    setState((prev) => handleDeleteScenario(prev, scenarioId));
+    if (isReadOnly) return;
+    const next = handleDeleteScenario(state, scenarioId);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   // Assistant Handlers
@@ -216,7 +351,10 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const applyProposedAction = (messageId: string, action: ProposedAction) => {
-    setState((prev) => handleApplyProposedAction(prev, messageId, action));
+    if (isReadOnly) return;
+    const next = handleApplyProposedAction(state, messageId, action);
+    setState(next);
+    pushUpdateIfConnected(next);
   };
 
   const dismissProposedAction = (messageId: string) => {
@@ -225,19 +363,25 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Data & Reset Handlers
   const resetToDemo = () => {
+    if (isReadOnly) return;
     const demo = resetToDemoState();
     setState(demo);
+    pushUpdateIfConnected(demo);
   };
 
   const importState = (newState: AppState) => {
+    if (isReadOnly) return;
     savePersistedState(newState);
     setState(newState);
+    pushUpdateIfConnected(newState);
   };
 
   const clearAllData = () => {
+    if (isReadOnly) return;
     clearAllPersistedData();
     const cleanState = resetToDemoState();
     setState(cleanState);
+    pushUpdateIfConnected(cleanState);
   };
 
   const contextValue = useMemo<EventContextType>(
@@ -272,8 +416,17 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       resetToDemo,
       importState,
       clearAllData,
+      collabState,
+      userRole,
+      isReadOnly,
+      isCollabModalOpen,
+      setCollabModalOpen,
+      isConflictModalOpen,
+      resolveConflictAcceptServer,
+      resolveConflictReapplyLocal,
+      connectToCollabEvent,
     }),
-    [state, activeTab]
+    [state, activeTab, collabState, isReadOnly, userRole, isCollabModalOpen, isConflictModalOpen]
   );
 
   return <EventContext.Provider value={contextValue}>{children}</EventContext.Provider>;

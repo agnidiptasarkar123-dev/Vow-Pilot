@@ -306,7 +306,7 @@ describe('Planning Assistant Intent Matching & Budget Reduction Regression Suite
       const assistantTab = within(nav).getByRole('button', { name: /Planner Assistant/i });
       fireEvent.click(assistantTab);
 
-      expect(screen.getByText(/Context-Aware Planning Coordinator/i)).toBeInTheDocument();
+      expect(await screen.findByText(/Context-Aware Planning Coordinator/i)).toBeInTheDocument();
 
       // Find prompt input and submit button
       const promptInput = screen.getByLabelText(/Planning command input/i);
@@ -341,6 +341,8 @@ describe('Planning Assistant Intent Matching & Budget Reduction Regression Suite
       const assistantTab = within(nav).getByRole('button', { name: /Planner Assistant/i });
       fireEvent.click(assistantTab);
 
+      expect(await screen.findByText(/Context-Aware Planning Coordinator/i)).toBeInTheDocument();
+
       const promptInput = screen.getByLabelText(/Planning command input/i);
       const askButton = screen.getByRole('button', { name: /Send planning command/i });
 
@@ -360,6 +362,8 @@ describe('Planning Assistant Intent Matching & Budget Reduction Regression Suite
       const nav = screen.getByRole('navigation', { name: /tabs/i });
       const assistantTab = within(nav).getByRole('button', { name: /Planner Assistant/i });
       fireEvent.click(assistantTab);
+
+      expect(await screen.findByText(/Context-Aware Planning Coordinator/i)).toBeInTheDocument();
 
       const promptInput = screen.getByLabelText(/Planning command input/i);
       const askButton = screen.getByRole('button', { name: /Send planning command/i });
