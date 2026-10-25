@@ -15,6 +15,12 @@ export function createServerApp(
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Expected-Version');
 
+    // Strict OWASP Security Headers
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+
     if (req.method === 'OPTIONS') {
       res.writeHead(204);
       res.end();
@@ -31,7 +37,21 @@ export function createServerApp(
       res.end(JSON.stringify(data));
     };
 
-    // Helper for reading JSON body safely (with 5MB size limit)
+    // Helper to guard against prototype pollution and excessive nesting
+    const checkPrototypePollution = (data: unknown, depth = 0): void => {
+      if (depth > 50) {
+        throw new Error('Payload too nested: Maximum object depth exceeded.');
+      }
+      if (!data || typeof data !== 'object') return;
+      for (const key of Object.keys(data)) {
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+          throw new Error('Security violation: Prototype pollution attempt detected.');
+        }
+        checkPrototypePollution((data as Record<string, unknown>)[key], depth + 1);
+      }
+    };
+
+    // Helper for reading JSON body safely (with 5MB size limit & prototype guard)
     const readJsonBody = async <T = Record<string, unknown>>(): Promise<T> => {
       return new Promise((resolve, reject) => {
         let body = '';
@@ -50,9 +70,15 @@ export function createServerApp(
 
         req.on('end', () => {
           try {
-            resolve(body ? JSON.parse(body) : ({} as T));
-          } catch (err) {
-            reject(new Error('Malformed JSON payload.'));
+            const parsed = body ? JSON.parse(body) : ({} as T);
+            checkPrototypePollution(parsed);
+            resolve(parsed);
+          } catch (err: unknown) {
+            if (err instanceof Error && (err.message.includes('Prototype pollution') || err.message.includes('Maximum object depth'))) {
+              reject(err);
+            } else {
+              reject(new Error('Malformed JSON payload.'));
+            }
           }
         });
 
@@ -128,12 +154,13 @@ export function createServerApp(
 
       if (pathname === '/api/events/join' && method === 'POST') {
         const user = getAuthUser();
-        const body = await readJsonBody<{ inviteToken?: string }>();
-        if (!body.inviteToken) {
+        const body = await readJsonBody<{ inviteToken?: string; token?: string }>();
+        const tokenToUse = body.inviteToken || body.token;
+        if (!tokenToUse) {
           sendJson(400, { error: 'Missing inviteToken parameter.' });
           return;
         }
-        const event = eventStore.joinWithInvite(body.inviteToken, user);
+        const event = eventStore.joinWithInvite(tokenToUse, user);
         sendJson(200, event);
         return;
       }
@@ -289,7 +316,8 @@ export function createServerApp(
         message.includes('not found') ? 404 :
         message.includes('already exists') || message.includes('already been used') ? 409 :
         message.includes('Rate limit') ? 429 :
-        message.includes('Security violation') || message.includes('Invalid') || message.includes('Payload too large') || message.includes('required') ? 400 : 500;
+        message.includes('Payload too large') ? 413 :
+        message.includes('Security violation') || message.includes('Invalid') || message.includes('Malformed') || message.includes('required') ? 400 : 500;
 
       sendJson(statusCode, { error: message });
     }

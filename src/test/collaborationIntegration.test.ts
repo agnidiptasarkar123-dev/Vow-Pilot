@@ -655,4 +655,118 @@ describe('VowPilot Multi-User Collaboration & Email Delivery Integration Suite',
       expect(data.error).toContain('SMTP provider unconfigured');
     });
   });
+
+  // ==========================================================================
+  // Suite 6: OWASP Security Hardening & Hostile Input Defenses
+  // ==========================================================================
+  describe('OWASP Security Hardening & Hostile Input Defenses', () => {
+    it('sets strict OWASP security headers on all HTTP responses', async () => {
+      const res = await fetch(`${baseUrl}/api/auth/me`);
+      expect(res.headers.get('X-Content-Type-Options')).toBe('nosniff');
+      expect(res.headers.get('X-Frame-Options')).toBe('DENY');
+      expect(res.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
+      expect(res.headers.get('Permissions-Policy')).toContain('camera=()');
+    });
+
+    it('rejects JSON payloads containing prototype pollution keys (__proto__)', async () => {
+      const reg = await fetch(`${baseUrl}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Hacker User',
+          email: 'hacker@example.com',
+          password: 'password123',
+        }),
+      });
+      const { token } = await reg.json();
+
+      const hostileRes = await fetch(`${baseUrl}/api/events`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: '{"state": {"__proto__": {"polluted": true}}}',
+      });
+
+      expect(hostileRes.status).toBe(400);
+      const err = await hostileRes.json();
+      expect(err.error).toContain('Prototype pollution attempt detected');
+    });
+
+    it('prevents privilege escalation when an editor attempts to create an owner invite', async () => {
+      const ownerReg = await fetch(`${baseUrl}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: 'Owner', email: 'event_owner@example.com', password: 'password123' }),
+      });
+      const { token: ownerToken } = await ownerReg.json();
+
+      const createRes = await fetch(`${baseUrl}/api/events`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ownerToken}` },
+        body: JSON.stringify({ state: DEMO_STATE }),
+      });
+      const event = await createRes.json();
+
+      // Owner creates an editor invite
+      const editorInviteRes = await fetch(`${baseUrl}/api/events/${event.id}/invites`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ownerToken}` },
+        body: JSON.stringify({ role: 'editor' }),
+      });
+      const editorInvite = await editorInviteRes.json();
+
+      // Editor registers and joins
+      const editorReg = await fetch(`${baseUrl}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: 'Editor User', email: 'editor_user@example.com', password: 'password123' }),
+      });
+      const { token: editorToken } = await editorReg.json();
+
+      await fetch(`${baseUrl}/api/events/join`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${editorToken}` },
+        body: JSON.stringify({ token: editorInvite.token }),
+      });
+
+      // Editor attempts to create an 'owner' invite (Privilege Escalation attempt)
+      const escalationRes = await fetch(`${baseUrl}/api/events/${event.id}/invites`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${editorToken}` },
+        body: JSON.stringify({ role: 'owner' }),
+      });
+
+      expect(escalationRes.status).toBe(403);
+      const data = await escalationRes.json();
+      expect(data.error).toContain('Only event owners can invite another owner');
+    });
+
+    it('rejects invalid invitation roles with HTTP 400', async () => {
+      const reg = await fetch(`${baseUrl}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: 'Owner', email: 'owner_role_test@example.com', password: 'password123' }),
+      });
+      const { token } = await reg.json();
+
+      const createRes = await fetch(`${baseUrl}/api/events`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ state: DEMO_STATE }),
+      });
+      const event = await createRes.json();
+
+      const invalidRoleRes = await fetch(`${baseUrl}/api/events/${event.id}/invites`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ role: 'superadmin_injected' }),
+      });
+
+      expect(invalidRoleRes.status).toBe(400);
+      const err = await invalidRoleRes.json();
+      expect(err.error).toContain('Invalid invitation role');
+    });
+  });
 });

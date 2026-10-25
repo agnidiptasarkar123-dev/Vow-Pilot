@@ -152,6 +152,12 @@ export class EventStore {
     if (member?.role !== 'owner' && member?.role !== 'editor') {
       throw new Error('Forbidden: Only owners and editors can generate invitations.');
     }
+    if (role !== 'owner' && role !== 'editor' && role !== 'viewer') {
+      throw new Error('Invalid invitation role: Must be owner, editor, or viewer.');
+    }
+    if (role === 'owner' && member?.role !== 'owner') {
+      throw new Error('Forbidden: Only event owners can invite another owner.');
+    }
 
     const token = `inv_${crypto.randomBytes(20).toString('hex')}`;
     const now = new Date();

@@ -35,10 +35,10 @@ npm test -- --run
 - **Expected Output:**
   ```text
    Test Files  27 passed (27)
-        Tests  1716 passed (1716)
-     Duration  2.49s
+        Tests  1720 passed (1720)
+     Duration  2.77s
   ```
-  1,716 passed tests across 27 test files with 0 failures.
+  1,720 passed tests across 27 test files with 0 failures.
 
 ---
 

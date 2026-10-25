@@ -7,10 +7,11 @@ export class AuthStore {
   private sessions: Map<string, Session> = new Map(); // token -> Session
 
   /**
-   * Hashes a password with salt using SHA-256 for deterministic, secure local storage.
+   * Hashes a password using scrypt KDF (CPU/memory-hard) with 16-byte salt and 64-byte key length.
+   * Resists GPU/ASIC brute-force attacks in accordance with OWASP Password Storage guidelines.
    */
   public hashPassword(password: string, salt: string): string {
-    return crypto.createHash('sha256').update(password + salt).digest('hex');
+    return crypto.scryptSync(password, salt, 64).toString('hex');
   }
 
   public registerUser(name: string, email: string, password: string): { user: Omit<User, 'passwordHash'>; token: string } {
@@ -48,8 +49,15 @@ export class AuthStore {
     }
 
     const [salt, storedHash] = user.passwordHash.split(':');
+    if (!salt || !storedHash) {
+      throw new Error('Invalid email or password.');
+    }
+
     const inputHash = this.hashPassword(password, salt);
-    if (inputHash !== storedHash) {
+    const inputBuf = Buffer.from(inputHash, 'hex');
+    const storedBuf = Buffer.from(storedHash, 'hex');
+
+    if (inputBuf.length !== storedBuf.length || !crypto.timingSafeEqual(inputBuf, storedBuf)) {
       throw new Error('Invalid email or password.');
     }
 
