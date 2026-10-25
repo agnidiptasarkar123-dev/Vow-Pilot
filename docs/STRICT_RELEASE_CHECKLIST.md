@@ -34,11 +34,11 @@ npm test -- --run
 - **Exit Code:** 0
 - **Expected Output:**
   ```text
-   Test Files  22 passed (22)
-        Tests  1589 passed (1589)
-     Duration  2.05s
+   Test Files  23 passed (23)
+        Tests  1625 passed (1625)
+     Duration  2.18s
   ```
-  1,589 passed tests across 22 test files with 0 failures.
+  1,625 passed tests across 23 test files with 0 failures.
 
 ---
 
@@ -52,13 +52,13 @@ npm run test:coverage
   -------------------|---------|----------|---------|---------|
   File               | % Stmts | % Branch | % Funcs | % Lines |
   -------------------|---------|----------|---------|---------|
-  All files          |   91.16 |    83.50 |   93.65 |   93.72 |
-   domain            |   93.69 |    84.46 |   90.69 |   93.59 |
+  All files          |   92.86 |    83.37 |  100.00 |   95.46 |
+   domain            |   95.96 |    84.13 |  100.00 |   95.95 |
+    assistantEngine  |   93.37 |    79.90 |  100.00 |   92.90 |
+    budgetEngine.ts  |   96.55 |    79.22 |  100.00 |   97.36 |
     currency.ts      |  100.00 |    97.22 |  100.00 |  100.00 |
-    vendorEngine.ts  |  100.00 |    95.74 |  100.00 |  100.00 |
     taskEngine.ts    |   96.29 |    86.45 |  100.00 |   96.18 |
-    budgetEngine.ts  |   96.55 |    78.08 |  100.00 |   97.36 |
-    assistantEngine  |   84.61 |    79.59 |   71.42 |   83.60 |
+    vendorEngine.ts  |  100.00 |    95.74 |  100.00 |  100.00 |
    persistence       |   85.84 |    82.21 |  100.00 |   94.08 |
     demoData.ts      |  100.00 |   100.00 |  100.00 |  100.00 |
     importExport.ts  |   94.00 |    61.11 |  100.00 |   95.65 |

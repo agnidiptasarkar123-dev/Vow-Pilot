@@ -23,13 +23,48 @@ export interface IntentParseResult {
 }
 
 /**
+ * Normalizes user input for deterministic intent classification:
+ * - Trims whitespace
+ * - Converts to lowercase
+ * - Replaces typographic apostrophes/quotes
+ * - Expands common contractions
+ * - Strips trailing punctuation (? ! . , ; :)
+ * - Replaces non-word punctuation symbols with single spaces
+ * - Collapses consecutive whitespace
+ */
+export function normalizeAssistantInput(raw: string): string {
+  if (!raw) return '';
+  return raw
+    .trim()
+    .toLowerCase()
+    .replace(/[\u2018\u2019`]/g, "'")
+    .replace(/\bcan['']t\b/g, 'cannot')
+    .replace(/\bwon['']t\b/g, 'will not')
+    .replace(/\bwe['']ll\b/g, 'we will')
+    .replace(/\bwe['']d\b/g, 'we would')
+    .replace(/\bwe['']re\b/g, 'we are')
+    .replace(/\bwhat['']s\b/g, 'what is')
+    .replace(/\bwhere['']s\b/g, 'where is')
+    .replace(/\bhow['']s\b/g, 'how is')
+    .replace(/\blet['']s\b/g, 'let us')
+    .replace(/[?!.,;:]+$/g, '')
+    .replace(/[?!.,;:]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
  * Parses user text deterministically into one of the 11 documented intents or 'unsupported'.
  */
 export function parseUserIntent(input: string): IntentParseResult {
-  const text = input.trim().toLowerCase();
+  const text = normalizeAssistantInput(input);
+  if (!text) {
+    return { intent: 'unsupported' };
+  }
 
   // 1. Guest count change
-  const guestMatch = text.match(/(?:guest|people|attendee|headcount)\s*(?:count)?\s*(?:to|by|is|=)?\s*(\d+)/i) ||
+  const guestMatch =
+    text.match(/(?:guest|people|attendee|headcount)\s*(?:count)?\s*(?:to|by|is|=)?\s*(\d+)/i) ||
     text.match(/(?:increase|decrease|change|set|update)\s*(?:guests?|guest count)\s*(?:to|by)?\s*(\d+)/i);
   if (guestMatch) {
     const count = parseInt(guestMatch[1], 10);
@@ -41,26 +76,29 @@ export function parseUserIntent(input: string): IntentParseResult {
     }
   }
 
-  // 2. Suggest reductions vs direct budget reduction
-  if ((text.includes('suggest') || text.includes('how can we') || text.includes('ways to')) &&
-      (text.includes('reduc') || text.includes('cut') || text.includes('save') || text.includes('expense'))) {
-    return { intent: 'suggest_expense_reductions' };
-  }
-  if (text.includes('reduce') && (text.includes('budget') || text.includes('cost') || text.includes('expense') || text.includes('spend'))) {
-    return { intent: 'reduce_budget' };
-  }
-
-  // 3. Explain budget
-  if (text.includes('explain') && (text.includes('budget') || text.includes('spend') || text.includes('cost'))) {
-    return { intent: 'explain_budget' };
-  }
-  if (text.includes('how much') || text.includes('budget status') || text.includes('breakdown')) {
-    return { intent: 'explain_budget' };
-  }
-
-  // 4. Protect priority
-  if (text.includes('protect') || (text.includes('priorit') && (text.includes('category') || text.includes('venue')))) {
+  // 2. Protect priority (checked early so category protection is never conflated with cuts)
+  if (
+    text.includes('protect') ||
+    text.includes('shield') ||
+    (text.includes('priorit') && (text.includes('category') || text.includes('venue') || text.includes('catering') || text.includes('decor') || text.includes('top')))
+  ) {
     return { intent: 'protect_priority' };
+  }
+
+  // 3. Compare vendor quotes
+  if (
+    (text.includes('compare') || text.includes('comparison')) &&
+    (text.includes('vendor') || text.includes('quote') || text.includes('quotation') || text.includes('supplier') || text.includes('price'))
+  ) {
+    return { intent: 'compare_vendor_quotes' };
+  }
+
+  // 4. Missing vendor info
+  if (
+    (text.includes('missing') || text.includes('incomplete')) &&
+    (text.includes('vendor') || text.includes('quote') || text.includes('quotation') || text.includes('info') || text.includes('detail') || text.includes('specification') || text.includes('proposal'))
+  ) {
+    return { intent: 'identify_missing_vendor_info' };
   }
 
   // 5. Overdue tasks
@@ -69,30 +107,84 @@ export function parseUserIntent(input: string): IntentParseResult {
   }
 
   // 6. Blocked tasks
-  if (text.includes('blocked') || text.includes('prerequisite') || text.includes('dependency')) {
+  if (text.includes('blocked') || text.includes('prerequisite') || text.includes('dependency') || text.includes('blocker')) {
     return { intent: 'explain_blocked_tasks' };
   }
 
-  // 7. Compare vendor quotes
-  if ((text.includes('compare') || text.includes('comparison')) &&
-      (text.includes('vendor') || text.includes('quote') || text.includes('quotation') || text.includes('supplier'))) {
-    return { intent: 'compare_vendor_quotes' };
-  }
-
-  // 8. Missing vendor info
-  if ((text.includes('missing') || text.includes('incomplete')) &&
-      (text.includes('vendor') || text.includes('quote') || text.includes('quotation') || text.includes('info') || text.includes('detail') || text.includes('specification') || text.includes('proposal'))) {
-    return { intent: 'identify_missing_vendor_info' };
-  }
-
-  // 9. Create scenario
+  // 7. Create scenario
   if (text.includes('scenario') || text.includes('what if') || text.includes('model alternative')) {
     return { intent: 'create_budget_scenario' };
   }
 
-  // 10. Summarize plan
-  if (text.includes('summar') || text.includes('overview') || text.includes('plan status') || text.includes('readiness') || text.includes('how are we doing')) {
+  // 8. Summarize plan
+  if (
+    text.includes('summar') ||
+    text.includes('overview') ||
+    text.includes('plan status') ||
+    text.includes('readiness') ||
+    text.includes('how are we doing')
+  ) {
     return { intent: 'summarize_plan' };
+  }
+
+  // 9. Negative guard for budget reduction:
+  // Requests to INCREASE or EXPAND the budget must NOT trigger expense reduction
+  const isBudgetIncreaseQuery =
+    /\b(increase|raise|expand|boost|grow|add to|more budget)\b/i.test(text) &&
+    /\b(budget|funds?|spend|spending|money|allowance)\b/i.test(text);
+
+  // 10. Budget reduction intent detection
+  if (!isBudgetIncreaseQuery) {
+    const hasCutOrTrimWord =
+      /\b(cut|cuts|cutting|trim|trims|trimming|lower|lowers|lowering)\b/i.test(text) &&
+      /\b(budget|budgets|cost|costs|expense|expenses|spending|spend|allocation|allocations|funds?)\b/i.test(text);
+
+    const hasReduceWord =
+      /\b(reduce|reduces|reducing|reduction|reductions)\b/i.test(text) &&
+      /\b(budget|budgets|cost|costs|expense|expenses|spending|spend|allocation|allocations|funds?)\b/i.test(text);
+
+    const hasSaveWord =
+      /\b(save|saves|saving|savings)\b/i.test(text) &&
+      /\b(money|budget|budgets|cost|costs|expense|expenses|funds?|spending)\b/i.test(text);
+
+    const hasSpendLess = /\b(spend|spending)\s+less\b/i.test(text);
+    const hasUnnecessaryExpenses = /\b(unnecessary|unneeded)\s+(?:budget|cost|costs|expense|expenses|spending)\b/i.test(text);
+    const hasCheaper = /\b(cheaper|less\s+expensive)\b/i.test(text);
+    const hasSavingOpportunities = /\b(budget[- ]saving|saving[- ]opportunities|ways to save)\b/i.test(text);
+
+    const hasInquiryAndSavingVerb =
+      /\b(suggest|how can|how do|how to|where can|help me|what can|can i|can we|we need to|ways to|show me)\b/i.test(text) &&
+      /\b(reduce|reduces|reducing|reduction|reductions|cut|cuts|save|saving|savings|trim|trimming|lower|cheaper|economize|spend less)\b/i.test(text);
+
+    const isBudgetReduction =
+      hasCutOrTrimWord ||
+      hasReduceWord ||
+      hasSaveWord ||
+      hasSpendLess ||
+      hasUnnecessaryExpenses ||
+      hasCheaper ||
+      hasSavingOpportunities ||
+      hasInquiryAndSavingVerb;
+
+    if (isBudgetReduction) {
+      // Direct imperative requests like "reduce expenses", "reduce budget allocations", "reduce total cost"
+      // map to 'reduce_budget'; questions and suggestions map to 'suggest_expense_reductions'.
+      const isDirectImperative = /^reduce\s+(?:budget\s+allocations?|expenses?|total\s+cost)$/i.test(text);
+      return { intent: isDirectImperative ? 'reduce_budget' : 'suggest_expense_reductions' };
+    }
+  }
+
+  // 11. Explain budget
+  if (
+    !isBudgetIncreaseQuery &&
+    (
+      (text.includes('explain') && (text.includes('budget') || text.includes('spend') || text.includes('cost'))) ||
+      text.includes('how much') ||
+      text.includes('budget status') ||
+      text.includes('breakdown')
+    )
+  ) {
+    return { intent: 'explain_budget' };
   }
 
   return { intent: 'unsupported' };
@@ -193,9 +285,45 @@ export function generateAssistantResponse(
 
     case 'reduce_budget':
     case 'suggest_expense_reductions': {
+      if (!state.categories || state.categories.length === 0) {
+        return {
+          id: `msg-${Date.now()}`,
+          timestamp: now,
+          role: 'assistant',
+          content: 'Current data is insufficient: No budget categories have been configured yet. Add categories and allocations in the **Budget Planner** to receive tailored savings opportunities.',
+          intent: parse.intent === 'reduce_budget' ? 'reduce_budget' : 'suggest_expense_reductions',
+          requiresConfirmation: false,
+          rationale: 'Cannot calculate savings without configured budget categories.',
+        };
+      }
+
       const overview = calculateBudgetOverview(state.event.totalBudget, state.categories, state.expenses);
       const priorities = state.event.preferences.planningPriorities;
-      const recs = generatePriorityAwareRecommendations(overview, priorities);
+
+      const totalFlexible = overview.categories.reduce(
+        (sum, c) => sum + Math.max(0, c.allocatedAmount - c.committedTotal),
+        0
+      );
+
+      if (totalFlexible <= 0) {
+        return {
+          id: `msg-${Date.now()}`,
+          timestamp: now,
+          role: 'assistant',
+          content: `All category allocations (${formatCurrency(overview.totalAllocated, currency)}) are already committed to confirmed vendor expenses or deposits (${formatCurrency(overview.committedTotal, currency)}). There is no flexible, uncommitted headroom available to trim without renegotiating confirmed vendor contracts or canceling bookings.`,
+          intent: parse.intent === 'reduce_budget' ? 'reduce_budget' : 'suggest_expense_reductions',
+          requiresConfirmation: false,
+          rationale: 'All budget allocations are locked in confirmed vendor commitments.',
+        };
+      }
+
+      // If budget is overrun, target the exact overrun amount.
+      // If budget is within limits, target a prudent 10% saving from flexible headroom.
+      const targetReduction = overview.isOverrun
+        ? overview.overrunAmount
+        : Math.min(Math.round(state.event.totalBudget * 0.10), totalFlexible);
+
+      const recs = generatePriorityAwareRecommendations(overview, priorities, targetReduction);
 
       if (recs.recommendations.length === 0) {
         return {
@@ -204,36 +332,72 @@ export function generateAssistantResponse(
           role: 'assistant',
           content: overview.isOverrun
             ? `Your budget has an overrun of ${formatCurrency(overview.overrunAmount, currency)}, but all category allocations are already tied to confirmed vendor commitments. You may need to renegotiate quotes or increase the total budget.`
-            : `Your budget is currently within the total limit of ${formatCurrency(state.event.totalBudget, currency)}. If you wish to create a leaner contingency buffer, you can create a test scenario in the Decision Simulator.`,
-          intent: 'suggest_expense_reductions',
+            : `Your budget is currently within the total limit of ${formatCurrency(state.event.totalBudget, currency)}, and existing category headroom is already optimized. To explore deeper custom cuts, open the **Decision Simulator**.`,
+          intent: parse.intent === 'reduce_budget' ? 'reduce_budget' : 'suggest_expense_reductions',
           requiresConfirmation: false,
+          rationale: 'Evaluated category allocations against priority rankings.',
         };
       }
 
-      let content = `### Priority-Aware Budget Reduction Proposals\n\n` +
-        `The recommendations below safeguard your top-ranked priority categories (${priorities.slice(0, 2).join(', ')}) while trimming non-committed flexible allocations from lower-priority items:\n\n`;
+      const totalSavings = recs.recommendations.reduce((sum, r) => sum + r.suggestedReduction, 0);
+      const proposedTotal = overview.effectiveProjectedTotal - totalSavings;
+      const revisedRunway = overview.remainingBudget + totalSavings;
+
+      const cutCategoryIds = new Set(recs.recommendations.map((r) => r.categoryId));
+      const protectedCategoryNames = state.categories
+        .filter((c) => !cutCategoryIds.has(c.id))
+        .map((c) => c.name);
+
+      let content = overview.isOverrun
+        ? `### Priority-Aware Budget Reduction Proposals (Overrun Correction)\n\n` +
+          `Your plan currently projects an overrun of **${formatCurrency(overview.overrunAmount, currency)}**. ` +
+          `The recommendations below eliminate the overrun while safeguarding your highest priorities (${protectedCategoryNames.slice(0, 2).join(', ') || 'top-ranked categories'}):\n\n`
+        : `### Priority-Aware Budget Reduction Opportunities\n\n` +
+          `Based on your active plan (${formatCurrency(overview.effectiveProjectedTotal, currency)} projected of ${formatCurrency(overview.totalBudget, currency)} total budget), here are concrete, data-grounded savings opportunities:\n\n` +
+          `* **Committed vs Flexible Spend:** ${formatCurrency(overview.committedTotal, currency)} is locked in confirmed commitments, leaving ${formatCurrency(totalFlexible, currency)} in flexible uncommitted allocations.\n` +
+          `* **Protected Categories:** Your top priorities (${protectedCategoryNames.slice(0, 3).join(', ') || 'top-ranked categories'}) are fully shielded from cuts.\n` +
+          `* **Identified Savings Potential:** Up to **${formatCurrency(totalSavings, currency)}** can be trimmed across lower-priority items without affecting confirmed bookings:\n\n`;
 
       for (const rec of recs.recommendations) {
+        let tradeOffNote = '';
+        const lowerCat = rec.categoryName.toLowerCase();
+        if (lowerCat.includes('decor')) {
+          tradeOffNote = ' *Trade-off:* Opt for standard seasonal florals or ambient warm lanterns over custom fabrication.';
+        } else if (lowerCat.includes('entertainment') || lowerCat.includes('music')) {
+          tradeOffNote = ' *Trade-off:* Rely on curated DJ sound arrangements rather than a multi-piece live ensemble.';
+        } else if (lowerCat.includes('logistics') || lowerCat.includes('transport')) {
+          tradeOffNote = ' *Trade-off:* Consolidate airport transfers into scheduled group shuttles.';
+        } else if (lowerCat.includes('contingency') || lowerCat.includes('buffer')) {
+          tradeOffNote = ' *Trade-off:* Retains a leaner emergency reserve for last-minute additions.';
+        }
+
         content += `* **${rec.categoryName}** (Rank #${rec.priorityRank}): Reduce allocation by **${formatCurrency(rec.suggestedReduction, currency)}** ` +
           `(${formatCurrency(rec.currentAllocated, currency)} ➔ ${formatCurrency(rec.newAllocated, currency)}).\n` +
-          `  *Rationale:* ${rec.rationale}\n`;
+          `  *Rationale:* ${rec.rationale}${tradeOffNote}\n`;
       }
 
-      content += `\nWould you like to generate an alternative Budget Scenario incorporating these reductions?`;
+      content += `\n**Projected Financial Outcome:**\n` +
+        `* **Current Projected Spend:** ${formatCurrency(overview.effectiveProjectedTotal, currency)}\n` +
+        `* **Proposed Projected Spend:** ${formatCurrency(proposedTotal, currency)}\n` +
+        `* **Net Savings Difference:** -${formatCurrency(totalSavings, currency)}\n` +
+        `* **Revised Runway:** ${formatCurrency(revisedRunway, currency)}\n\n` +
+        `*Note: These recommendations have not modified your active event data.* Would you like to generate an alternative Budget Scenario in the Decision Simulator incorporating these reductions?`;
 
       const proposedAction: ProposedAction = {
         id: `act-${Date.now()}`,
         type: 'create_scenario',
-        summary: 'Create Leaner Contingency Scenario',
+        summary: overview.isOverrun
+          ? 'Rebalance Budget to Clear Overrun'
+          : `Create ${formatCurrency(totalSavings, currency)} Savings Scenario`,
         payload: {
-          scenarioName: 'Lean Rebalance Scenario',
+          scenarioName: overview.isOverrun ? 'Overrun Correction Scenario' : 'Lean Savings Scenario',
           adjustments: recs.recommendations,
         },
         impact: {
           currentEstimatedTotal: overview.effectiveProjectedTotal,
-          proposedEstimatedTotal: overview.effectiveProjectedTotal - recs.recommendations.reduce((sum, r) => sum + r.suggestedReduction, 0),
-          difference: -recs.recommendations.reduce((sum, r) => sum + r.suggestedReduction, 0),
-          remainingBudget: overview.remainingBudget + recs.recommendations.reduce((sum, r) => sum + r.suggestedReduction, 0),
+          proposedEstimatedTotal: proposedTotal,
+          difference: -totalSavings,
+          remainingBudget: revisedRunway,
           affectedCategories: recs.recommendations.map((r) => r.categoryName),
           budgetViolations: [],
         },
@@ -244,11 +408,11 @@ export function generateAssistantResponse(
         timestamp: now,
         role: 'assistant',
         content,
-        intent: 'suggest_expense_reductions',
+        intent: parse.intent === 'reduce_budget' ? 'reduce_budget' : 'suggest_expense_reductions',
         proposedAction,
         requiresConfirmation: true,
         actionStatus: 'pending',
-        rationale: 'Follows priority ranking order strictly, preserving committed actuals.',
+        rationale: 'Follows priority ranking order strictly, preserving committed actuals and safeguarding top categories.',
       };
     }
 

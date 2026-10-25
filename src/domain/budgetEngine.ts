@@ -237,7 +237,8 @@ export function calculateGuestCountImpact(
  */
 export function generatePriorityAwareRecommendations(
   overview: BudgetOverview,
-  priorities: string[] // List of category IDs in order of priority (first = highest)
+  priorities: string[], // List of category IDs in order of priority (first = highest)
+  targetAmount?: number
 ): {
   targetReductionAmount: number;
   recommendations: Array<{
@@ -250,7 +251,11 @@ export function generatePriorityAwareRecommendations(
     rationale: string;
   }>;
 } {
-  const targetReductionAmount = overview.overrunAmount > 0 ? overview.overrunAmount : 0;
+  const targetReductionAmount =
+    targetAmount !== undefined && targetAmount > 0
+      ? targetAmount
+      : (overview.overrunAmount > 0 ? overview.overrunAmount : 0);
+
   if (targetReductionAmount <= 0) {
     return { targetReductionAmount: 0, recommendations: [] };
   }
