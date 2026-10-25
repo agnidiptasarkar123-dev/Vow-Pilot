@@ -17,7 +17,9 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom/vitest"]
+    "types": ["vite/client"]
   },
-  "include": ["src", "vite.config.ts"]
+  "include": ["src"],
+  "exclude": ["src/test", "**/*.test.ts", "**/*.test.tsx"]
 }
+
