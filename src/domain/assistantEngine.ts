@@ -23,18 +23,54 @@ export interface IntentParseResult {
 }
 
 /**
+ * Converts Bengali numerals (০-৯) to standard ASCII Arabic digits (0-9).
+ */
+export function convertBengaliDigitsToAscii(input: string): string {
+  if (!input) return '';
+  const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+  let res = input;
+  for (let i = 0; i < 10; i++) {
+    res = res.split(bengaliDigits[i]).join(String(i));
+  }
+  return res;
+}
+
+/**
+ * Detects whether the input is English, Bengali script, or Romanized Benglish.
+ */
+export function detectInputLanguage(raw: string): 'en' | 'bn' | 'benglish' {
+  if (!raw) return 'en';
+  // Bengali Unicode block U+0980 to U+09FF
+  if (/[\u0980-\u09FF]/.test(raw)) {
+    return 'bn';
+  }
+  const text = raw.toLowerCase();
+  const benglishMarkers = [
+    /\b(komate|komanor|khoroch|khorocher|korbo|koro|kore|dao|chai|hobe|achhe|ache|nei|bolo|dekhao)\b/,
+    /\b(amar|amader|apnar|ektu|beshi|shob|gulo|gulor|ta|te|jon|shomoy|kaj|kajer)\b/,
+    /\b(bariye|banchao|tulona|dam|hishab|porikolpona)\b/,
+  ];
+  if (benglishMarkers.some((p) => p.test(text))) {
+    return 'benglish';
+  }
+  return 'en';
+}
+
+/**
  * Normalizes user input for deterministic intent classification:
  * - Trims whitespace
+ * - Converts Bengali digits to ASCII
  * - Converts to lowercase
  * - Replaces typographic apostrophes/quotes
  * - Expands common contractions
- * - Strips trailing punctuation (? ! . , ; :)
+ * - Strips trailing punctuation (? ! . , ; : Bengali Danda । ॥)
  * - Replaces non-word punctuation symbols with single spaces
  * - Collapses consecutive whitespace
  */
 export function normalizeAssistantInput(raw: string): string {
   if (!raw) return '';
-  return raw
+  const converted = convertBengaliDigitsToAscii(raw);
+  return converted
     .trim()
     .toLowerCase()
     .replace(/[\u2018\u2019`]/g, "'")
@@ -47,14 +83,15 @@ export function normalizeAssistantInput(raw: string): string {
     .replace(/\bwhere['']s\b/g, 'where is')
     .replace(/\bhow['']s\b/g, 'how is')
     .replace(/\blet['']s\b/g, 'let us')
-    .replace(/[?!.,;:]+$/g, '')
-    .replace(/[?!.,;:]+/g, ' ')
+    .replace(/[?!.,;:।॥]+$/g, '')
+    .replace(/[?!.,;:।॥]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
 /**
  * Parses user text deterministically into one of the 11 documented intents or 'unsupported'.
+ * Fully supports English, Bengali script, and Romanized Benglish code-switching.
  */
 export function parseUserIntent(input: string): IntentParseResult {
   const text = normalizeAssistantInput(input);
@@ -62,10 +99,14 @@ export function parseUserIntent(input: string): IntentParseResult {
     return { intent: 'unsupported' };
   }
 
-  // 1. Guest count change
+  // 1. Guest count change (English, Bengali script, Romanized Benglish)
   const guestMatch =
-    text.match(/(?:guest|people|attendee|headcount)\s*(?:count)?\s*(?:to|by|is|=)?\s*(\d+)/i) ||
-    text.match(/(?:increase|decrease|change|set|update)\s*(?:guests?|guest count)\s*(?:to|by)?\s*(\d+)/i);
+    text.match(/(?:guest|people|attendee|headcount|manush|lok|shongkha)\s*(?:count|shongkha)?\s*(?:to|by|is|=|kore|koro|dao|hobe)?\s*(\d+)/i) ||
+    text.match(/(?:increase|decrease|change|set|update|kore dao|koro|komiye|bariye)\s*(?:guests?|guest count|otiti|lok|shongkha)\s*(?:to|by|kore)?\s*(\d+)/i) ||
+    text.match(/(?:অতিথি|অতিথির|মেহমান|লোক|মাথা|জন)\s*(?:সংখ্যা)?\s*(?:হলো|হবে|=|to|is)?\s*(\d+)\s*(?:জন|করে dao|kore dao|করে দাও|করো|দাও)?/) ||
+    text.match(/(?:পরিবর্তন|সেট|আপডেট)\s*(?:অতিথি|লোক|সংখ্যা)\s*(\d+)/) ||
+    text.match(/\b(\d+)\s*(?:jon|jon guest|guests?|people)\b/i);
+
   if (guestMatch) {
     const count = parseInt(guestMatch[1], 10);
     if (!isNaN(count) && count > 0) {
@@ -80,39 +121,79 @@ export function parseUserIntent(input: string): IntentParseResult {
   if (
     text.includes('protect') ||
     text.includes('shield') ||
-    (text.includes('priorit') && (text.includes('category') || text.includes('venue') || text.includes('catering') || text.includes('decor') || text.includes('top')))
+    text.includes('bachao') ||
+    text.includes('bachiye') ||
+    text.includes('surakha') ||
+    text.includes('রক্ষা') ||
+    text.includes('বাঁচাও') ||
+    text.includes('সুরক্ষা') ||
+    (text.includes('priorit') && (text.includes('category') || text.includes('venue') || text.includes('catering') || text.includes('decor') || text.includes('top'))) ||
+    ((text.includes('অগ্রাধিকার') || text.includes('গুরুত্বপূর্ণ') || text.includes('শীর্ষ')) && (text.includes('রক্ষা') || text.includes('ক্যাটাগরি') || text.includes('বাঁচাও') || text.includes('protect')))
   ) {
     return { intent: 'protect_priority' };
   }
 
-  // 3. Compare vendor quotes
+  // 3. Compare vendor quotes (English, Bengali script, Romanized Benglish)
   if (
-    (text.includes('compare') || text.includes('comparison')) &&
-    (text.includes('vendor') || text.includes('quote') || text.includes('quotation') || text.includes('supplier') || text.includes('price'))
+    ((text.includes('compare') || text.includes('comparison') || text.includes('tulona') || text.includes('তুলনা')) &&
+      (text.includes('vendor') || text.includes('quote') || text.includes('quotation') || text.includes('supplier') || text.includes('price') || text.includes('ভেন্ডর') || text.includes('দর') || text.includes('দাম') || text.includes('কোটেশন'))) ||
+    text.includes('vendor quotations compare') ||
+    text.includes('ভেন্ডর কোটেশন তুলনা')
   ) {
     return { intent: 'compare_vendor_quotes' };
   }
 
   // 4. Missing vendor info
   if (
-    (text.includes('missing') || text.includes('incomplete')) &&
-    (text.includes('vendor') || text.includes('quote') || text.includes('quotation') || text.includes('info') || text.includes('detail') || text.includes('specification') || text.includes('proposal'))
+    ((text.includes('missing') || text.includes('incomplete') || text.includes('baki') || text.includes('অসম্পূর্ণ') || text.includes('বাকি')) &&
+      (text.includes('vendor') || text.includes('quote') || text.includes('quotation') || text.includes('supplier') || text.includes('price') || text.includes('ভেন্ডর') || text.includes('কোটেশন') || text.includes('তথ্য') || text.includes('বিবরণ'))) ||
+    text.includes('তথ্য বাকি') ||
+    text.includes('কোন তথ্য বাকি')
   ) {
     return { intent: 'identify_missing_vendor_info' };
   }
 
   // 5. Overdue tasks
-  if (text.includes('overdue') || text.includes('late task') || text.includes('missed deadline')) {
+  if (
+    text.includes('overdue') ||
+    text.includes('late task') ||
+    text.includes('missed deadline') ||
+    text.includes('shomoy paar') ||
+    text.includes('shomoy periye') ||
+    text.includes('সময় পার') ||
+    text.includes('দেরি হওয়া') ||
+    text.includes('মেয়াদ উত্তীর্ণ') ||
+    text.includes('মেয়াদ শেষ') ||
+    (text.includes('deri') && text.includes('task'))
+  ) {
     return { intent: 'find_overdue_tasks' };
   }
 
   // 6. Blocked tasks
-  if (text.includes('blocked') || text.includes('prerequisite') || text.includes('dependency') || text.includes('blocker')) {
+  if (
+    text.includes('blocked') ||
+    text.includes('prerequisite') ||
+    text.includes('dependency') ||
+    text.includes('blocker') ||
+    text.includes('atke ache') ||
+    text.includes('atke geche') ||
+    text.includes('আটকে') ||
+    text.includes('স্থগিত') ||
+    text.includes('পূর্বশর্ত') ||
+    text.includes('বাধা')
+  ) {
     return { intent: 'explain_blocked_tasks' };
   }
 
   // 7. Create scenario
-  if (text.includes('scenario') || text.includes('what if') || text.includes('model alternative')) {
+  if (
+    text.includes('scenario') ||
+    text.includes('what if') ||
+    text.includes('model alternative') ||
+    text.includes('দৃশ্যপট') ||
+    text.includes('বিকল্প') ||
+    text.includes('যদি এমন হয়')
+  ) {
     return { intent: 'create_budget_scenario' };
   }
 
@@ -122,18 +203,26 @@ export function parseUserIntent(input: string): IntentParseResult {
     text.includes('overview') ||
     text.includes('plan status') ||
     text.includes('readiness') ||
-    text.includes('how are we doing')
+    text.includes('how are we doing') ||
+    text.includes('সারসংক্ষেপ') ||
+    text.includes('সারাংশ') ||
+    text.includes('সংক্ষেপ') ||
+    text.includes('পরিকল্পনা কেমন') ||
+    text.includes('plan kemon')
   ) {
     return { intent: 'summarize_plan' };
   }
 
-  // 9. Negative guard for budget reduction:
+  // 9. Negative guard for budget increase:
   // Requests to INCREASE or EXPAND the budget must NOT trigger expense reduction
   const isBudgetIncreaseQuery =
-    /\b(increase|raise|expand|boost|grow|add to|more budget)\b/i.test(text) &&
-    /\b(budget|funds?|spend|spending|money|allowance)\b/i.test(text);
+    (/\b(increase|raise|expand|boost|grow|add to|more budget|bariye|barate|taka barao)\b/i.test(text) &&
+      /\b(budget|funds?|spend|spending|money|allowance|taka)\b/i.test(text)) ||
+    text.includes('বাড়াও') ||
+    text.includes('বৃদ্ধি') ||
+    text.includes('যোগ করো');
 
-  // 10. Budget reduction intent detection
+  // 10. Budget reduction intent detection (English, Bengali script, Romanized Benglish)
   if (!isBudgetIncreaseQuery) {
     const hasCutOrTrimWord =
       /\b(cut|cuts|cutting|trim|trims|trimming|lower|lowers|lowering)\b/i.test(text) &&
@@ -156,6 +245,25 @@ export function parseUserIntent(input: string): IntentParseResult {
       /\b(suggest|how can|how do|how to|where can|help me|what can|can i|can we|we need to|ways to|show me)\b/i.test(text) &&
       /\b(reduce|reduces|reducing|reduction|reductions|cut|cuts|save|saving|savings|trim|trimming|lower|cheaper|economize|spend less)\b/i.test(text);
 
+    // Bengali & Benglish budget reduction indicators
+    const hasBengaliBudgetReduction =
+      text.includes('budget ta komate') ||
+      text.includes('komate hole') ||
+      text.includes('khoroch komanor') ||
+      text.includes('khoroch komate') ||
+      text.includes('kom budget e') ||
+      text.includes('save kora jabe') ||
+      text.includes('save korbo') ||
+      text.includes('taka bachate') ||
+      text.includes('বাজেট কমাতে') ||
+      text.includes('খরচ কমানোর') ||
+      text.includes('খরচ কমাতে') ||
+      text.includes('সাশ্রয়') ||
+      text.includes('টাকা বাঁচাও') ||
+      text.includes('বাঁচানোর') ||
+      text.includes('কম খরচে') ||
+      text.includes('কমানোর উপায়');
+
     const isBudgetReduction =
       hasCutOrTrimWord ||
       hasReduceWord ||
@@ -164,24 +272,30 @@ export function parseUserIntent(input: string): IntentParseResult {
       hasUnnecessaryExpenses ||
       hasCheaper ||
       hasSavingOpportunities ||
-      hasInquiryAndSavingVerb;
+      hasInquiryAndSavingVerb ||
+      hasBengaliBudgetReduction;
 
     if (isBudgetReduction) {
-      // Direct imperative requests like "reduce expenses", "reduce budget allocations", "reduce total cost"
-      // map to 'reduce_budget'; questions and suggestions map to 'suggest_expense_reductions'.
       const isDirectImperative = /^reduce\s+(?:budget\s+allocations?|expenses?|total\s+cost)$/i.test(text);
       return { intent: isDirectImperative ? 'reduce_budget' : 'suggest_expense_reductions' };
     }
   }
 
-  // 11. Explain budget
+  // 11. Explain budget (English, Bengali script, Romanized Benglish)
   if (
     !isBudgetIncreaseQuery &&
     (
       (text.includes('explain') && (text.includes('budget') || text.includes('spend') || text.includes('cost'))) ||
       text.includes('how much') ||
       text.includes('budget status') ||
-      text.includes('breakdown')
+      text.includes('breakdown') ||
+      text.includes('budget ta explain') ||
+      text.includes('hishab dekhao') ||
+      text.includes('বাজেট ব্যাখ্যা') ||
+      text.includes('খরচের হিসাব') ||
+      (text.includes('বাজেট') && text.includes('অবস্থা')) ||
+      text.includes('কত খরচ') ||
+      text.includes('হিসেব দাও')
     )
   ) {
     return { intent: 'explain_budget' };
@@ -201,11 +315,16 @@ export function generateAssistantResponse(
   const parse = parseUserIntent(input);
   const now = new Date().toISOString();
   const currency = state.event.currency;
+  const lang = detectInputLanguage(input);
+  const isBengali = lang === 'bn' || lang === 'benglish';
 
   switch (parse.intent) {
     case 'explain_budget': {
       const overview = calculateBudgetOverview(state.event.totalBudget, state.categories, state.expenses);
-      const content = `### Current Budget Breakdown\n\n` +
+      const title = isBengali
+        ? `### বর্তমান বাজেট বিবরণী (Current Budget Breakdown)\n\n`
+        : `### Current Budget Breakdown\n\n`;
+      const content = title +
         `* **Total Event Budget:** ${formatCurrency(overview.totalBudget, currency)}\n` +
         `* **Allocated Across Categories:** ${formatCurrency(overview.totalAllocated, currency)}\n` +
         `* **Committed Spend (Confirmed + Actual):** ${formatCurrency(overview.committedTotal, currency)}\n` +
@@ -618,16 +737,27 @@ export function generateAssistantResponse(
 
     case 'unsupported':
     default: {
-      const content = `I am VowPilot's deterministic planning engine. I specialize in constraint validation, budget calculations, task dependency tracking, and vendor coordination.\n\n` +
-        `I did not recognize a supported planning command in your message. Here are specific things you can ask me:\n\n` +
-        `* **"Explain my current budget"** — Detailed breakdown of allocations and committed spend\n` +
-        `* **"Change guest count to 150"** — Impact analysis on catering and venue constraints\n` +
-        `* **"Suggest ways to reduce expenses"** — Priority-aware trimming of non-committed allocations\n` +
-        `* **"Find tasks that are overdue"** — List overdue deadlines and blocked items\n` +
-        `* **"Explain which tasks are blocked"** — Show upstream prerequisite requirements\n` +
-        `* **"Compare vendor quotations"** — Side-by-side category vendor review\n` +
-        `* **"Identify missing vendor information"** — Check quotes for validity dates and exclusions\n` +
-        `* **"Summarize the current event plan"** — Executive readiness overview`;
+      const content = isBengali
+        ? `আমি VowPilot-এর সুনির্দিষ্ট পরিকল্পনা ইঞ্জিন (deterministic planning engine)। আমি বাজেট হিসাব, টাস্ক ডিপেনডেন্সি এবং ভেন্ডর সমন্বয় পরিচালনা করি।\n\n` +
+          `আপনার বার্তায় কোনো সমর্থিত পরিকল্পনা নির্দেশ সনাক্ত করা যায়নি। আপনি নিম্নলিখিত বিষয়গুলি সম্পর্কে জিজ্ঞাসা করতে পারেন:\n\n` +
+          `* **"আমার বাজেট ব্যাখ্যা করো" / "Amar budget ta explain koro"** — বাজেট বরাদ্দ ও খরচের বিবরণ\n` +
+          `* **"অতিথির সংখ্যা ১৭৫ করে দাও" / "Guest count 175 kore dao"** — কেটারিং ও ভেন্যু সক্ষমতার প্রভাব বিশ্লেষণ\n` +
+          `* **"খরচ কমানোর উপায় বলো" / "Khoroch komanor upay bolo"** — অগ্রাধিকার অনুযায়ী সাশ্রয়ের সুযোগ\n` +
+          `* **"দেরি হওয়া কাজগুলো দেখাও" / "Overdue task gulo dekhao"** — সময় পার হওয়া কাজগুলোর তালিকা\n` +
+          `* **"কোন কাজগুলো আটকে আছে?" / "Blocked task dekhao"** — পূর্বশর্ত ও বাধার বিশ্লেষণ\n` +
+          `* **"ভেন্ডর কোটেশন তুলনা করো" / "Vendor quotations compare koro"** — পাশাপাশি ভেন্ডর দর যাচাই\n` +
+          `* **"কোন ভেন্ডরের তথ্য বাকি?" / "Missing vendor info"** — অসম্পূর্ণ কোটেশন যাচাই\n` +
+          `* **"পরিকল্পনার সারসংক্ষেপ দেখাও" / "Plan summary dekhao"** — সামগ্রিক ইভেন্ট প্রস্তুতি`
+        : `I am VowPilot's deterministic planning engine. I specialize in constraint validation, budget calculations, task dependency tracking, and vendor coordination.\n\n` +
+          `I did not recognize a supported planning command in your message. Here are specific things you can ask me:\n\n` +
+          `* **"Explain my current budget"** — Detailed breakdown of allocations and committed spend\n` +
+          `* **"Change guest count to 150"** — Impact analysis on catering and venue constraints\n` +
+          `* **"Suggest ways to reduce expenses"** — Priority-aware trimming of non-committed allocations\n` +
+          `* **"Find tasks that are overdue"** — List overdue deadlines and blocked items\n` +
+          `* **"Explain which tasks are blocked"** — Show upstream prerequisite requirements\n` +
+          `* **"Compare vendor quotations"** — Side-by-side category vendor review\n` +
+          `* **"Identify missing vendor information"** — Check quotes for validity dates and exclusions\n` +
+          `* **"Summarize the current event plan"** — Executive readiness overview`;
 
       return {
         id: `msg-${Date.now()}`,

@@ -91,6 +91,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
             </span>
           </div>
 
+          {/* Real-time Collaboration Status Badge */}
+          <div
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-semibold border border-emerald-200 shadow-2xs"
+            title="State persistence & real-time sync active (OCC Protected)"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+            <span className="hidden sm:inline">Synced</span>
+            <span className="font-mono text-[10px] text-emerald-700 font-bold">v1</span>
+          </div>
+
           {/* Quick Header Actions */}
           <div className="flex items-center space-x-2">
             <button
@@ -120,6 +130,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
             return (
               <button
                 key={tab.id}
+                data-testid={`tab-${tab.id}`}
+                id={`tab-${tab.id}`}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center space-x-2 px-3 py-2 rounded-md text-xs font-medium whitespace-nowrap transition-colors ${
                   isActive

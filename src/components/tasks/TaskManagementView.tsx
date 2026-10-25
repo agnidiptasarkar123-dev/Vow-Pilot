@@ -210,7 +210,7 @@ export const TaskManagementView: React.FC = () => {
                 key={task.id}
                 className={`p-5 rounded-xl border transition bg-white shadow-xs ${
                   isCompleted
-                    ? 'border-[#E6DFD5] opacity-75'
+                    ? 'border-[#E6DFD5] bg-[#FBF9F7]'
                     : isBlocked
                     ? 'border-neutral-300 bg-neutral-50/40'
                     : isOverdue

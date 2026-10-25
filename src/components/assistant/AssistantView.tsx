@@ -258,7 +258,7 @@ export const AssistantView: React.FC = () => {
             type="button"
             onClick={() => handleSend()}
             disabled={!inputPrompt.trim()}
-            aria-label="Send planning command"
+            aria-label="Ask: Send planning command"
             className="px-4 py-2.5 bg-[#A2421D] hover:bg-[#863414] disabled:opacity-40 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
           >
             <span>Ask</span>

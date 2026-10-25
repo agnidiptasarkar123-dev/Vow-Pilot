@@ -421,7 +421,7 @@ export const DecisionSimulatorView: React.FC = () => {
                               onClick={() => setConfirmApplyScenarioId(scen.id)}
                               className="px-2 py-1 rounded bg-[#047857] hover:bg-[#065F46] text-white font-medium text-[11px] transition"
                               title="Commit this scenario to become confirmed plan"
-                              aria-label={`Apply scenario "${scen.name}" to confirmed plan`}
+                              aria-label={`Apply to Plan: ${scen.name}`}
                             >
                               Apply to Plan
                             </button>
