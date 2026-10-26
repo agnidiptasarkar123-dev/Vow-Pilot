@@ -40,7 +40,8 @@ export function generateSecureRsvpToken(): string {
  */
 export function isSecureRsvpToken(token: string | undefined | null): boolean {
   if (!token || typeof token !== 'string') return false;
-  const trimmed = token.trim();
-  // Validates vow_rsvp_ prefix followed by 32 lowercase hex characters
-  return /^vow_rsvp_[a-f0-9]{32}$/i.test(trimmed);
+  // Validates vow_rsvp_ prefix followed by exactly 32 lowercase hex characters with no surrounding whitespace
+  return /^vow_rsvp_[a-f0-9]{32}$/.test(token);
 }
+
+export const isValidRsvpToken = isSecureRsvpToken;

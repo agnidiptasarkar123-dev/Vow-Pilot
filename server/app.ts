@@ -45,7 +45,8 @@ export function createServerApp(
   eventStore: EventStore = globalEventStore,
   emailService: EmailDispatchService = globalEmailService,
   logger: StructuredLogger = globalLogger,
-  metrics: MetricsRegistry = globalMetrics
+  metrics: MetricsRegistry = globalMetrics,
+  options?: { isProduction?: boolean; allowedOrigins?: string[] }
 ) {
   // Validate production security configuration on app initialization
   validateEnvironmentSecurity();
@@ -63,11 +64,11 @@ export function createServerApp(
     const requestId = resolveCorrelationId(req);
     res.setHeader('X-Request-Id', requestId);
 
-    const isProduction = process.env.NODE_ENV === 'production';
+    const isProduction = options?.isProduction ?? (process.env.NODE_ENV === 'production');
     const origin = req.headers['origin'];
-    const configuredOrigins = process.env.ALLOWED_ORIGINS
+    const configuredOrigins = options?.allowedOrigins ?? (process.env.ALLOWED_ORIGINS
       ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim().toLowerCase().replace(/\/+$/, ''))
-      : ['https://vowpilot.vercel.app', 'http://localhost:3000', 'http://localhost:5173'];
+      : ['https://vowpilot.vercel.app', 'http://localhost:3000', 'http://localhost:5173']);
 
     let isAllowedOrigin = false;
     if (origin) {

@@ -211,16 +211,23 @@ export function validateStateSchema(data: unknown): data is AppState {
  */
 export function migrateState(rawState: Record<string, unknown> | AppState): AppState {
   const s = rawState as Record<string, unknown>;
-  const version = typeof s.schemaVersion === 'number' ? s.schemaVersion : 0;
 
-  if (version === 0) {
-    return {
-      ...(rawState as unknown as AppState),
-      schemaVersion: CURRENT_SCHEMA_VERSION,
-    };
-  }
-
-  return rawState as AppState;
+  return {
+    ...(rawState as unknown as AppState),
+    schemaVersion: CURRENT_SCHEMA_VERSION,
+    categories: Array.isArray(s.categories) ? s.categories as any : [],
+    tasks: Array.isArray(s.tasks) ? s.tasks as any : [],
+    expenses: Array.isArray(s.expenses) ? s.expenses as any : [],
+    vendors: Array.isArray(s.vendors) ? s.vendors as any : [],
+    quotes: Array.isArray(s.quotes) ? s.quotes as any : [],
+    scenarios: Array.isArray(s.scenarios) ? s.scenarios as any : [],
+    messages: Array.isArray(s.messages) ? s.messages as any : [],
+    changeLog: Array.isArray(s.changeLog) ? s.changeLog as any : [],
+    invitations: Array.isArray(s.invitations) ? s.invitations as any : [],
+    guests: Array.isArray(s.guests) ? s.guests as any : [],
+    timeline: Array.isArray(s.timeline) ? s.timeline as any : [],
+    tables: Array.isArray(s.tables) ? s.tables as any : [],
+  };
 }
 
 /**

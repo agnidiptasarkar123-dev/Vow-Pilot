@@ -163,3 +163,45 @@ export function handleBatchAddGuests(
     changeLog: [changeRecord, ...state.changeLog],
   };
 }
+
+/**
+ * Serializes guest list to RFC-4180 compliant CSV string.
+ * Escapes quotes, newlines, and special characters safely.
+ */
+export function formatGuestsCsv(guests: GuestRecord[]): string {
+  const headers = [
+    'Name',
+    'Household/Group',
+    'Party Size',
+    'RSVP Status',
+    'Confirmed Guests',
+    'Email',
+    'Phone',
+    'Dietary Requirements',
+    'Accessibility',
+    'RSVP Link Token',
+    'Notes',
+  ];
+
+  const escapeCell = (val: string | number | undefined | null): string => {
+    if (val === undefined || val === null) return '""';
+    const str = String(val);
+    return `"${str.replace(/"/g, '""')}"`;
+  };
+
+  const rows = guests.map((g) => [
+    escapeCell(g.name),
+    escapeCell(g.householdGroup || ''),
+    g.partySize,
+    escapeCell(g.rsvpStatus),
+    g.confirmedCount,
+    escapeCell(g.email || ''),
+    escapeCell(g.phone || ''),
+    escapeCell(g.dietaryNotes || ''),
+    escapeCell(g.accessibilityRequirements || ''),
+    escapeCell(g.invitationToken),
+    escapeCell(g.notes || ''),
+  ]);
+
+  return [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+}

@@ -1,4 +1,4 @@
-import { AppState, ChangeRecord, SeatingTable } from '../../types';
+import { AppState, ChangeRecord, GuestRecord, SeatingTable } from '../../types';
 
 export function handleAddTable(
   state: AppState,
@@ -172,4 +172,82 @@ export function handleRemoveGuestFromTable(state: AppState, guestId: string): Ap
     guests: updatedGuests,
     changeLog: [changeRecord, ...state.changeLog],
   };
+}
+
+/**
+ * Checks for seating allocation conflicts, capacity violations, orphaned assignments,
+ * and link inconsistencies between tables and guests.
+ */
+export function detectSeatingConflicts(
+  tables: SeatingTable[] = [],
+  guests: GuestRecord[] = []
+): string[] {
+  const conflicts: string[] = [];
+  const guestMap = new Map(guests.map((g) => [g.id, g]));
+  const seenGuestTableMap = new Map<string, string>(); // guestId -> tableId
+
+  for (const table of tables) {
+    // 1. Capacity check
+    if (table.assignedGuestIds.length > table.capacity) {
+      conflicts.push(
+        `Capacity Overload: Table "${table.name}" has ${table.assignedGuestIds.length} seated guests exceeding its capacity of ${table.capacity}.`
+      );
+    }
+
+    for (const guestId of table.assignedGuestIds) {
+      const guest = guestMap.get(guestId);
+
+      // 2. Orphaned guest check
+      if (!guest) {
+        conflicts.push(
+          `Orphaned Assignment: Table "${table.name}" references non-existent guest ID "${guestId}".`
+        );
+        continue;
+      }
+
+      // 3. Duplicate table assignment check
+      const priorTableId = seenGuestTableMap.get(guestId);
+      if (priorTableId) {
+        const priorTable = tables.find((t) => t.id === priorTableId);
+        conflicts.push(
+          `Duplicate Seating: Guest "${guest.name}" is assigned to both "${priorTable?.name || priorTableId}" and "${table.name}".`
+        );
+      } else {
+        seenGuestTableMap.set(guestId, table.id);
+      }
+
+      // 4. Inactive guest check
+      if (guest.rsvpStatus === 'declined') {
+        conflicts.push(
+          `Declined Guest Seated: Guest "${guest.name}" RSVP is declined but still assigned to "${table.name}".`
+        );
+      }
+
+      // 5. Inconsistent linkage (guest record tableId mismatch)
+      if (guest.tableId && guest.tableId !== table.id) {
+        conflicts.push(
+          `Linkage Mismatch: Guest "${guest.name}" has tableId "${guest.tableId}" but is seated in "${table.id}".`
+        );
+      }
+    }
+  }
+
+  // 6. Check guests pointing to tableId that don't have reciprocal assignment in table.assignedGuestIds
+  const tableMap = new Map(tables.map((t) => [t.id, t]));
+  for (const guest of guests) {
+    if (guest.tableId) {
+      const targetTable = tableMap.get(guest.tableId);
+      if (!targetTable) {
+        conflicts.push(
+          `Missing Table: Guest "${guest.name}" is linked to deleted or non-existent table ID "${guest.tableId}".`
+        );
+      } else if (!targetTable.assignedGuestIds.includes(guest.id)) {
+        conflicts.push(
+          `Unreciprocated Seating: Guest "${guest.name}" is marked as seated at "${targetTable.name}" but not in table roster.`
+        );
+      }
+    }
+  }
+
+  return conflicts;
 }

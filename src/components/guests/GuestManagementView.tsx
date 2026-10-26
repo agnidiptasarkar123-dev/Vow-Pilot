@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useEvent } from '../../context/EventContext';
 import { GuestRecord, RsvpStatus } from '../../types';
+import { formatGuestsCsv } from '../../context/slices/guestSlice';
 import { PublicRsvpModal } from '../rsvp/PublicRsvpModal';
 import {
   Users,
@@ -98,9 +99,10 @@ export const GuestManagementView: React.FC = () => {
         const q = searchQuery.toLowerCase();
         const matchesName = g.name.toLowerCase().includes(q);
         const matchesEmail = g.email?.toLowerCase().includes(q) || false;
+        const matchesPhone = g.phone?.toLowerCase().includes(q) || false;
         const matchesHousehold = g.householdGroup?.toLowerCase().includes(q) || false;
         const matchesDietary = g.dietaryNotes?.toLowerCase().includes(q) || false;
-        if (!matchesName && !matchesEmail && !matchesHousehold && !matchesDietary) {
+        if (!matchesName && !matchesEmail && !matchesPhone && !matchesHousehold && !matchesDietary) {
           return false;
         }
       }
@@ -196,35 +198,7 @@ export const GuestManagementView: React.FC = () => {
       return;
     }
 
-    const headers = [
-      'Name',
-      'Household/Group',
-      'Party Size',
-      'RSVP Status',
-      'Confirmed Guests',
-      'Email',
-      'Phone',
-      'Dietary Requirements',
-      'Accessibility',
-      'RSVP Link Token',
-      'Notes',
-    ];
-
-    const rows = guests.map((g) => [
-      `"${g.name.replace(/"/g, '""')}"`,
-      `"${(g.householdGroup || '').replace(/"/g, '""')}"`,
-      g.partySize,
-      g.rsvpStatus,
-      g.confirmedCount,
-      `"${(g.email || '').replace(/"/g, '""')}"`,
-      `"${(g.phone || '').replace(/"/g, '""')}"`,
-      `"${(g.dietaryNotes || '').replace(/"/g, '""')}"`,
-      `"${(g.accessibilityRequirements || '').replace(/"/g, '""')}"`,
-      g.invitationToken,
-      `"${(g.notes || '').replace(/"/g, '""')}"`,
-    ]);
-
-    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const csvContent = formatGuestsCsv(guests);
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');

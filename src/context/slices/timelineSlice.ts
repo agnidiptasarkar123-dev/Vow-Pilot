@@ -102,33 +102,79 @@ export function handleReorderTimeline(state: AppState, itemIds: string[]): AppSt
 }
 
 /**
- * Checks for timeline schedule conflicts or overlaps.
+ * Checks for timeline schedule conflicts, overlaps, resource clashes, and invalid times.
  * Returns array of conflict warning messages.
  */
 export function detectTimelineConflicts(timeline: TimelineItem[]): string[] {
   const conflicts: string[] = [];
-  if (!timeline || timeline.length < 2) return conflicts;
+  if (!timeline || timeline.length === 0) return conflicts;
+
+  // Validate individual item times and durations
+  for (const item of timeline) {
+    if (!item.time || typeof item.time !== 'string') {
+      conflicts.push(`Invalid Time: Activity "${item.activity}" is missing a valid time.`);
+      continue;
+    }
+    const [hours, mins] = item.time.split(':').map((v) => parseInt(v, 10));
+    if (isNaN(hours) || isNaN(mins) || hours < 0 || hours > 23 || mins < 0 || mins > 59) {
+      conflicts.push(`Invalid Time Format: Activity "${item.activity}" has invalid time "${item.time}".`);
+    }
+    if (typeof item.durationMinutes !== 'number' || isNaN(item.durationMinutes) || item.durationMinutes < 0) {
+      conflicts.push(`Invalid Duration: Activity "${item.activity}" has invalid duration (${item.durationMinutes}m).`);
+    }
+  }
+
+  if (timeline.length < 2) return conflicts;
 
   const sorted = [...timeline].sort((a, b) => a.time.localeCompare(b.time));
 
   for (let i = 0; i < sorted.length - 1; i++) {
     const current = sorted[i];
-    const next = sorted[i + 1];
-
-    // Parse HH:mm to minutes from midnight
     const [cHours, cMins] = current.time.split(':').map((v) => parseInt(v, 10));
-    const [nHours, nMins] = next.time.split(':').map((v) => parseInt(v, 10));
+    if (isNaN(cHours) || isNaN(cMins) || cHours < 0 || cHours > 23 || cMins < 0 || cMins > 59) {
+      continue;
+    }
+    const safeDuration = Math.max(0, current.durationMinutes || 0);
+    const currentStart = cHours * 60 + cMins;
+    const currentEnd = currentStart + safeDuration;
 
-    if (!isNaN(cHours) && !isNaN(cMins) && !isNaN(nHours) && !isNaN(nMins)) {
-      const currentStart = cHours * 60 + cMins;
-      const currentEnd = currentStart + current.durationMinutes;
+    // Check against ALL subsequent overlapping activities, not just the immediately adjacent one
+    for (let j = i + 1; j < sorted.length; j++) {
+      const next = sorted[j];
+      const [nHours, nMins] = next.time.split(':').map((v) => parseInt(v, 10));
+      if (isNaN(nHours) || isNaN(nMins) || nHours < 0 || nHours > 23 || nMins < 0 || nMins > 59) {
+        continue;
+      }
       const nextStart = nHours * 60 + nMins;
 
-      if (currentEnd > nextStart) {
-        conflicts.push(
-          `Schedule Overlap: "${current.activity}" (${current.time}, ${current.durationMinutes}m) overlaps with "${next.activity}" (${next.time}) by ${currentEnd - nextStart} minutes.`
-        );
+      // Because sorted chronologically, once nextStart exceeds or equals currentEnd,
+      // no subsequent activity can overlap with current unless same start time.
+      if (nextStart >= currentEnd) {
+        break;
       }
+
+      const overlapMinutes = currentEnd - nextStart;
+      let conflictMsg = `Schedule Overlap: "${current.activity}" (${current.time}, ${current.durationMinutes}m) overlaps with "${next.activity}" (${next.time}) by ${overlapMinutes} minutes.`;
+
+      if (
+        current.location &&
+        next.location &&
+        current.location.trim().toLowerCase() === next.location.trim().toLowerCase()
+      ) {
+        conflictMsg += ` [Location Clash: "${current.location}"]`;
+      }
+      if (
+        current.assignedPerson &&
+        next.assignedPerson &&
+        current.assignedPerson.trim().toLowerCase() === next.assignedPerson.trim().toLowerCase()
+      ) {
+        conflictMsg += ` [Personnel Conflict: "${current.assignedPerson}"]`;
+      }
+      if (current.vendorId && next.vendorId && current.vendorId === next.vendorId) {
+        conflictMsg += ` [Vendor Conflict]`;
+      }
+
+      conflicts.push(conflictMsg);
     }
   }
 
