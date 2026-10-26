@@ -1,0 +1,8 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="VowPilot Monochrome Mark">
+  <!-- Left foundation ribbon -->
+  <path d="M8 15C13.5 15 17.5 20.5 20.8 30L23.2 37.5C23.5 38.2 24.5 38.2 24.8 37.5L27.2 30C28.5 24.5 30.5 19.5 33.5 15.5C31 16.5 29 19.5 27.8 24L24 34.5L20.2 24C18 18 14 15 8 15Z" fill="currentColor"/>
+  <!-- Right ascending flight ribbon -->
+  <path d="M25 34L33.5 17.5C35 14.5 37.8 13.5 39.5 14.8C41 16.2 40 19 37.5 23L28 35.5L25 34Z" fill="currentColor"/>
+  <!-- Inner coordination fold (with slight opacity for mono depth) -->
+  <path d="M26 25C27.8 19.5 30.5 15 34.5 14.2C36.8 13.8 37.8 15.2 36.5 17.2C34.2 20.2 31 24.5 28 28.2L26 25Z" fill="currentColor" fill-opacity="0.6"/>
+</svg>

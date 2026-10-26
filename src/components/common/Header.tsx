@@ -3,6 +3,7 @@ import { useEvent } from '../../context/EventContext';
 import { formatCurrency } from '../../domain/currency';
 import { calculateBudgetOverview } from '../../domain/budgetEngine';
 import { evaluateTasks } from '../../domain/taskEngine';
+import { VowPilotLogo } from './VowPilotLogo';
 import {
   Calendar,
   Compass,
@@ -67,7 +68,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
       case 'syncing':
         return {
           bg: 'bg-blue-50 text-blue-800 border-blue-200',
-          dot: 'bg-blue-600 animate-pulse',
+          dot: 'bg-blue-600',
           label: 'Syncing...',
           version: `Rev #${collabState.serverVersion}`,
           tooltip: 'Syncing updates with server...',
@@ -75,14 +76,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
       case 'connecting':
         return {
           bg: 'bg-amber-50 text-amber-800 border-amber-200',
-          dot: 'bg-amber-600 animate-pulse',
+          dot: 'bg-amber-600',
           label: 'Connecting...',
           version: `v${collabState.serverVersion}`,
           tooltip: 'Connecting to server SSE stream...',
         };
       case 'conflict':
         return {
-          bg: 'bg-rose-50 text-rose-800 border-rose-300 animate-pulse',
+          bg: 'bg-rose-50 text-rose-800 border-rose-300',
           dot: 'bg-rose-600',
           label: 'Conflict Detected',
           version: `Rev #${collabState.serverVersion}`,
@@ -114,23 +115,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
       {/* Top Banner Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
         {/* Brand identity */}
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-md bg-[#A2421D] flex items-center justify-center text-white font-serif font-bold text-lg shadow-xs">
-            V
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="text-xl font-bold tracking-tight text-[#1C1917] font-serif-heading">
-                VowPilot
-              </span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-[#FAF0EB] text-[#A2421D] font-medium border border-[#F3CEBE]">
-                Coordinator
-              </span>
-            </div>
-            <p className="text-xs text-[#78716C] hidden sm:block">
-              Plan with clarity. Coordinate with confidence.
-            </p>
-          </div>
+        <div className="flex items-center space-x-2.5">
+          <VowPilotLogo
+            variant="compact"
+            size="md"
+            onClick={() => setActiveTab('dashboard')}
+            className="cursor-pointer"
+          />
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#FAF0EB] text-[#B85C3A] font-semibold border border-[#E8C8BD] tracking-tight">
+            Coordinator
+          </span>
         </div>
 
         {/* Event Quick Info */}
@@ -186,12 +180,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
               data-testid="open-collab-btn"
               title="Invite collaborators or view active members"
               aria-label={`Collaborate${collabState.members.length > 0 ? ` (${collabState.members.length})` : ''}`}
-              className="px-2.5 py-1.5 rounded bg-[#FAF0EB] hover:bg-[#F3CEBE] text-[#A2421D] border border-[#F3CEBE] text-xs font-semibold flex items-center gap-1.5 transition"
+              className="px-2.5 py-1.5 rounded bg-[#FAF0EB] hover:bg-[#E8C8BD] text-[#B85C3A] border border-[#E8C8BD] text-xs font-semibold flex items-center gap-1.5 transition"
             >
               <Users className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Collaborate</span>
               {collabState.members.length > 0 && (
-                <span className="bg-[#A2421D] text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold">
+                <span className="bg-[#B85C3A] text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold">
                   {collabState.members.length}
                 </span>
               )}
@@ -229,7 +223,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
                 title="Sign in or create an account"
                 className="px-2.5 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#F4EFEA] text-[#1C1917] border border-[#D6CFC7] text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
               >
-                <LogIn className="w-3.5 h-3.5 text-[#A2421D]" />
+                <LogIn className="w-3.5 h-3.5 text-[#B85C3A]" />
                 <span className="hidden sm:inline">Sign In</span>
               </button>
             )}
@@ -246,7 +240,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
 
             <button
               onClick={onOpenNewEventWizard}
-              className="px-3 py-1.5 rounded bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-medium transition shadow-xs"
+              className="px-3 py-1.5 rounded bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-medium transition shadow-xs"
             >
               + New Event
             </button>
@@ -269,11 +263,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
                 aria-current={isActive ? 'page' : undefined}
                 className={`flex items-center space-x-2 px-3 py-2 rounded-md text-xs font-medium whitespace-nowrap transition-colors ${
                   isActive
-                    ? 'bg-[#FAF0EB] text-[#A2421D] font-semibold border border-[#F3CEBE]'
+                    ? 'bg-[#FAF0EB] text-[#B85C3A] font-semibold border border-[#E8C8BD]'
                     : 'text-[#5C554E] hover:text-[#1C1917] hover:bg-[#F4EFEA]'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-[#A2421D]' : 'text-[#78716C]'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-[#B85C3A]' : 'text-[#78716C]'}`} />
                 <span>{tab.label}</span>
                 {tab.badge && (
                   <span

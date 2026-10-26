@@ -9,12 +9,14 @@ import {
   AlertCircle,
   AlertTriangle,
   ArrowRight,
+  Calendar,
   CheckCircle2,
+  GitBranch,
   Lock,
+  MapPin,
   MessageSquare,
   PieChart,
   Sliders,
-  Sparkles,
   TrendingDown,
   Users,
 } from 'lucide-react';
@@ -46,26 +48,26 @@ export const DashboardView: React.FC = () => {
                 {state.event.eventType}
               </Badge>
             </div>
-            <p className="text-xs text-[#6E665E] flex flex-wrap items-center gap-2 pt-0.5">
-              <span>📍 {state.event.location}</span>
-              <span>•</span>
-              <span>📅 {state.event.date}</span>
-              <span>•</span>
-              <span>👥 {state.event.guestCount} Confirmed Guests</span>
-            </p>
+            <div className="text-xs text-[#5C554E] flex flex-wrap items-center gap-3 pt-1">
+              <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-[#B85C3A]" /> {state.event.location}</span>
+              <span className="text-[#D5CCC0]">•</span>
+              <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-[#B85C3A]" /> {state.event.date}</span>
+              <span className="text-[#D5CCC0]">•</span>
+              <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-[#B85C3A]" /> {state.event.guestCount} Confirmed Guests</span>
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
             <button
               onClick={() => setActiveTab('simulator')}
-              className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-[#FAF0EB] hover:bg-[#F5E8E0] text-[#A2421D] text-xs font-semibold border border-[#F3CEBE] flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
+              className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-[#FAF0EB] hover:bg-[#F5E8E0] text-[#B85C3A] text-xs font-semibold border border-[#E8C8BD] flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
             >
               <Sliders className="w-3.5 h-3.5" />
               <span>Model Decision What-Ifs</span>
             </button>
             <button
               onClick={() => setActiveTab('assistant')}
-              className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-[#1C1917] hover:bg-[#33302B] text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
+              className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-[#26221F] hover:bg-[#3D3732] text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
             >
               <MessageSquare className="w-3.5 h-3.5" />
               <span>Ask Coordinator</span>
@@ -94,7 +96,7 @@ export const DashboardView: React.FC = () => {
               </div>
               <button
                 onClick={() => setActiveTab('budget')}
-                className="font-bold underline text-[#A2421D] hover:text-[#863414] shrink-0 cursor-pointer"
+                className="font-bold underline text-[#B85C3A] hover:text-[#9E4B2D] shrink-0 cursor-pointer"
               >
                 Review Reductions
               </button>
@@ -128,7 +130,7 @@ export const DashboardView: React.FC = () => {
       <div className="bg-[#FAF8F5] border border-[#E6DFD5] rounded-xl p-5 sm:p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#A2421D]" />
+            <GitBranch className="w-4 h-4 text-[#B85C3A]" />
             <h2 className="text-sm sm:text-base font-bold text-[#1C1917] font-serif-heading">
               Planning Progression & Next Logical Actions
             </h2>
@@ -160,7 +162,7 @@ export const DashboardView: React.FC = () => {
             </div>
             <button
               onClick={() => setActiveTab('budget')}
-              className="text-xs font-semibold text-[#A2421D] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              className="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Review Budget <ArrowRight className="w-3 h-3" />
             </button>
@@ -187,7 +189,7 @@ export const DashboardView: React.FC = () => {
             </div>
             <button
               onClick={() => setActiveTab('tasks')}
-              className="text-xs font-semibold text-[#A2421D] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              className="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Inspect Tasks <ArrowRight className="w-3 h-3" />
             </button>
@@ -212,7 +214,7 @@ export const DashboardView: React.FC = () => {
             </div>
             <button
               onClick={() => setActiveTab('vendors')}
-              className="text-xs font-semibold text-[#A2421D] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              className="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Compare Quotes <ArrowRight className="w-3 h-3" />
             </button>
@@ -239,7 +241,7 @@ export const DashboardView: React.FC = () => {
             </div>
             <button
               onClick={() => setCollabModalOpen(true)}
-              className="text-xs font-semibold text-[#A2421D] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              className="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Manage Sharing <ArrowRight className="w-3 h-3" />
             </button>
@@ -253,7 +255,7 @@ export const DashboardView: React.FC = () => {
         <Card padding="md" className="space-y-2">
           <div className="flex items-center justify-between text-xs text-[#6E665E] font-medium">
             <span>Projected Spend</span>
-            <div className="w-7 h-7 rounded-lg bg-[#FAF0EB] text-[#A2421D] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-[#FAF0EB] text-[#B85C3A] flex items-center justify-center">
               <PieChart className="w-4 h-4" />
             </div>
           </div>
@@ -267,7 +269,7 @@ export const DashboardView: React.FC = () => {
           <div className="w-full bg-[#EAE4DB] h-1.5 rounded-full overflow-hidden mt-1.5">
             <div
               className={`h-full ${
-                overview.isOverrun ? 'bg-[#BE123C]' : 'bg-[#A2421D]'
+                overview.isOverrun ? 'bg-[#BE123C]' : 'bg-[#B85C3A]'
               } transition-all duration-300`}
               style={{ width: `${Math.min(overview.utilizationPercentage, 100)}%` }}
             />
@@ -301,7 +303,7 @@ export const DashboardView: React.FC = () => {
         <Card padding="md" className="space-y-2">
           <div className="flex items-center justify-between text-xs text-[#6E665E] font-medium">
             <span>Milestones Progress</span>
-            <div className="w-7 h-7 rounded-lg bg-[#FAF0EB] text-[#A2421D] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-[#FAF0EB] text-[#B85C3A] flex items-center justify-center">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
@@ -322,7 +324,7 @@ export const DashboardView: React.FC = () => {
         <Card padding="md" className="space-y-2">
           <div className="flex items-center justify-between text-xs text-[#6E665E] font-medium">
             <span>Vendor Quotations</span>
-            <div className="w-7 h-7 rounded-lg bg-[#FAF0EB] text-[#A2421D] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-[#FAF0EB] text-[#B85C3A] flex items-center justify-center">
               <Users className="w-4 h-4" />
             </div>
           </div>
@@ -354,7 +356,7 @@ export const DashboardView: React.FC = () => {
               </div>
               <button
                 onClick={() => setActiveTab('tasks')}
-                className="text-xs font-semibold text-[#A2421D] hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 cursor-pointer"
               >
                 View Full Graph
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -391,7 +393,7 @@ export const DashboardView: React.FC = () => {
                           {evalItem.priorityRationale}
                         </p>
                         {isBlocked && (
-                          <p className="text-[11px] text-[#A2421D]">
+                          <p className="text-[11px] text-[#B85C3A]">
                             Awaiting: {evalItem.risks.missingPrerequisites.join(', ')}
                           </p>
                         )}
@@ -430,7 +432,7 @@ export const DashboardView: React.FC = () => {
               </div>
               <button
                 onClick={() => setActiveTab('budget')}
-                className="text-xs font-semibold text-[#A2421D] hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 cursor-pointer"
               >
                 Open Budget Planner
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -463,7 +465,7 @@ export const DashboardView: React.FC = () => {
                     </div>
                     <div className="w-full bg-[#EAE4DB] h-1.5 rounded-full overflow-hidden">
                       <div
-                        className={`h-full ${pct > 100 ? 'bg-[#BE123C]' : 'bg-[#A2421D]'} transition-all duration-300`}
+                        className={`h-full ${pct > 100 ? 'bg-[#BE123C]' : 'bg-[#B85C3A]'} transition-all duration-300`}
                         style={{ width: `${Math.min(pct, 100)}%` }}
                       />
                     </div>
@@ -477,8 +479,8 @@ export const DashboardView: React.FC = () => {
         {/* Right Column: Recent Planning Changes & Simulator Promo */}
         <div className="space-y-6">
           {/* Decision Simulator Prompt */}
-          <div className="bg-[#FAF0EB] p-5 sm:p-6 rounded-xl border border-[#F3CEBE] space-y-3 shadow-2xs">
-            <div className="flex items-center gap-2 text-[#A2421D] font-bold text-sm">
+          <div className="bg-[#FAF0EB] p-5 sm:p-6 rounded-xl border border-[#E8C8BD] space-y-3 shadow-2xs">
+            <div className="flex items-center gap-2 text-[#B85C3A] font-bold text-sm">
               <Sliders className="w-4 h-4" />
               <span>Simulate Planning Changes</span>
             </div>
@@ -487,7 +489,7 @@ export const DashboardView: React.FC = () => {
             </p>
             <button
               onClick={() => setActiveTab('simulator')}
-              className="w-full py-2.5 bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold rounded-lg transition shadow-xs cursor-pointer active:scale-[0.98]"
+              className="w-full py-2.5 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold rounded-lg transition shadow-xs cursor-pointer active:scale-[0.98]"
             >
               Open Simulator Sandbox
             </button>
@@ -500,7 +502,7 @@ export const DashboardView: React.FC = () => {
             </h3>
             <div className="space-y-3">
               {state.changeLog.slice(0, 5).map((log) => (
-                <div key={log.id} className="text-xs border-l-2 border-[#A2421D] pl-3 py-1 space-y-0.5">
+                <div key={log.id} className="text-xs border-l-2 border-[#B85C3A] pl-3 py-1 space-y-0.5">
                   <span className="text-[#6E665E] text-[10px] block">
                     {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} •{' '}
                     {new Date(log.timestamp).toLocaleDateString()}

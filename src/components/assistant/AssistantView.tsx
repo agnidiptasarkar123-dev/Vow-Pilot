@@ -6,7 +6,6 @@ import {
   Check,
   CornerDownLeft,
   Info,
-  Sparkles,
   User,
 } from 'lucide-react';
 
@@ -52,10 +51,10 @@ export const AssistantView: React.FC = () => {
       <div className="bg-white p-6 rounded-xl border border-[#E6DFD5] shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-[#1C1917] font-serif-heading">
+            <h1 className="text-2xl font-bold text-[#26221F] font-serif-heading">
               Context-Aware Planning Coordinator
             </h1>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#FAF0EB] text-[#A2421D] font-bold border border-[#F3CEBE] uppercase">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#FAF0EB] text-[#B85C3A] font-bold border border-[#E8C8BD] uppercase">
               Rule-Based Engine
             </span>
           </div>
@@ -65,7 +64,7 @@ export const AssistantView: React.FC = () => {
         </div>
 
         <div className="p-2.5 bg-[#FAF8F5] border border-[#E6DFD5] rounded-lg text-xs text-[#5C554E] max-w-sm flex items-start gap-2">
-          <Info className="w-4 h-4 text-[#A2421D] shrink-0 mt-0.5" />
+          <Info className="w-4 h-4 text-[#B85C3A] shrink-0 mt-0.5" />
           <span>
             <strong>Deterministic Guarantee:</strong> No hallucinated quotes, fake vendor reviews, or unverified claims.
           </span>
@@ -83,7 +82,7 @@ export const AssistantView: React.FC = () => {
               key={promptText}
               type="button"
               onClick={() => handleSend(promptText)}
-              className="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#1C1917] hover:text-[#A2421D] border border-[#E6DFD5] hover:border-[#F3CEBE] transition shadow-2xs font-medium"
+              className="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
             >
               "{promptText}"
             </button>
@@ -115,8 +114,8 @@ export const AssistantView: React.FC = () => {
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
                     isUser
-                      ? 'bg-[#1C1917] text-white'
-                      : 'bg-[#A2421D] text-white font-serif'
+                      ? 'bg-[#26221F] text-white'
+                      : 'bg-[#B85C3A] text-white font-serif'
                   }`}
                 >
                   {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
@@ -126,8 +125,8 @@ export const AssistantView: React.FC = () => {
                 <div
                   className={`max-w-[85%] rounded-xl p-4 text-xs space-y-3 ${
                     isUser
-                      ? 'bg-[#1C1917] text-white'
-                      : 'bg-[#FAF8F5] text-[#1C1917] border border-[#E6DFD5]'
+                      ? 'bg-[#26221F] text-white'
+                      : 'bg-[#FAF8F5] text-[#26221F] border border-[#E6DFD5]'
                   }`}
                 >
                   {/* Markdown formatted text (rendered safely without dangerouslySetInnerHTML) */}
@@ -135,7 +134,7 @@ export const AssistantView: React.FC = () => {
                     {msg.content.split('\n\n').map((paragraph, pIdx) => {
                       if (paragraph.startsWith('### ')) {
                         return (
-                          <h4 key={pIdx} className="font-bold text-sm text-[#1C1917] pt-1">
+                          <h4 key={pIdx} className="font-bold text-sm text-[#26221F] pt-1">
                             {paragraph.replace('### ', '')}
                           </h4>
                         );
@@ -178,8 +177,8 @@ export const AssistantView: React.FC = () => {
                   {msg.proposedAction && msg.requiresConfirmation && (
                     <div className="p-3.5 bg-white border border-[#E6DFD5] rounded-lg space-y-2.5 mt-2 shadow-2xs">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-[#1C1917] text-xs flex items-center gap-1.5">
-                          <Sparkles className="w-3.5 h-3.5 text-[#A2421D]" />
+                        <span className="font-bold text-[#26221F] text-xs flex items-center gap-1.5">
+                          <Bot className="w-3.5 h-3.5 text-[#B85C3A]" />
                           Proposed Plan Action: {msg.proposedAction.summary}
                         </span>
                         {msg.actionStatus === 'applied' && (
@@ -211,7 +210,7 @@ export const AssistantView: React.FC = () => {
                         </div>
                         <div>
                           <span className="text-[#78716C] block">Revised Runway</span>
-                          <span className="font-bold text-[#1C1917]">
+                          <span className="font-bold text-[#26221F]">
                             {formatCurrency(msg.proposedAction.impact.remainingBudget, state.event.currency)}
                           </span>
                         </div>
@@ -230,7 +229,7 @@ export const AssistantView: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => applyProposedAction(msg.id, msg.proposedAction!)}
-                            className="px-3.5 py-1.5 rounded bg-[#A2421D] hover:bg-[#863414] text-white font-semibold text-xs shadow-xs transition flex items-center gap-1"
+                            className="px-3.5 py-1.5 rounded bg-[#B85C3A] hover:bg-[#9E4B2D] text-white font-semibold text-xs shadow-xs transition flex items-center gap-1"
                             aria-label={`Confirm and apply proposed action: ${msg.proposedAction.summary}`}
                           >
                             <Check className="w-3.5 h-3.5" />
@@ -259,14 +258,14 @@ export const AssistantView: React.FC = () => {
             onKeyDown={handleKeyDown}
             placeholder="Type a planning command, e.g. 'Explain my current budget' or 'Change guest count to 160'..."
             aria-label="Planning command input"
-            className="flex-1 text-xs px-3.5 py-2.5 bg-white border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-1 focus:ring-[#A2421D] text-[#1C1917]"
+            className="flex-1 text-xs px-3.5 py-2.5 bg-white border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] text-[#26221F]"
           />
           <button
             type="button"
             onClick={() => handleSend()}
             disabled={!inputPrompt.trim()}
             aria-label="Ask: Send planning command"
-            className="px-4 py-2.5 bg-[#A2421D] hover:bg-[#863414] disabled:opacity-40 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+            className="px-4 py-2.5 bg-[#B85C3A] hover:bg-[#9E4B2D] disabled:opacity-40 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
           >
             <span>Ask</span>
             <CornerDownLeft className="w-3.5 h-3.5" />
@@ -294,7 +293,7 @@ function renderSafeInline(text: string): React.ReactNode[] {
     const token = match[0];
     if (token.startsWith('**') && token.endsWith('**')) {
       tokens.push(
-        <strong key={`b-${lastIndex}`} className="font-semibold text-[#1C1917]">
+        <strong key={`b-${lastIndex}`} className="font-semibold text-[#26221F]">
           {token.slice(2, -2)}
         </strong>
       );

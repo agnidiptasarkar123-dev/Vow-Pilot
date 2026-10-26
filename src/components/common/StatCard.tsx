@@ -37,7 +37,7 @@ export const StatCard: React.FC<StatCardProps> = ({
           <p className="text-xs font-semibold uppercase tracking-wider text-[#6E665E]">
             {title}
           </p>
-          <p className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#1F1D1A]">
+          <p className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#26221F]">
             {value}
           </p>
           {subtitle && (
@@ -47,7 +47,7 @@ export const StatCard: React.FC<StatCardProps> = ({
           )}
         </div>
 
-        <div className="w-10 h-10 rounded-xl bg-[#FAF0EB] text-[#A2421D] flex items-center justify-center shrink-0 border border-[#F3CEBE]/60">
+        <div className="w-10 h-10 rounded-xl bg-[#FAF0EB] text-[#B85C3A] flex items-center justify-center shrink-0 border border-[#E8C8BD]/60">
           <Icon className="w-5 h-5" />
         </div>
       </div>
@@ -59,7 +59,7 @@ export const StatCard: React.FC<StatCardProps> = ({
             badge.variant === 'success' ? 'text-[#047857]' :
             badge.variant === 'warning' ? 'text-[#B45309]' :
             badge.variant === 'error' ? 'text-[#BE123C]' :
-            badge.variant === 'accent' ? 'text-[#A2421D]' : 'text-[#5C554E]'
+            badge.variant === 'accent' ? 'text-[#B85C3A]' : 'text-[#5C554E]'
           }`}>
             {badge.text}
           </span>

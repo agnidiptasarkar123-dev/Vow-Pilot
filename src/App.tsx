@@ -5,6 +5,7 @@ import { LandingView } from './components/landing/LandingView';
 import { DashboardView } from './components/dashboard/DashboardView';
 import { Modal } from './components/common/Modal';
 import { ViewLoadingFallback } from './components/common/ViewLoadingFallback';
+import { VowPilotLogo } from './components/common/VowPilotLogo';
 
 // Route-level code splitting: dynamic imports for secondary heavy views
 const BudgetPlannerView = lazy(() =>
@@ -61,7 +62,7 @@ const AppContent: React.FC = () => {
       {/* WCAG 2.2 AA Skip to Main Content Bypass Link */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#A2421D] focus:text-white focus:rounded-md focus:shadow-lg focus:outline-2 focus:outline-white focus:font-semibold text-xs"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#B85C3A] focus:text-white focus:rounded-md focus:shadow-lg focus:outline-2 focus:outline-white focus:font-semibold text-xs"
       >
         Skip to main content
       </a>
@@ -166,8 +167,8 @@ const AppContent: React.FC = () => {
       <footer className="border-t border-[#E6DFD5] bg-[#FFFFFF] py-4 text-center text-xs text-[#5C554E]">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-[#1C1917] font-serif-heading">VowPilot</span>
-            <span>— Plan with clarity. Coordinate with confidence.</span>
+            <VowPilotLogo variant="compact" size="xs" />
+            <span className="hidden sm:inline">— Plan with clarity. Coordinate with confidence.</span>
           </div>
           <div>
             Prompt Wars Virtual • Challenge 5: Celebration & Event Planner

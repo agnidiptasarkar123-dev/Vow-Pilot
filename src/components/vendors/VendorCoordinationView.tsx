@@ -254,7 +254,7 @@ export const VendorCoordinationView: React.FC = () => {
       {/* Header and Quick Actions */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#1C1917] font-serif-heading">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#26221F] font-serif-heading">
             Vendor Directory & Quotation Matrix
           </h1>
           <p className="text-xs text-[#78716C] mt-1">
@@ -269,14 +269,14 @@ export const VendorCoordinationView: React.FC = () => {
                 setQuoteVendorId(comparison.rows[0]?.vendor.id || state.vendors[0]?.id || '');
                 setIsAddQuoteOpen(true);
               }}
-              className="px-3.5 py-2 rounded-md bg-white border border-[#D5CCC0] text-[#1C1917] hover:bg-[#FAF8F5] text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+              className="px-3.5 py-2 rounded-md bg-white border border-[#D5CCC0] text-[#26221F] hover:bg-[#FAF8F5] text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
             >
-              <FileText className="w-3.5 h-3.5 text-[#A2421D]" />
+              <FileText className="w-3.5 h-3.5 text-[#B85C3A]" />
               Log Quotation
             </button>
             <button
               onClick={() => setIsAddVendorOpen(true)}
-              className="px-4 py-2 rounded-md bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+              className="px-4 py-2 rounded-md bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
             >
               <Plus className="w-4 h-4" />
               Add Supplier
@@ -301,8 +301,8 @@ export const VendorCoordinationView: React.FC = () => {
               onClick={() => setSelectedCategoryTab(cat.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 ${
                 isSelected
-                  ? 'bg-[#1C1917] text-white font-bold shadow-xs'
-                  : 'bg-white text-[#5C554E] hover:text-[#1C1917] border border-[#E6DFD5]'
+                  ? 'bg-[#26221F] text-white font-bold shadow-xs'
+                  : 'bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]'
               }`}
             >
               <span>{cat.name}</span>
@@ -323,7 +323,7 @@ export const VendorCoordinationView: React.FC = () => {
         <div className="flex items-center justify-between text-xs text-[#78716C]">
           <span>
             Showing quotations for <strong>{activeCategory.name}</strong> • Category Average:{' '}
-            <span className="font-mono font-semibold text-[#1C1917]">
+            <span className="font-mono font-semibold text-[#26221F]">
               {formatCurrency(comparison.averageQuotedPrice, state.event.currency)}
             </span>
           </span>
@@ -366,7 +366,7 @@ export const VendorCoordinationView: React.FC = () => {
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <h3 className="font-bold text-base text-[#1C1917] font-serif-heading">
+                          <h3 className="font-bold text-base text-[#26221F] font-serif-heading">
                             {vendor.name}
                           </h3>
                         </div>
@@ -393,7 +393,7 @@ export const VendorCoordinationView: React.FC = () => {
                     <div className="text-xs text-[#78716C] space-y-1">
                       {vendor.contactName && (
                         <p className="flex items-center gap-1.5">
-                          <span className="font-semibold text-[#1C1917]">Contact:</span> {vendor.contactName}
+                          <span className="font-semibold text-[#26221F]">Contact:</span> {vendor.contactName}
                         </p>
                       )}
                       {vendor.email && (
@@ -438,7 +438,7 @@ export const VendorCoordinationView: React.FC = () => {
                         )}
                       </div>
 
-                      <div className="text-xl font-bold font-mono text-[#1C1917]">
+                      <div className="text-xl font-bold font-mono text-[#26221F]">
                         {quote ? formatCurrency(quote.quotedAmount, quote.currency) : 'No formal quote'}
                       </div>
 
@@ -482,7 +482,7 @@ export const VendorCoordinationView: React.FC = () => {
                     {quote && (
                       <div className="space-y-2 text-xs pt-1">
                         <div>
-                          <span className="font-semibold text-[#1C1917] block mb-1">
+                          <span className="font-semibold text-[#26221F] block mb-1">
                             Included Services ({quote.includedServices.length}):
                           </span>
                           <ul className="space-y-0.5 text-[11px] text-[#5C554E]">
@@ -524,7 +524,7 @@ export const VendorCoordinationView: React.FC = () => {
                           <button
                             data-testid="draft-clarification-btn"
                             onClick={() => handleOpenClarification(vendor, quote)}
-                            className="px-2.5 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#EAE4DB] text-[#1C1917] text-[11px] font-semibold border border-[#D5CCC0] transition"
+                            className="px-2.5 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#EAE4DB] text-[#26221F] text-[11px] font-semibold border border-[#D5CCC0] transition"
                             aria-label={`Draft clarification message for ${vendor.name}`}
                           >
                             Draft Clarification
@@ -537,7 +537,7 @@ export const VendorCoordinationView: React.FC = () => {
                               className={`px-3 py-1.5 rounded text-[11px] font-semibold transition ${
                                 isSelected
                                   ? 'bg-[#047857] text-white'
-                                  : 'bg-[#1C1917] hover:bg-[#33302B] text-white shadow-xs'
+                                  : 'bg-[#26221F] hover:bg-[#33302B] text-white shadow-xs'
                               }`}
                             >
                               {isSelected ? '✓ Selected' : 'Select Proposal'}
@@ -555,7 +555,7 @@ export const VendorCoordinationView: React.FC = () => {
                             setIsAddQuoteOpen(true);
                           }}
                           aria-label={`Submit quotation for ${vendor.name}`}
-                          className="w-full py-1.5 rounded bg-[#FAF8F5] hover:bg-[#EAE4DB] text-[#1C1917] text-xs font-semibold border border-[#D5CCC0] transition"
+                          className="w-full py-1.5 rounded bg-[#FAF8F5] hover:bg-[#EAE4DB] text-[#26221F] text-xs font-semibold border border-[#D5CCC0] transition"
                         >
                           + Submit Quotation
                         </button>
@@ -582,11 +582,11 @@ export const VendorCoordinationView: React.FC = () => {
         <div className="space-y-4 text-xs">
           <div className="flex items-center justify-between bg-[#F5F2EB] p-2.5 rounded-md border border-[#EAE4DB]">
             <div className="flex items-center gap-2">
-              <Mail className="w-4 h-4 text-[#A2421D]" />
-              <span className="text-[#1C1917] font-medium">
+              <Mail className="w-4 h-4 text-[#B85C3A]" />
+              <span className="text-[#26221F] font-medium">
                 Supplier Email:{' '}
                 {clarificationModal?.vendor.email ? (
-                  <span className="font-mono text-[#A2421D]">{clarificationModal.vendor.email}</span>
+                  <span className="font-mono text-[#B85C3A]">{clarificationModal.vendor.email}</span>
                 ) : (
                   <span className="text-[#8C827A] italic">None registered (clipboard handoff recommended)</span>
                 )}
@@ -640,7 +640,7 @@ export const VendorCoordinationView: React.FC = () => {
                     href={serverDeliveryResult.previewUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-[#A2421D] underline font-medium text-xs hover:text-[#863414]"
+                    className="inline-flex items-center gap-1 text-[#B85C3A] underline font-medium text-xs hover:text-[#9E4B2D]"
                   >
                     <span>View Delivered Message in Test Inbox</span>
                     <ExternalLink className="w-3 h-3" />
@@ -702,7 +702,7 @@ export const VendorCoordinationView: React.FC = () => {
               setClarificationModal((prev) => (prev ? { ...prev, message: e.target.value } : null))
             }
             aria-label="Clarification inquiry message draft"
-            className="w-full p-3 font-mono text-xs border border-[#D5CCC0] rounded-lg bg-[#FAF8F5] text-[#1C1917] focus:outline-hidden focus:border-[#A2421D]"
+            className="w-full p-3 font-mono text-xs border border-[#D5CCC0] rounded-lg bg-[#FAF8F5] text-[#26221F] focus:outline-hidden focus:border-[#B85C3A]"
           />
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
@@ -720,7 +720,7 @@ export const VendorCoordinationView: React.FC = () => {
               <button
                 data-testid="copy-draft-btn"
                 onClick={handleCopyDraft}
-                className="px-3 py-2 border border-[#A2421D] text-[#A2421D] hover:bg-[#FBF6F0] font-semibold rounded-md flex items-center gap-1.5 shadow-xs text-xs"
+                className="px-3 py-2 border border-[#B85C3A] text-[#B85C3A] hover:bg-[#FBF6F0] font-semibold rounded-md flex items-center gap-1.5 shadow-xs text-xs"
               >
                 {hasCopiedDraft ? (
                   <>
@@ -753,7 +753,7 @@ export const VendorCoordinationView: React.FC = () => {
                 disabled={!clarificationModal?.vendor.email || isDispatching}
                 className={`px-3 py-2 text-white font-semibold rounded-md flex items-center gap-1.5 shadow-xs transition text-xs ${
                   clarificationModal?.vendor.email && !isDispatching
-                    ? 'bg-[#A2421D] hover:bg-[#863414]'
+                    ? 'bg-[#B85C3A] hover:bg-[#9E4B2D]'
                     : 'bg-neutral-400 cursor-not-allowed opacity-60'
                 }`}
                 title={
@@ -788,58 +788,58 @@ export const VendorCoordinationView: React.FC = () => {
       >
         <div className="space-y-4 text-xs">
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Company / Vendor Name *</label>
+            <label className="block font-semibold text-[#26221F] mb-1">Company / Vendor Name *</label>
             <input
               type="text"
               value={vendorName}
               onChange={(e) => setVendorName(e.target.value)}
               placeholder="e.g. Royal Rajputana Sound & Lights"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold text-[#1C1917] mb-1">Contact Person</label>
+              <label className="block font-semibold text-[#26221F] mb-1">Contact Person</label>
               <input
                 type="text"
                 value={vendorContact}
                 onChange={(e) => setVendorContact(e.target.value)}
                 placeholder="e.g. Vikramaditya Rathore"
-                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
               />
             </div>
             <div>
-              <label className="block font-semibold text-[#1C1917] mb-1">Phone Number</label>
+              <label className="block font-semibold text-[#26221F] mb-1">Phone Number</label>
               <input
                 type="text"
                 value={vendorPhone}
                 onChange={(e) => setVendorPhone(e.target.value)}
                 placeholder="+91 98XXX XXXXX"
-                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Email Address</label>
+            <label className="block font-semibold text-[#26221F] mb-1">Email Address</label>
             <input
               type="email"
               value={vendorEmail}
               onChange={(e) => setVendorEmail(e.target.value)}
               placeholder="contact@supplier.example"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Notes (optional)</label>
+            <label className="block font-semibold text-[#26221F] mb-1">Notes (optional)</label>
             <textarea
               rows={2}
               value={vendorNotes}
               onChange={(e) => setVendorNotes(e.target.value)}
               placeholder="Referred by family, specializes in heritage acoustics..."
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
@@ -852,7 +852,7 @@ export const VendorCoordinationView: React.FC = () => {
             </button>
             <button
               onClick={handleCreateVendor}
-              className="px-4 py-2 bg-[#A2421D] hover:bg-[#863414] text-white font-semibold rounded-md shadow-xs"
+              className="px-4 py-2 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white font-semibold rounded-md shadow-xs"
             >
               Register Supplier
             </button>
@@ -869,11 +869,11 @@ export const VendorCoordinationView: React.FC = () => {
       >
         <div className="space-y-4 text-xs">
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Select Supplier *</label>
+            <label className="block font-semibold text-[#26221F] mb-1">Select Supplier *</label>
             <select
               value={quoteVendorId}
               onChange={(e) => setQuoteVendorId(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             >
               <option value="">Select a vendor...</option>
               {state.vendors.map((v) => (
@@ -886,7 +886,7 @@ export const VendorCoordinationView: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold text-[#1C1917] mb-1">
+              <label className="block font-semibold text-[#26221F] mb-1">
                 Quoted Amount ({state.event.currency}) *
               </label>
               <input
@@ -894,33 +894,33 @@ export const VendorCoordinationView: React.FC = () => {
                 value={quoteAmountDisplay}
                 onChange={(e) => setQuoteAmountDisplay(e.target.value)}
                 placeholder="e.g. 350000"
-                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-[#1C1917] mb-1">Quote Validity Date</label>
+              <label className="block font-semibold text-[#26221F] mb-1">Quote Validity Date</label>
               <input
                 type="date"
                 value={quoteValidity}
                 onChange={(e) => setQuoteValidity(e.target.value)}
-                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Quote Received Date</label>
+            <label className="block font-semibold text-[#26221F] mb-1">Quote Received Date</label>
             <input
               type="date"
               value={quoteDate}
               onChange={(e) => setQuoteDate(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">
+            <label className="block font-semibold text-[#26221F] mb-1">
               Included Services (One per line)
             </label>
             <textarea
@@ -928,12 +928,12 @@ export const VendorCoordinationView: React.FC = () => {
               value={quoteInclusions}
               onChange={(e) => setQuoteInclusions(e.target.value)}
               placeholder="Courtyard sound equipment&#10;Wireless microphones&#10;On-site technician"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">
+            <label className="block font-semibold text-[#26221F] mb-1">
               Explicit Exclusions (One per line)
             </label>
             <textarea
@@ -941,18 +941,18 @@ export const VendorCoordinationView: React.FC = () => {
               value={quoteExclusions}
               onChange={(e) => setQuoteExclusions(e.target.value)}
               placeholder="Overtime beyond 10 PM&#10;Power generator fuel"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">Payment Terms</label>
+            <label className="block font-semibold text-[#26221F] mb-1">Payment Terms</label>
             <input
               type="text"
               value={quotePaymentTerms}
               onChange={(e) => setQuotePaymentTerms(e.target.value)}
               placeholder="e.g. 50% advance on booking, 50% on event date"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
@@ -965,7 +965,7 @@ export const VendorCoordinationView: React.FC = () => {
             </button>
             <button
               onClick={handleCreateQuote}
-              className="px-4 py-2 bg-[#A2421D] hover:bg-[#863414] text-white font-semibold rounded-md shadow-xs"
+              className="px-4 py-2 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white font-semibold rounded-md shadow-xs"
             >
               Record Proposal
             </button>

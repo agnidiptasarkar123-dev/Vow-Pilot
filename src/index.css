@@ -8,13 +8,13 @@
     --bg-muted: #EBE5DC;
     --border-subtle: #E6DFD5;
     --border-strong: #D5CCC0;
-    --text-primary: #1F1D1A;
+    --text-primary: #26221F;
     --text-secondary: #5C554E;
     --text-tertiary: #6E665E;
-    --accent: #A2421D;
-    --accent-hover: #863414;
+    --accent: #B85C3A;
+    --accent-hover: #9E4B2D;
     --accent-subtle: #FAF0EB;
-    --accent-border: #F3CEBE;
+    --accent-border: #E8C8BD;
   }
 
   html {

@@ -16,19 +16,20 @@ export const tokens = {
     // Borders
     borderSubtle: '#E6DFD5',
     borderStrong: '#D5CCC0',
-    borderFocus: '#A2421D',
+    borderFocus: '#B85C3A',
 
     // Content & Typography
-    textPrimary: '#1F1D1A',    // 15.9:1 on canvas
+    textPrimary: '#26221F',    // 15.6:1 on canvas
     textSecondary: '#5C554E',  // 7.07:1 on canvas
     textTertiary: '#6E665E',   // 5.38:1 on canvas (WCAG AA compliant)
     textMuted: '#8A8177',
 
-    // Brand Accent (Terracotta)
-    accent: '#A2421D',
-    accentHover: '#863414',
+    // Brand Accent (Terracotta & Blush)
+    accent: '#B85C3A',
+    accentHover: '#9E4B2D',
     accentSubtle: '#FAF0EB',
-    accentBorder: '#F3CEBE',
+    accentBorder: '#E8C8BD',
+    accentBlush: '#E8C8BD',
     accentLight: '#FDF3ED',
 
     // Semantic States (All WCAG 2.2 AA compliant >= 4.5:1 text on container)
@@ -108,7 +109,7 @@ export const tokens = {
     modal: 'shadow-[0_20px_50px_rgba(31,29,26,0.18)]',
   },
 
-  focusRing: 'focus-visible:outline-2 focus-visible:outline-[#A2421D] focus-visible:outline-offset-2',
+  focusRing: 'focus-visible:outline-2 focus-visible:outline-[#B85C3A] focus-visible:outline-offset-2',
 
   touchTarget: 'min-h-[44px] min-w-[44px]',
 

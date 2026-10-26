@@ -86,10 +86,10 @@ export const ConflictModal: React.FC<ConflictModalProps> = ({
 
           <button
             onClick={onKeepLocal}
-            className="flex flex-col items-start p-3 rounded-lg border border-[#E6DFD5] hover:border-[#A2421D] bg-[#FFFFFF] hover:bg-[#FAF0EB]/30 text-left transition group"
+            className="flex flex-col items-start p-3 rounded-lg border border-[#E6DFD5] hover:border-[#B85C3A] bg-[#FFFFFF] hover:bg-[#FAF0EB]/30 text-left transition group"
           >
-            <div className="flex items-center gap-1.5 font-semibold text-[#1C1917] text-xs mb-1">
-              <Check className="w-4 h-4 text-[#A2421D]" />
+            <div className="flex items-center gap-1.5 font-semibold text-[#26221F] text-xs mb-1">
+              <Check className="w-4 h-4 text-[#B85C3A]" />
               <span>Re-apply My Changes</span>
             </div>
             <p className="text-[11px] text-[#78716C]">

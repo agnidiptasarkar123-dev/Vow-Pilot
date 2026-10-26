@@ -11,7 +11,6 @@ import {
   AlertTriangle,
   Plus,
   RotateCcw,
-  Sparkles,
   Trash2,
   Users,
 } from 'lucide-react';
@@ -119,7 +118,7 @@ export const DecisionSimulatorView: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#1C1917] font-serif-heading tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#26221F] font-serif-heading tracking-tight">
             Decision Impact Simulator
           </h1>
           <p className="text-xs text-[#6E665E] mt-1">
@@ -130,14 +129,14 @@ export const DecisionSimulatorView: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleResetSandbox}
-            className="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#5C554E] hover:text-[#1C1917] bg-white border border-[#D5CCC0] flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
+            className="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#5C554E] hover:text-[#26221F] bg-white border border-[#D5CCC0] flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset to Baseline</span>
           </button>
           <button
             onClick={() => setIsSaveModalOpen(true)}
-            className="px-4 py-2 rounded-lg text-xs font-semibold bg-[#A2421D] hover:bg-[#863414] text-white flex items-center gap-1.5 transition shadow-xs cursor-pointer active:scale-[0.98]"
+            className="px-4 py-2 rounded-lg text-xs font-semibold bg-[#B85C3A] hover:bg-[#9E4B2D] text-white flex items-center gap-1.5 transition shadow-xs cursor-pointer active:scale-[0.98]"
           >
             <Plus className="w-4 h-4" />
             <span>Save as Scenario</span>
@@ -153,8 +152,8 @@ export const DecisionSimulatorView: React.FC = () => {
           <Card padding="md" className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-[#1C1917] font-serif-heading flex items-center gap-2">
-                  <Users className="w-4 h-4 text-[#A2421D]" />
+                <h3 className="text-base font-bold text-[#26221F] font-serif-heading flex items-center gap-2">
+                  <Users className="w-4 h-4 text-[#B85C3A]" />
                   Simulate Guest Count ({sandboxGuestCount} Guests)
                 </h3>
                 <p className="text-xs text-[#6E665E]">
@@ -189,7 +188,7 @@ export const DecisionSimulatorView: React.FC = () => {
               aria-valuemin={20}
               aria-valuemax={capacityLimit ? capacityLimit + 50 : 300}
               aria-valuetext={`${sandboxGuestCount} guests`}
-              className="w-full h-2 bg-[#EAE4DB] rounded-lg appearance-none cursor-pointer accent-[#A2421D]"
+              className="w-full h-2 bg-[#EAE4DB] rounded-lg appearance-none cursor-pointer accent-[#B85C3A]"
             />
 
             {/* Capacity Warning Banner */}
@@ -207,7 +206,7 @@ export const DecisionSimulatorView: React.FC = () => {
 
           {/* Category Budget Adjusters */}
           <Card padding="md" className="space-y-4">
-            <h3 className="text-base font-bold text-[#1C1917] font-serif-heading">
+            <h3 className="text-base font-bold text-[#26221F] font-serif-heading">
               Simulate Category Reallocations
             </h3>
             <p className="text-xs text-[#6E665E]">
@@ -225,7 +224,7 @@ export const DecisionSimulatorView: React.FC = () => {
                   <div key={cat.id} className="pt-3.5 first:pt-0 space-y-2">
                     <div className="flex items-center justify-between text-xs">
                       <div>
-                        <span className="font-semibold text-sm text-[#1C1917] block">
+                        <span className="font-semibold text-sm text-[#26221F] block">
                           {cat.name}
                         </span>
                         <span className="text-[11px] text-[#6E665E]">
@@ -235,7 +234,7 @@ export const DecisionSimulatorView: React.FC = () => {
                       </div>
 
                       <div className="text-right">
-                        <span className="font-mono font-bold text-sm text-[#1C1917]">
+                        <span className="font-mono font-bold text-sm text-[#26221F]">
                           {formatCurrency(currentMinor, state.event.currency)}
                         </span>
                         {deltaMinor !== 0 && (
@@ -265,7 +264,7 @@ export const DecisionSimulatorView: React.FC = () => {
                       aria-valuemin={0}
                       aria-valuemax={maxRange}
                       aria-valuetext={formatCurrency(currentMinor, state.event.currency)}
-                      className="w-full h-1.5 bg-[#EAE4DB] rounded-lg appearance-none cursor-pointer accent-[#A2421D]"
+                      className="w-full h-1.5 bg-[#EAE4DB] rounded-lg appearance-none cursor-pointer accent-[#B85C3A]"
                     />
                   </div>
                 );
@@ -278,10 +277,10 @@ export const DecisionSimulatorView: React.FC = () => {
         <div className="space-y-6">
           <div className="bg-[#FAF8F5] p-5 sm:p-6 rounded-2xl border border-[#E6DFD5] shadow-xs space-y-5 sticky top-24">
             <div>
-              <span className="text-xs font-semibold text-[#A2421D] uppercase tracking-wider">
+              <span className="text-xs font-semibold text-[#B85C3A] uppercase tracking-wider">
                 Simulated Impact
               </span>
-              <h3 className="text-xl font-bold text-[#1C1917] font-serif-heading mt-0.5">
+              <h3 className="text-xl font-bold text-[#26221F] font-serif-heading mt-0.5">
                 Variance vs Baseline
               </h3>
             </div>
@@ -289,20 +288,20 @@ export const DecisionSimulatorView: React.FC = () => {
             <div className="space-y-3 divide-y divide-[#EAE4DB] text-xs">
               <div className="flex justify-between items-center pt-2">
                 <span className="text-[#5C554E]">Baseline Spend</span>
-                <span className="font-mono font-semibold text-[#1C1917]">
+                <span className="font-mono font-semibold text-[#26221F]">
                   {formatCurrency(baselineOverview.effectiveProjectedTotal, state.event.currency)}
                 </span>
               </div>
 
               <div className="flex justify-between items-center pt-2">
                 <span className="text-[#5C554E]">Simulated Total</span>
-                <span className="font-mono font-bold text-sm text-[#1C1917]">
+                <span className="font-mono font-bold text-sm text-[#26221F]">
                   {formatCurrency(evaluation.scenarioTotal, state.event.currency)}
                 </span>
               </div>
 
               <div className="flex justify-between items-center pt-2">
-                <span className="font-semibold text-[#1C1917]">Net Difference</span>
+                <span className="font-semibold text-[#26221F]">Net Difference</span>
                 <span
                   className={`font-mono font-bold text-sm ${
                     evaluation.deltaFromBaseline > 0 ? 'text-[#BE123C]' : 'text-[#047857]'
@@ -341,9 +340,9 @@ export const DecisionSimulatorView: React.FC = () => {
 
             <button
               onClick={() => setIsSaveModalOpen(true)}
-              className="w-full py-2.5 bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold rounded-lg transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98]"
+              className="w-full py-2.5 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold rounded-lg transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98]"
             >
-              <Sparkles className="w-4 h-4" />
+              <Plus className="w-4 h-4" />
               <span>Save As Named Scenario</span>
             </button>
           </div>
@@ -353,7 +352,7 @@ export const DecisionSimulatorView: React.FC = () => {
       {/* Saved Scenarios Comparison Matrix */}
       <Card padding="md" className="space-y-4">
         <div>
-          <h3 className="text-base font-bold text-[#1C1917] font-serif-heading">
+          <h3 className="text-base font-bold text-[#26221F] font-serif-heading">
             Saved Scenarios Comparison ({state.scenarios.length})
           </h3>
           <p className="text-xs text-[#6E665E]">
@@ -387,7 +386,7 @@ export const DecisionSimulatorView: React.FC = () => {
                           </Badge>
                         )}
                         <div>
-                          <span className="font-semibold text-sm text-[#1C1917] block">
+                          <span className="font-semibold text-sm text-[#26221F] block">
                             {scen.name}
                           </span>
                           <span className="text-[11px] text-[#6E665E]">{scen.description}</span>
@@ -395,11 +394,11 @@ export const DecisionSimulatorView: React.FC = () => {
                       </div>
                     </td>
 
-                    <td className="py-3.5 px-4 text-center font-mono font-medium text-[#1C1917]">
+                    <td className="py-3.5 px-4 text-center font-mono font-medium text-[#26221F]">
                       {scen.modifiedGuestCount}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right font-mono font-bold text-[#1C1917]">
+                    <td className="py-3.5 px-4 text-right font-mono font-bold text-[#26221F]">
                       {formatCurrency(scenEval.scenarioTotal, state.event.currency)}
                     </td>
 
@@ -422,7 +421,7 @@ export const DecisionSimulatorView: React.FC = () => {
                       <div className="flex items-center justify-center gap-2">
                         <button
                           onClick={() => handleLoadScenarioIntoSandbox(scen)}
-                          className="px-2.5 py-1 rounded-md bg-[#F4EFEA] hover:bg-[#EAE4DB] text-[#1C1917] font-medium text-[11px] transition cursor-pointer"
+                          className="px-2.5 py-1 rounded-md bg-[#F4EFEA] hover:bg-[#EAE4DB] text-[#26221F] font-medium text-[11px] transition cursor-pointer"
                         >
                           Load Sandbox
                         </button>
@@ -471,7 +470,7 @@ export const DecisionSimulatorView: React.FC = () => {
                     {scen.isBaseline && (
                       <Badge variant="accent" size="sm">Active</Badge>
                     )}
-                    <span className="font-semibold text-sm text-[#1C1917]">{scen.name}</span>
+                    <span className="font-semibold text-sm text-[#26221F]">{scen.name}</span>
                   </div>
                   <span className="font-mono text-xs text-[#5C554E]">{scen.modifiedGuestCount} guests</span>
                 </div>
@@ -479,7 +478,7 @@ export const DecisionSimulatorView: React.FC = () => {
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E6DFD5]">
                   <div>
                     <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Projected Spend</span>
-                    <span className="font-bold text-[#1C1917]">{formatCurrency(scenEval.scenarioTotal, state.event.currency)}</span>
+                    <span className="font-bold text-[#26221F]">{formatCurrency(scenEval.scenarioTotal, state.event.currency)}</span>
                   </div>
                   <div>
                     <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Variance</span>
@@ -492,7 +491,7 @@ export const DecisionSimulatorView: React.FC = () => {
                 <div className="flex items-center justify-end gap-2 pt-1">
                   <button
                     onClick={() => handleLoadScenarioIntoSandbox(scen)}
-                    className="px-3 py-1.5 rounded-md bg-[#F4EFEA] text-[#1C1917] font-medium text-xs"
+                    className="px-3 py-1.5 rounded-md bg-[#F4EFEA] text-[#26221F] font-medium text-xs"
                   >
                     Load Sandbox
                   </button>
@@ -520,31 +519,31 @@ export const DecisionSimulatorView: React.FC = () => {
       >
         <div className="space-y-4 text-xs">
           <div>
-            <label htmlFor="save-scenario-name" className="block font-semibold text-[#1C1917] mb-1">Scenario Name</label>
+            <label htmlFor="save-scenario-name" className="block font-semibold text-[#26221F] mb-1">Scenario Name</label>
             <input
               id="save-scenario-name"
               type="text"
               value={scenarioNameInput}
               onChange={(e) => setScenarioNameInput(e.target.value)}
               placeholder="e.g. Scaled 180 Guests + Drone Cinema Upgrade"
-              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
+              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
             />
           </div>
 
           <div>
-            <label htmlFor="save-scenario-desc" className="block font-semibold text-[#1C1917] mb-1">Description / Rationale</label>
+            <label htmlFor="save-scenario-desc" className="block font-semibold text-[#26221F] mb-1">Description / Rationale</label>
             <textarea
               id="save-scenario-desc"
               rows={2}
               value={scenarioDescriptionInput}
               onChange={(e) => setScenarioDescriptionInput(e.target.value)}
               placeholder="e.g. Explores expanding guest list by trimming decor contingency..."
-              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
+              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
             />
           </div>
 
           <div className="p-3.5 bg-[#FAF8F5] border border-[#E6DFD5] rounded-xl space-y-1">
-            <span className="font-semibold text-[#1C1917]">Snapshot Highlights:</span>
+            <span className="font-semibold text-[#26221F]">Snapshot Highlights:</span>
             <p className="text-[#5C554E]">
               • {sandboxGuestCount} Guests ({sandboxGuestCount - state.event.guestCount >= 0 ? '+' : ''}{sandboxGuestCount - state.event.guestCount} delta)
             </p>
@@ -562,7 +561,7 @@ export const DecisionSimulatorView: React.FC = () => {
             </button>
             <button
               onClick={handleSaveAsScenario}
-              className="px-4 py-2 bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold rounded-lg shadow-xs cursor-pointer active:scale-[0.98]"
+              className="px-4 py-2 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold rounded-lg shadow-xs cursor-pointer active:scale-[0.98]"
             >
               Save Scenario
             </button>

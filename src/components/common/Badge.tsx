@@ -51,9 +51,9 @@ export const Badge: React.FC<BadgeProps> = ({
     },
     accent: {
       bg: 'bg-[#FAF0EB]',
-      text: 'text-[#A2421D]',
-      border: 'border-[#F3CEBE]',
-      dot: 'bg-[#A2421D]',
+      text: 'text-[#B85C3A]',
+      border: 'border-[#E8C8BD]',
+      dot: 'bg-[#B85C3A]',
     },
   };
 

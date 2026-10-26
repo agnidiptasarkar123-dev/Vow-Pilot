@@ -131,7 +131,7 @@ export const TaskManagementView: React.FC = () => {
       {/* Header and Quick Actions */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#1C1917] font-serif-heading tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#26221F] font-serif-heading tracking-tight">
             Tasks & Dependency Graph
           </h1>
           <p className="text-xs text-[#6E665E] mt-1">
@@ -142,7 +142,7 @@ export const TaskManagementView: React.FC = () => {
         {!isReadOnly ? (
           <button
             onClick={handleOpenAddModal}
-            className="px-4 py-2 rounded-lg bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer active:scale-[0.98]"
+            className="px-4 py-2 rounded-lg bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer active:scale-[0.98]"
           >
             <Plus className="w-4 h-4" />
             <span>Add Actionable Task</span>
@@ -159,7 +159,7 @@ export const TaskManagementView: React.FC = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         <Card padding="sm" className="space-y-1">
           <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Total Milestones</span>
-          <p className="text-xl sm:text-2xl font-bold tracking-tight text-[#1C1917]">{state.tasks.length}</p>
+          <p className="text-xl sm:text-2xl font-bold tracking-tight text-[#26221F]">{state.tasks.length}</p>
         </Card>
         <Card padding="sm" className="space-y-1">
           <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Completed</span>
@@ -167,11 +167,11 @@ export const TaskManagementView: React.FC = () => {
         </Card>
         <Card padding="sm" className="space-y-1">
           <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Overdue</span>
-          <p className={`text-xl sm:text-2xl font-bold tracking-tight ${overdueCount > 0 ? 'text-[#BE123C]' : 'text-[#1C1917]'}`}>{overdueCount}</p>
+          <p className={`text-xl sm:text-2xl font-bold tracking-tight ${overdueCount > 0 ? 'text-[#BE123C]' : 'text-[#26221F]'}`}>{overdueCount}</p>
         </Card>
         <Card padding="sm" className="space-y-1">
           <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Blocked Prereqs</span>
-          <p className={`text-xl sm:text-2xl font-bold tracking-tight ${blockedCount > 0 ? 'text-[#B45309]' : 'text-[#1C1917]'}`}>{blockedCount}</p>
+          <p className={`text-xl sm:text-2xl font-bold tracking-tight ${blockedCount > 0 ? 'text-[#B45309]' : 'text-[#26221F]'}`}>{blockedCount}</p>
         </Card>
       </div>
 
@@ -191,7 +191,7 @@ export const TaskManagementView: React.FC = () => {
           <button
             onClick={() => setBlockedAlertMessage(null)}
             aria-label="Dismiss dependency rule alert"
-            className="text-red-700 hover:text-black font-bold p-1 rounded focus-visible:outline-2 focus-visible:outline-[#A2421D] cursor-pointer"
+            className="text-red-700 hover:text-black font-bold p-1 rounded focus-visible:outline-2 focus-visible:outline-[#B85C3A] cursor-pointer"
           >
             ×
           </button>
@@ -212,7 +212,7 @@ export const TaskManagementView: React.FC = () => {
               aria-pressed={statusFilter === st}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition cursor-pointer ${
                 statusFilter === st
-                  ? 'bg-[#FAF0EB] text-[#A2421D] font-bold border border-[#F3CEBE] shadow-2xs'
+                  ? 'bg-[#FAF0EB] text-[#B85C3A] font-bold border border-[#E8C8BD] shadow-2xs'
                   : 'text-[#5C554E] hover:bg-[#F4EFEA]'
               }`}
             >
@@ -229,7 +229,7 @@ export const TaskManagementView: React.FC = () => {
             id="task-category-filter"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-3 py-1.5 border border-[#D5CCC0] rounded-lg text-xs bg-[#FAF8F5] focus:outline-hidden focus:ring-1 focus:ring-[#A2421D]"
+            className="px-3 py-1.5 border border-[#D5CCC0] rounded-lg text-xs bg-[#FAF8F5] focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
           >
             <option value="all">All Categories</option>
             {state.categories.map((c) => (
@@ -299,7 +299,7 @@ export const TaskManagementView: React.FC = () => {
                           ? 'bg-[#047857] border-[#047857] text-white'
                           : isBlocked
                           ? 'border-neutral-300 bg-neutral-100 text-neutral-400 cursor-not-allowed'
-                          : 'border-[#D5CCC0] hover:border-[#A2421D] bg-white'
+                          : 'border-[#D5CCC0] hover:border-[#B85C3A] bg-white'
                       }`}
                       title={
                         isReadOnly
@@ -319,7 +319,7 @@ export const TaskManagementView: React.FC = () => {
                       <div className="flex flex-wrap items-center gap-2">
                         <span
                           className={`text-sm sm:text-base font-bold ${
-                            isCompleted ? 'line-through text-[#6E665E]' : 'text-[#1C1917]'
+                            isCompleted ? 'line-through text-[#6E665E]' : 'text-[#26221F]'
                           }`}
                         >
                           {task.title}
@@ -415,7 +415,7 @@ export const TaskManagementView: React.FC = () => {
                   <div className="flex items-center gap-3 shrink-0 self-end sm:self-start pt-2 sm:pt-0">
                     <div className="text-right">
                       <span className="text-[11px] text-[#6E665E] block">Target Deadline</span>
-                      <span className="font-mono text-xs font-semibold text-[#1C1917]">
+                      <span className="font-mono text-xs font-semibold text-[#26221F]">
                         {task.dueDate}
                       </span>
                     </div>
@@ -457,7 +457,7 @@ export const TaskManagementView: React.FC = () => {
           )}
 
           <div>
-            <label htmlFor="new-task-title-input" className="block font-semibold text-[#1C1917] mb-1">Task Title *</label>
+            <label htmlFor="new-task-title-input" className="block font-semibold text-[#26221F] mb-1">Task Title *</label>
             <input
               id="new-task-title-input"
               type="text"
@@ -466,30 +466,30 @@ export const TaskManagementView: React.FC = () => {
               placeholder="e.g. Schedule Mandatory Lighting Electrical Walkthrough"
               aria-invalid={!!formError && !newTitle.trim()}
               aria-describedby={formError && !newTitle.trim() ? "new-task-form-error" : undefined}
-              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
+              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
             />
           </div>
 
           <div>
-            <label htmlFor="new-task-description-input" className="block font-semibold text-[#1C1917] mb-1">Description (optional)</label>
+            <label htmlFor="new-task-description-input" className="block font-semibold text-[#26221F] mb-1">Description (optional)</label>
             <textarea
               id="new-task-description-input"
               rows={2}
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
               placeholder="Detailed instructions or specifications..."
-              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
+              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor="new-task-category-select" className="block font-semibold text-[#1C1917] mb-1">Category</label>
+              <label htmlFor="new-task-category-select" className="block font-semibold text-[#26221F] mb-1">Category</label>
               <select
                 id="new-task-category-select"
                 value={newCategoryId}
                 onChange={(e) => setNewCategoryId(e.target.value)}
-                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
+                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
               >
                 {state.categories.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
@@ -498,25 +498,25 @@ export const TaskManagementView: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="new-task-due-date-input" className="block font-semibold text-[#1C1917] mb-1">Due Date *</label>
+              <label htmlFor="new-task-due-date-input" className="block font-semibold text-[#26221F] mb-1">Due Date *</label>
               <input
                 id="new-task-due-date-input"
                 type="date"
                 value={newDueDate}
                 onChange={(e) => setNewDueDate(e.target.value)}
-                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
+                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor="new-task-priority-select" className="block font-semibold text-[#1C1917] mb-1">Priority Level</label>
+              <label htmlFor="new-task-priority-select" className="block font-semibold text-[#26221F] mb-1">Priority Level</label>
               <select
                 id="new-task-priority-select"
                 value={newPriority}
                 onChange={(e) => setNewPriority(e.target.value as TaskPriority)}
-                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
+                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
               >
                 <option value="low">Low (Flexible timing)</option>
                 <option value="medium">Medium (Standard milestone)</option>
@@ -526,21 +526,21 @@ export const TaskManagementView: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="new-task-priority-reason-input" className="block font-semibold text-[#1C1917] mb-1">Priority Justification</label>
+              <label htmlFor="new-task-priority-reason-input" className="block font-semibold text-[#26221F] mb-1">Priority Justification</label>
               <input
                 id="new-task-priority-reason-input"
                 type="text"
                 value={newPriorityReason}
                 onChange={(e) => setNewPriorityReason(e.target.value)}
                 placeholder="Why is this prioritized this way?"
-                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#A2421D] bg-[#FAF8F5]"
+                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
               />
             </div>
           </div>
 
           {/* Dependencies / Prerequisites Multi-Select */}
           <div>
-            <label className="block font-semibold text-[#1C1917] mb-1">
+            <label className="block font-semibold text-[#26221F] mb-1">
               Prerequisite Dependencies (Must be completed first)
             </label>
             <div className="max-h-36 overflow-y-auto border border-[#D5CCC0] rounded-lg p-2.5 space-y-1 bg-[#FAF8F5]">
@@ -558,9 +558,9 @@ export const TaskManagementView: React.FC = () => {
                           setNewDependencies(newDependencies.filter((id) => id !== existingTask.id));
                         }
                       }}
-                      className="rounded border-[#D5CCC0] text-[#A2421D] focus:ring-[#A2421D]"
+                      className="rounded border-[#D5CCC0] text-[#B85C3A] focus:ring-[#B85C3A]"
                     />
-                    <span className="text-[#1C1917] font-medium">{existingTask.title}</span>
+                    <span className="text-[#26221F] font-medium">{existingTask.title}</span>
                     <span className="text-[10px] text-[#6E665E]">({existingTask.dueDate})</span>
                   </label>
                 );
@@ -579,7 +579,7 @@ export const TaskManagementView: React.FC = () => {
             <button
               type="button"
               onClick={handleCreateTask}
-              className="px-4 py-2 rounded-lg bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold shadow-xs cursor-pointer active:scale-[0.98]"
+              className="px-4 py-2 rounded-lg bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold shadow-xs cursor-pointer active:scale-[0.98]"
             >
               Create Milestone Task
             </button>

@@ -30,7 +30,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     ? 'bg-[#BE123C]'
     : percentage >= 85
     ? 'bg-[#B45309]'
-    : 'bg-[#A2421D]';
+    : 'bg-[#B85C3A]';
 
   const heightClass = size === 'sm' ? 'h-1.5' : 'h-2.5';
 

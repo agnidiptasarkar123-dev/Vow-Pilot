@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Modal } from '../common/Modal';
+import { VowPilotLogo } from '../common/VowPilotLogo';
 import { collaborationClient } from '../../services/collaborationClient';
 import { Lock, Mail, User as UserIcon, AlertCircle, Check, Loader2, Server } from 'lucide-react';
 
@@ -92,6 +93,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       maxWidth="md"
     >
       <div className="space-y-4 text-xs">
+        {/* Brand identity lockup */}
+        <div className="flex justify-center pb-1">
+          <VowPilotLogo variant="stacked" size="md" showTagline />
+        </div>
+
         {/* Mode Toggle Tabs */}
         <div className="flex border-b border-[#E6DFD5]">
           <button
@@ -100,7 +106,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             data-testid="auth-tab-login"
             className={`flex-1 py-2 text-center font-medium border-b-2 transition ${
               mode === 'login'
-                ? 'border-[#A2421D] text-[#A2421D] font-bold'
+                ? 'border-[#B85C3A] text-[#B85C3A] font-bold'
                 : 'border-transparent text-[#78716C] hover:text-[#1C1917]'
             }`}
           >
@@ -112,7 +118,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             data-testid="auth-tab-register"
             className={`flex-1 py-2 text-center font-medium border-b-2 transition ${
               mode === 'register'
-                ? 'border-[#A2421D] text-[#A2421D] font-bold'
+                ? 'border-[#B85C3A] text-[#B85C3A] font-bold'
                 : 'border-transparent text-[#78716C] hover:text-[#1C1917]'
             }`}
           >
@@ -123,7 +129,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* Server Endpoint Notice */}
         <div className="p-2.5 rounded-md bg-[#FAF8F5] border border-[#E6DFD5] text-[11px] text-[#5C554E] flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 truncate">
-            <Server className="w-3.5 h-3.5 text-[#A2421D] shrink-0" />
+            <Server className="w-3.5 h-3.5 text-[#B85C3A] shrink-0" />
             <span className="truncate">
               Connecting to: <strong className="font-mono text-[#1C1917]">{serverUrl}</strong>
             </span>
@@ -167,7 +173,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   placeholder="e.g. Maya Sharma"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-8 pr-3 py-2 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#1C1917] focus:outline-hidden focus:border-[#A2421D]"
+                  className="w-full pl-8 pr-3 py-2 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#26221F] focus:outline-hidden focus:border-[#B85C3A]"
                 />
               </div>
             </div>
@@ -189,7 +195,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-8 pr-3 py-2 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#1C1917] focus:outline-hidden focus:border-[#A2421D]"
+                className="w-full pl-8 pr-3 py-2 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#26221F] focus:outline-hidden focus:border-[#B85C3A]"
               />
             </div>
           </div>
@@ -211,7 +217,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-8 pr-3 py-2 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#1C1917] focus:outline-hidden focus:border-[#A2421D]"
+                className="w-full pl-8 pr-3 py-2 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#1C1917] focus:outline-hidden focus:border-[#B85C3A]"
               />
             </div>
           </div>
@@ -220,7 +226,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             type="submit"
             disabled={isLoading}
             data-testid="auth-submit-btn"
-            className="w-full py-2.5 px-4 bg-[#A2421D] hover:bg-[#863414] text-white font-semibold rounded-md shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+            className="w-full py-2.5 px-4 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white font-semibold rounded-md shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
           >
             {isLoading ? (
               <>
