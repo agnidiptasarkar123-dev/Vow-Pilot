@@ -196,9 +196,119 @@ export interface PlanningMessage {
 export interface ChangeRecord {
   id: string;
   timestamp: string;
-  changeType: 'budget' | 'task' | 'vendor' | 'guest_count' | 'scenario' | 'setup';
+  changeType: 'budget' | 'task' | 'vendor' | 'guest_count' | 'scenario' | 'setup' | 'invitation' | 'guest' | 'timeline' | 'seating';
   description: string;
   deltaSummary?: string;
+}
+
+// ==========================================
+// V2 INVITATION STUDIO TYPES
+// ==========================================
+
+export type InvitationTemplateId =
+  | 'botanical-embroidery'
+  | 'embossed-botanical'
+  | 'forest-sage'
+  | 'minimal-editorial'
+  | 'celebration-classic';
+
+export type PrintSize = 'a5' | 'a6' | '5x7' | 'a4-sheet';
+
+export type PaperPalette =
+  | 'cream-terracotta'
+  | 'forest-gold'
+  | 'sage-blush'
+  | 'pearl-charcoal'
+  | 'terracotta-sand';
+
+export interface InvitationDesign {
+  id: string;
+  eventId: string;
+  name: string;
+  templateId: InvitationTemplateId;
+  printSize: PrintSize;
+  palette: PaperPalette;
+  title: string;
+  hostNames: string;
+  invitationHeading: string;
+  bodyText: string;
+  eventDate: string;
+  startTime: string;
+  venueName: string;
+  venueAddress: string;
+  rsvpDeadline: string;
+  contactInfo: string;
+  dressCode?: string;
+  additionalDetails?: string;
+  isBilingual?: boolean;
+  bilingualLanguage?: 'bn' | 'hi' | 'es' | 'fr';
+  bilingualTitle?: string;
+  bilingualHeading?: string;
+  bilingualBody?: string;
+  bilingualDate?: string;
+  bilingualVenue?: string;
+  bilingualFooter?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ==========================================
+// V2 GUEST LIST & RSVP TYPES
+// ==========================================
+
+export type RsvpStatus = 'pending' | 'accepted' | 'declined';
+
+export interface GuestRecord {
+  id: string;
+  eventId: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  householdGroup?: string;
+  partySize: number;
+  confirmedCount: number;
+  rsvpStatus: RsvpStatus;
+  dietaryNotes?: string;
+  accessibilityRequirements?: string;
+  invitationToken: string;
+  tokenRevoked?: boolean;
+  tokenExpiresAt?: string;
+  tableId?: string;
+  notes?: string;
+  respondedAt?: string;
+  updatedAt: string;
+}
+
+// ==========================================
+// V2 EVENT-DAY TIMELINE & RUN SHEET TYPES
+// ==========================================
+
+export interface TimelineItem {
+  id: string;
+  eventId: string;
+  time: string; // e.g. "16:00" or "04:00 PM"
+  endTime?: string;
+  activity: string;
+  durationMinutes: number;
+  assignedPerson?: string;
+  vendorId?: string;
+  location?: string;
+  notes?: string;
+  orderIndex: number;
+}
+
+// ==========================================
+// V2 SEATING & TABLE PLANNER TYPES
+// ==========================================
+
+export interface SeatingTable {
+  id: string;
+  eventId: string;
+  name: string;
+  capacity: number;
+  shape: 'round' | 'rectangular' | 'oval';
+  assignedGuestIds: string[];
+  notes?: string;
 }
 
 export interface AppState {
@@ -213,4 +323,10 @@ export interface AppState {
   messages: PlanningMessage[];
   changeLog: ChangeRecord[];
   schemaVersion: number;
+  // V2 Slices (Backward compatible and optional)
+  invitations?: InvitationDesign[];
+  guests?: GuestRecord[];
+  timeline?: TimelineItem[];
+  tables?: SeatingTable[];
 }
+

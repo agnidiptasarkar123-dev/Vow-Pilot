@@ -8,6 +8,7 @@ export default defineConfig({
     react(),
   ],
   build: {
+    cssMinify: 'lightningcss',
     rollupOptions: {
       output: {
         manualChunks(id) {

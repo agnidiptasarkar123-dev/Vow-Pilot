@@ -589,6 +589,7 @@ describe('VowPilot Multi-User Collaboration & Distributed Systems Test Suite', (
       // Open and immediately close 5 connections
       for (let i = 0; i < 5; i++) {
         const req = http.request(url, () => {});
+        req.on('error', () => {});
         req.end();
         await new Promise((resolve) => setTimeout(resolve, 20));
         req.destroy();

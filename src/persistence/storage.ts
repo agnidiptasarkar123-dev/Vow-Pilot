@@ -151,6 +151,58 @@ export function validateStateSchema(data: unknown): data is AppState {
   // Validate messages
   if (!Array.isArray(s.messages)) return false;
 
+  // Validate optional V2 invitations
+  if (s.invitations !== undefined) {
+    if (!Array.isArray(s.invitations)) return false;
+    for (const inv of s.invitations) {
+      if (!inv || typeof inv !== 'object' || Array.isArray(inv)) return false;
+      const i = inv as Record<string, unknown>;
+      if (typeof i.id !== 'string' || !i.id) return false;
+      if (typeof i.title !== 'string') return false;
+      if (typeof i.templateId !== 'string') return false;
+    }
+  }
+
+  // Validate optional V2 guests
+  if (s.guests !== undefined) {
+    if (!Array.isArray(s.guests)) return false;
+    for (const gst of s.guests) {
+      if (!gst || typeof gst !== 'object' || Array.isArray(gst)) return false;
+      const g = gst as Record<string, unknown>;
+      if (typeof g.id !== 'string' || !g.id) return false;
+      if (typeof g.name !== 'string' || !g.name.trim()) return false;
+      if (typeof g.partySize !== 'number' || g.partySize < 1) return false;
+      if (typeof g.confirmedCount !== 'number' || g.confirmedCount < 0) return false;
+      if (g.rsvpStatus !== 'pending' && g.rsvpStatus !== 'accepted' && g.rsvpStatus !== 'declined') return false;
+    }
+  }
+
+  // Validate optional V2 timeline
+  if (s.timeline !== undefined) {
+    if (!Array.isArray(s.timeline)) return false;
+    for (const tml of s.timeline) {
+      if (!tml || typeof tml !== 'object' || Array.isArray(tml)) return false;
+      const t = tml as Record<string, unknown>;
+      if (typeof t.id !== 'string' || !t.id) return false;
+      if (typeof t.activity !== 'string' || !t.activity.trim()) return false;
+      if (typeof t.time !== 'string') return false;
+      if (typeof t.durationMinutes !== 'number' || t.durationMinutes < 0) return false;
+    }
+  }
+
+  // Validate optional V2 seating tables
+  if (s.tables !== undefined) {
+    if (!Array.isArray(s.tables)) return false;
+    for (const tbl of s.tables) {
+      if (!tbl || typeof tbl !== 'object' || Array.isArray(tbl)) return false;
+      const tb = tbl as Record<string, unknown>;
+      if (typeof tb.id !== 'string' || !tb.id) return false;
+      if (typeof tb.name !== 'string' || !tb.name.trim()) return false;
+      if (typeof tb.capacity !== 'number' || tb.capacity < 1) return false;
+      if (!Array.isArray(tb.assignedGuestIds)) return false;
+    }
+  }
+
   return true;
 }
 

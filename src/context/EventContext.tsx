@@ -51,6 +51,38 @@ import {
   handleDismissProposedAction,
 } from './slices/assistantSlice';
 import {
+  handleSaveInvitation,
+  handleDeleteInvitation,
+  handleDuplicateInvitation,
+} from './slices/invitationSlice';
+import {
+  handleAddGuest,
+  handleUpdateGuest,
+  handleDeleteGuest,
+  handleUpdateGuestRsvp,
+  handleBatchAddGuests,
+} from './slices/guestSlice';
+import {
+  handleAddTimelineItem,
+  handleUpdateTimelineItem,
+  handleDeleteTimelineItem,
+  handleReorderTimeline,
+} from './slices/timelineSlice';
+import {
+  handleAddTable,
+  handleUpdateTable,
+  handleDeleteTable,
+  handleAssignGuestToTable,
+  handleRemoveGuestFromTable,
+} from './slices/seatingSlice';
+import {
+  InvitationDesign,
+  GuestRecord,
+  RsvpStatus,
+  TimelineItem,
+  SeatingTable,
+} from '../types';
+import {
   collaborationClient,
   CollaborationState,
 } from '../services/collaborationClient';
@@ -90,6 +122,27 @@ export interface EventContextType {
   sendAssistantMessage: (text: string) => void;
   applyProposedAction: (messageId: string, action: ProposedAction) => void;
   dismissProposedAction: (messageId: string) => void;
+  // V2 Invitations
+  saveInvitation: (invitation: InvitationDesign) => void;
+  deleteInvitation: (invitationId: string) => void;
+  duplicateInvitation: (invitationId: string) => void;
+  // V2 Guests & RSVP
+  addGuest: (guest: Omit<GuestRecord, 'id' | 'updatedAt' | 'invitationToken'>) => void;
+  updateGuest: (guest: GuestRecord) => void;
+  deleteGuest: (guestId: string) => void;
+  updateGuestRsvp: (guestId: string, status: RsvpStatus, confirmedCount: number, dietaryNotes?: string, accessibilityRequirements?: string) => void;
+  batchAddGuests: (guests: Array<Omit<GuestRecord, 'id' | 'updatedAt' | 'invitationToken'>>) => void;
+  // V2 Event Timeline & Run Sheet
+  addTimelineItem: (item: Omit<TimelineItem, 'id' | 'orderIndex'>) => void;
+  updateTimelineItem: (item: TimelineItem) => void;
+  deleteTimelineItem: (itemId: string) => void;
+  reorderTimeline: (itemIds: string[]) => void;
+  // V2 Seating & Tables
+  addTable: (table: Omit<SeatingTable, 'id' | 'assignedGuestIds'>) => void;
+  updateTable: (table: SeatingTable) => void;
+  deleteTable: (tableId: string) => void;
+  assignGuestToTable: (guestId: string, tableId: string) => void;
+  removeGuestFromTable: (guestId: string) => void;
   // Storage & Reset
   resetToDemo: () => void;
   importState: (newState: AppState) => void;
@@ -416,6 +469,135 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setState((prev) => handleDismissProposedAction(prev, messageId));
   };
 
+  // V2 Invitation Handlers
+  const saveInvitation = (invitation: InvitationDesign) => {
+    if (isReadOnly) return;
+    const next = handleSaveInvitation(state, invitation);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const deleteInvitation = (invitationId: string) => {
+    if (isReadOnly) return;
+    const next = handleDeleteInvitation(state, invitationId);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const duplicateInvitation = (invitationId: string) => {
+    if (isReadOnly) return;
+    const next = handleDuplicateInvitation(state, invitationId);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  // V2 Guest Handlers
+  const addGuest = (guest: Omit<GuestRecord, 'id' | 'updatedAt' | 'invitationToken'>) => {
+    if (isReadOnly) return;
+    const next = handleAddGuest(state, guest);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const updateGuest = (guest: GuestRecord) => {
+    if (isReadOnly) return;
+    const next = handleUpdateGuest(state, guest);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const deleteGuest = (guestId: string) => {
+    if (isReadOnly) return;
+    const next = handleDeleteGuest(state, guestId);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const updateGuestRsvp = (
+    guestId: string,
+    status: RsvpStatus,
+    confirmedCount: number,
+    dietaryNotes?: string,
+    accessibilityRequirements?: string
+  ) => {
+    if (isReadOnly) return;
+    const next = handleUpdateGuestRsvp(state, guestId, status, confirmedCount, dietaryNotes, accessibilityRequirements);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const batchAddGuests = (guests: Array<Omit<GuestRecord, 'id' | 'updatedAt' | 'invitationToken'>>) => {
+    if (isReadOnly) return;
+    const next = handleBatchAddGuests(state, guests);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  // V2 Timeline Handlers
+  const addTimelineItem = (item: Omit<TimelineItem, 'id' | 'orderIndex'>) => {
+    if (isReadOnly) return;
+    const next = handleAddTimelineItem(state, item);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const updateTimelineItem = (item: TimelineItem) => {
+    if (isReadOnly) return;
+    const next = handleUpdateTimelineItem(state, item);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const deleteTimelineItem = (itemId: string) => {
+    if (isReadOnly) return;
+    const next = handleDeleteTimelineItem(state, itemId);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const reorderTimeline = (itemIds: string[]) => {
+    if (isReadOnly) return;
+    const next = handleReorderTimeline(state, itemIds);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  // V2 Seating Handlers
+  const addTable = (table: Omit<SeatingTable, 'id' | 'assignedGuestIds'>) => {
+    if (isReadOnly) return;
+    const next = handleAddTable(state, table);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const updateTable = (table: SeatingTable) => {
+    if (isReadOnly) return;
+    const next = handleUpdateTable(state, table);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const deleteTable = (tableId: string) => {
+    if (isReadOnly) return;
+    const next = handleDeleteTable(state, tableId);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const assignGuestToTable = (guestId: string, tableId: string) => {
+    if (isReadOnly) return;
+    const next = handleAssignGuestToTable(state, guestId, tableId);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const removeGuestFromTable = (guestId: string) => {
+    if (isReadOnly) return;
+    const next = handleRemoveGuestFromTable(state, guestId);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
   // Data & Reset Handlers
   const resetToDemo = () => {
     if (isReadOnly) return;
@@ -468,6 +650,23 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       sendAssistantMessage,
       applyProposedAction,
       dismissProposedAction,
+      saveInvitation,
+      deleteInvitation,
+      duplicateInvitation,
+      addGuest,
+      updateGuest,
+      deleteGuest,
+      updateGuestRsvp,
+      batchAddGuests,
+      addTimelineItem,
+      updateTimelineItem,
+      deleteTimelineItem,
+      reorderTimeline,
+      addTable,
+      updateTable,
+      deleteTable,
+      assignGuestToTable,
+      removeGuestFromTable,
       resetToDemo,
       importState,
       clearAllData,

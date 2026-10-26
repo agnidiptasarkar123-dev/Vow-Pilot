@@ -18,6 +18,28 @@ import {
   MetricsRegistry,
 } from './observability';
 
+class SlidingWindowRateLimiter {
+  private requests = new Map<string, number[]>();
+  constructor(private maxRequests: number, private windowMs: number) {}
+
+  public isAllowed(key: string): boolean {
+    const now = Date.now();
+    const timestamps = this.requests.get(key) || [];
+    const valid = timestamps.filter((t) => now - t < this.windowMs);
+    if (valid.length >= this.maxRequests) {
+      this.requests.set(key, valid);
+      return false;
+    }
+    valid.push(now);
+    this.requests.set(key, valid);
+    return true;
+  }
+
+  public reset(): void {
+    this.requests.clear();
+  }
+}
+
 export function createServerApp(
   authStore: AuthStore = globalAuthStore,
   eventStore: EventStore = globalEventStore,
@@ -31,6 +53,10 @@ export function createServerApp(
   // Bounded concurrency tracking for expensive asynchronous operations
   let inFlightEmailDispatches = 0;
   const MAX_CONCURRENT_EMAILS = 5;
+
+  // Rate limiters for unauthenticated public endpoints
+  const rsvpInspectLimiter = new SlidingWindowRateLimiter(30, 60_000); // 30 requests per minute
+  const rsvpSubmitLimiter = new SlidingWindowRateLimiter(15, 60_000);  // 15 submissions per minute
 
   return async function handleRequest(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
     const startTime = performance.now();
@@ -399,6 +425,74 @@ export function createServerApp(
         }
         const preview = eventStore.inspectInvite(tokenToUse);
         sendJson(200, preview);
+        return;
+      }
+
+      // Route: /api/public/rsvp/inspect (POST)
+      if (pathname === '/api/public/rsvp/inspect' && method === 'POST') {
+        const clientIp = typeof req.headers['x-forwarded-for'] === 'string'
+          ? req.headers['x-forwarded-for'].split(',')[0].trim()
+          : req.socket.remoteAddress || 'unknown';
+
+        if (!rsvpInspectLimiter.isAllowed(clientIp)) {
+          sendJson(429, {
+            error: 'Rate limit exceeded: Too many RSVP inspection requests from this IP address. Please retry shortly.',
+          });
+          return;
+        }
+
+        const body = await readJsonBody<{ token?: string; rsvpToken?: string }>();
+        const targetToken = body.token || body.rsvpToken;
+        if (!targetToken) {
+          sendJson(400, { error: 'Missing token parameter.' });
+          return;
+        }
+        try {
+          const preview = eventStore.inspectPublicRsvp(targetToken);
+          sendJson(200, preview);
+        } catch (err: any) {
+          sendJson(404, { error: err.message || 'Invitation token not found.' });
+        }
+        return;
+      }
+
+      // Route: /api/public/rsvp/submit (POST)
+      if (pathname === '/api/public/rsvp/submit' && method === 'POST') {
+        const clientIp = typeof req.headers['x-forwarded-for'] === 'string'
+          ? req.headers['x-forwarded-for'].split(',')[0].trim()
+          : req.socket.remoteAddress || 'unknown';
+
+        if (!rsvpSubmitLimiter.isAllowed(clientIp)) {
+          sendJson(429, {
+            error: 'Rate limit exceeded: Too many RSVP submissions from this IP address. Please retry shortly.',
+          });
+          return;
+        }
+
+        const body = await readJsonBody<{
+          token?: string;
+          rsvpToken?: string;
+          rsvpStatus: 'accepted' | 'declined';
+          confirmedCount: number;
+          dietaryNotes?: string;
+          accessibilityRequirements?: string;
+        }>();
+        const targetToken = body.token || body.rsvpToken;
+        if (!targetToken) {
+          sendJson(400, { error: 'Missing token parameter.' });
+          return;
+        }
+        try {
+          const result = eventStore.submitPublicRsvp(targetToken, {
+            rsvpStatus: body.rsvpStatus,
+            confirmedCount: body.confirmedCount,
+            dietaryNotes: body.dietaryNotes,
+            accessibilityRequirements: body.accessibilityRequirements,
+          });
+          sendJson(200, result);
+        } catch (err: any) {
+          sendJson(400, { error: err.message || 'Failed to submit RSVP response.' });
+        }
         return;
       }
 

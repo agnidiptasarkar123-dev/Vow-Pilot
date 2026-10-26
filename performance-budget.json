@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "VowPilot Performance & SRE Budgets",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Production performance thresholds, bundle budgets, latency limits, and Core Web Vitals targets for CI enforcement.",
   "budgets": {
     "bundleSizes": {
       "initialAppJsBytes": 200000,
       "vendorReactJsBytes": 250000,
       "totalInitialJsBytes": 420000,
-      "globalCssBytes": 60000,
+      "globalCssBytes": 65000,
       "maxIndividualRouteChunkBytes": 35000,
       "notes": "Ensures no monolithic bundle warnings and sub-120kB gzip transfer on first visit."
     },

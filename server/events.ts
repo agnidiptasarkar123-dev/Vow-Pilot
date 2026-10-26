@@ -226,6 +226,200 @@ export class EventStore {
   }
 
   /**
+   * Public Guest RSVP Inspection:
+   * Returns non-sensitive event details and guest party without exposing private budgets or quotes.
+   */
+  public inspectPublicRsvp(rawToken: string): {
+    guest: {
+      id: string;
+      name: string;
+      householdGroup?: string;
+      partySize: number;
+      rsvpStatus: string;
+      confirmedCount: number;
+      dietaryNotes?: string;
+      accessibilityRequirements?: string;
+    };
+    event: {
+      id: string;
+      name: string;
+      date: string;
+      location: string;
+    };
+  } {
+    const trimmed = rawToken?.trim();
+    if (!trimmed || trimmed.length < 16) {
+      throw new Error('Invalid or missing RSVP token.');
+    }
+
+    const rows = this.dbContext.db
+      .prepare<[], { id: string; name: string; event_date: string; state_json: string }>(
+        'SELECT id, name, event_date, state_json FROM events'
+      )
+      .all();
+
+    for (const ev of rows) {
+      try {
+        const state: AppState = JSON.parse(ev.state_json);
+        const guest = state.guests?.find((g) => g.invitationToken === trimmed);
+        if (guest) {
+          if (guest.tokenRevoked) {
+            throw new Error('This invitation token has been revoked by the event organizer.');
+          }
+          if (guest.tokenExpiresAt && new Date(guest.tokenExpiresAt).getTime() < Date.now()) {
+            throw new Error('This invitation token has expired.');
+          }
+
+          return {
+            guest: {
+              id: guest.id,
+              name: guest.name,
+              householdGroup: guest.householdGroup,
+              partySize: guest.partySize,
+              rsvpStatus: guest.rsvpStatus,
+              confirmedCount: guest.confirmedCount,
+              dietaryNotes: guest.dietaryNotes,
+              accessibilityRequirements: guest.accessibilityRequirements,
+            },
+            event: {
+              id: ev.id,
+              name: ev.name,
+              date: ev.event_date || state.event.date,
+              location: state.event.location || '',
+            },
+          };
+        }
+      } catch (err: any) {
+        if (
+          err.message === 'This invitation token has been revoked by the event organizer.' ||
+          err.message === 'This invitation token has expired.'
+        ) {
+          throw err;
+        }
+        // Skip malformed row
+      }
+    }
+
+    throw new Error('Guest invitation not found or token has expired.');
+  }
+
+  /**
+   * Public Guest RSVP Submission:
+   * Submits attendance, headcount, and dietary preferences without requiring user account registration.
+   */
+  public submitPublicRsvp(
+    rawToken: string,
+    payload: {
+      rsvpStatus: 'accepted' | 'declined';
+      confirmedCount: number;
+      dietaryNotes?: string;
+      accessibilityRequirements?: string;
+    }
+  ): { success: true; message: string; guestName: string; confirmedCount: number } {
+    const trimmed = rawToken?.trim();
+    if (!trimmed || trimmed.length < 16) {
+      throw new Error('Invalid or missing RSVP token.');
+    }
+    if (payload.rsvpStatus !== 'accepted' && payload.rsvpStatus !== 'declined') {
+      throw new Error('Invalid RSVP status. Must be accepted or declined.');
+    }
+
+    const rows = this.dbContext.db
+      .prepare<[], { id: string; name: string; version: number; state_json: string; owner_id: string; created_at: string }>(
+        'SELECT id, name, version, state_json, owner_id, created_at FROM events'
+      )
+      .all();
+
+    for (const ev of rows) {
+      try {
+        const state: AppState = JSON.parse(ev.state_json);
+        const guestIndex = state.guests?.findIndex((g) => g.invitationToken === trimmed) ?? -1;
+        if (guestIndex >= 0 && state.guests) {
+          const guest = state.guests[guestIndex];
+          if (guest.tokenRevoked) {
+            throw new Error('This invitation token has been revoked by the event organizer.');
+          }
+          if (guest.tokenExpiresAt && new Date(guest.tokenExpiresAt).getTime() < Date.now()) {
+            throw new Error('This invitation token has expired.');
+          }
+
+          const now = new Date().toISOString();
+          const finalConfirmed =
+            payload.rsvpStatus === 'accepted'
+              ? Math.max(1, Math.min(payload.confirmedCount || guest.partySize, guest.partySize))
+              : 0;
+
+          const updatedGuest = {
+            ...guest,
+            rsvpStatus: payload.rsvpStatus,
+            confirmedCount: finalConfirmed,
+            dietaryNotes: payload.dietaryNotes !== undefined ? payload.dietaryNotes : guest.dietaryNotes,
+            accessibilityRequirements:
+              payload.accessibilityRequirements !== undefined
+                ? payload.accessibilityRequirements
+                : guest.accessibilityRequirements,
+            respondedAt: now,
+            updatedAt: now,
+          };
+
+          const updatedGuests = [...state.guests];
+          updatedGuests[guestIndex] = updatedGuest;
+
+          const updatedState: AppState = {
+            ...state,
+            guests: updatedGuests,
+            changeLog: [
+              {
+                id: `chg-rsvp-${Date.now()}`,
+                timestamp: now,
+                changeType: 'guest',
+                description: `Public RSVP: ${guest.name} (${payload.rsvpStatus.toUpperCase()}, ${finalConfirmed}/${guest.partySize} guests attending).`,
+              },
+              ...state.changeLog,
+            ],
+          };
+
+          const newVersion = ev.version + 1;
+          const modifierName = `Public RSVP (${guest.name})`;
+
+          this.dbContext.db
+            .prepare<[number, string, string, string, string, number]>(`
+              UPDATE events
+              SET version = ?, state_json = ?, updated_at = ?, last_modified_by = ?
+              WHERE id = ? AND version = ?
+            `)
+            .run(newVersion, JSON.stringify(updatedState), now, modifierName, ev.id, ev.version);
+
+          const members = this.dbContext.events.getEventMembers(ev.id);
+          const updatedRecord: ServerEventRecord = {
+            id: ev.id,
+            ownerId: ev.owner_id,
+            version: newVersion,
+            state: updatedState,
+            members,
+            createdAt: ev.created_at,
+            updatedAt: now,
+            lastModifiedBy: modifierName,
+          };
+
+          this.notifySubscribers(ev.id, updatedRecord);
+
+          return {
+            success: true,
+            message: 'Your RSVP response has been confirmed.',
+            guestName: guest.name,
+            confirmedCount: finalConfirmed,
+          };
+        }
+      } catch {
+        // Skip malformed row
+      }
+    }
+
+    throw new Error('Guest invitation not found or token has expired.');
+  }
+
+  /**
    * Lists all invitations for an event.
    */
   public listEventInvites(eventId: string, requestingUser: User): InviteToken[] {
