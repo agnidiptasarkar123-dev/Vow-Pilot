@@ -1,0 +1,33 @@
+{
+  "version": 1.1,
+  "atDirectives": [
+    {
+      "name": "@custom-variant",
+      "description": "Tailwind CSS v4 directive for declaring custom variants, such as `@custom-variant dark (.dark &);`."
+    },
+    {
+      "name": "@utility",
+      "description": "Tailwind CSS v4 directive for declaring custom static or functional utility classes."
+    },
+    {
+      "name": "@theme",
+      "description": "Tailwind CSS v4 directive for defining theme tokens and CSS variables."
+    },
+    {
+      "name": "@source",
+      "description": "Tailwind CSS v4 directive for specifying source file scanning globs."
+    },
+    {
+      "name": "@plugin",
+      "description": "Tailwind CSS v4 directive for registering Tailwind CSS plugins."
+    },
+    {
+      "name": "@variant",
+      "description": "Tailwind CSS v4 directive for applying variants within CSS rules."
+    },
+    {
+      "name": "@reference",
+      "description": "Tailwind CSS v4 directive for referencing external stylesheets without duplicating CSS output."
+    }
+  ]
+}

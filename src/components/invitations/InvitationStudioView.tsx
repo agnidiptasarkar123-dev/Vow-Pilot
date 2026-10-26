@@ -226,7 +226,7 @@ export const InvitationStudioView: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       {/* Top Studio Control Bar */}
-      <div className="bg-surface border border-border-subtle rounded-xl p-4 mb-6 shadow-xs flex flex-wrap items-center justify-between gap-4">
+      <div className="no-print bg-surface border border-border-subtle rounded-xl p-4 mb-6 shadow-xs flex flex-wrap items-center justify-between gap-4">
         {/* Left: Design Selection & Management */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
@@ -298,7 +298,7 @@ export const InvitationStudioView: React.FC = () => {
       {/* Main Studio Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Form Controls (7 cols on lg) */}
-        <div className="lg:col-span-6 xl:col-span-5 space-y-6">
+        <div className="no-print lg:col-span-6 xl:col-span-5 space-y-6">
           {/* Card: Template & Print Specs */}
           <div className="bg-surface border border-border-subtle rounded-xl p-5 shadow-xs">
             <h3 className="font-serif-heading text-sm font-semibold text-primary mb-4 flex items-center gap-2">
@@ -694,10 +694,10 @@ export const InvitationStudioView: React.FC = () => {
         </div>
 
         {/* Right Column: Live Tactile Preview & Print Container (5/7 cols on lg) */}
-        <div className="lg:col-span-6 xl:col-span-7 flex flex-col items-center">
+        <div className="lg:col-span-6 xl:col-span-7 flex flex-col items-center w-full">
           <div className="sticky top-20 w-full flex flex-col items-center">
             {/* Live Preview Label & Specs */}
-            <div className="w-full max-w-[500px] mb-3 flex items-center justify-between text-xs text-tertiary">
+            <div className="no-print w-full max-w-[500px] mb-3 flex items-center justify-between text-xs text-tertiary">
               <span className="font-medium flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 Live Print Preview ({draft.printSize.toUpperCase()})
@@ -715,7 +715,7 @@ export const InvitationStudioView: React.FC = () => {
             </div>
 
             {/* Print & Export Help Footnote */}
-            <div className="mt-4 text-center max-w-sm text-[11px] text-tertiary space-y-1">
+            <div className="no-print mt-4 text-center max-w-sm text-[11px] text-tertiary space-y-1">
               <p>
                 <strong>Tip:</strong> Clicking <em>Print Invitation / PDF</em> activates clean print-specific styles. In Chrome/Safari, choose "Save as PDF" to generate high-resolution print files.
               </p>

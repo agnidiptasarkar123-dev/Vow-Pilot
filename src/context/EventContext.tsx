@@ -173,9 +173,9 @@ export interface EventContextType {
 
 const EventContext = createContext<EventContextType | undefined>(undefined);
 
-export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const EventProvider: React.FC<{ children: React.ReactNode; initialState?: AppState }> = ({ children, initialState }) => {
   const [state, setState] = useState<AppState>(() => {
-    return loadPersistedState().state;
+    return initialState || loadPersistedState().state;
   });
 
   const [activeTab, setActiveTab] = useState<string>('dashboard');

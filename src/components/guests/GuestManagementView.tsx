@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useEvent } from '../../context/EventContext';
 import { GuestRecord, RsvpStatus } from '../../types';
 import { formatGuestsCsv } from '../../context/slices/guestSlice';
 import { PublicRsvpModal } from '../rsvp/PublicRsvpModal';
 import { GuestRsvpQrModal } from '../rsvp/GuestRsvpQrModal';
 import { BatchGuestQrModal } from '../rsvp/BatchGuestQrModal';
+import { GuestTableRow } from './GuestTableRow';
 import {
   Users,
   UserCheck,
@@ -13,13 +14,9 @@ import {
   Plus,
   Search,
   Download,
-  Share2,
-  Edit2,
-  Trash2,
-  CheckCircle2,
-  Utensils,
-  Accessibility,
   QrCode,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 export const GuestManagementView: React.FC = () => {
@@ -114,6 +111,22 @@ export const GuestManagementView: React.FC = () => {
       return true;
     });
   }, [guests, statusFilter, householdFilter, searchQuery]);
+
+  // Accessible Pagination & Windowing state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number | 'all'>(50);
+
+  // Reset to page 1 on filter or search updates
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, householdFilter]);
+
+  const totalPages = pageSize === 'all' ? 1 : Math.max(1, Math.ceil(filteredGuests.length / pageSize));
+  const paginatedGuests = useMemo(() => {
+    if (pageSize === 'all') return filteredGuests;
+    const startIndex = (currentPage - 1) * pageSize;
+    return filteredGuests.slice(startIndex, startIndex + pageSize);
+  }, [filteredGuests, currentPage, pageSize]);
 
   // Open Add modal with clean state
   const handleOpenAddModal = () => {
@@ -378,130 +391,96 @@ export const GuestManagementView: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#F4EFEA] dark:divide-[#26362C] text-primary">
-                {filteredGuests.map((guest) => {
-                  const isCopied = copiedToken === guest.invitationToken;
-                  return (
-                    <tr
-                      key={guest.id}
-                      className="hover:bg-[#FAF8F5]/60 dark:hover:bg-[#26362C]/50 transition-colors"
-                    >
-                      <td className="py-3 px-4">
-                        <div className="font-semibold text-sm">{guest.name}</div>
-                        {guest.householdGroup && (
-                          <span className="inline-block px-2 py-0.5 text-[10px] rounded-full bg-[#FAF0EB] dark:bg-[#2B211E] text-[#B85C3A] dark:text-[#E8D7C4] font-medium border border-[#E8C8BD] dark:border-[#4D332B] mt-0.5">
-                            {guest.householdGroup}
-                          </span>
-                        )}
-                      </td>
-
-                      <td className="py-3 px-4">
-                        {guest.rsvpStatus === 'accepted' ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-                            <CheckCircle2 className="w-3 h-3" />
-                            Accepted
-                          </span>
-                        ) : guest.rsvpStatus === 'declined' ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-full border border-rose-200 dark:border-rose-800">
-                            <UserX className="w-3 h-3" />
-                            Declined
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
-                            <Clock className="w-3 h-3" />
-                            Pending
-                          </span>
-                        )}
-                      </td>
-
-                      <td className="py-3 px-4 text-center font-mono font-medium">
-                        {guest.partySize}
-                      </td>
-
-                      <td className="py-3 px-4 text-center font-mono font-bold text-emerald-700 dark:text-emerald-400">
-                        {guest.rsvpStatus === 'accepted' ? guest.confirmedCount : 0}
-                      </td>
-
-                      <td className="py-3 px-4 max-w-xs">
-                        <div className="space-y-0.5 text-[11px]">
-                          {guest.dietaryNotes && (
-                            <div className="flex items-center gap-1 text-stone-600 dark:text-stone-300">
-                              <Utensils className="w-3 h-3 text-[#B85C3A] shrink-0" />
-                              <span className="truncate">{guest.dietaryNotes}</span>
-                            </div>
-                          )}
-                          {guest.accessibilityRequirements && (
-                            <div className="flex items-center gap-1 text-blue-700 dark:text-blue-300">
-                              <Accessibility className="w-3 h-3 shrink-0" />
-                              <span className="truncate">{guest.accessibilityRequirements}</span>
-                            </div>
-                          )}
-                          {!guest.dietaryNotes && !guest.accessibilityRequirements && (
-                            <span className="text-stone-400 italic">None specified</span>
-                          )}
-                        </div>
-                      </td>
-
-                      <td className="py-3 px-4 text-[11px]">
-                        <div>{guest.email || <span className="text-stone-400 italic">No email</span>}</div>
-                        <div className="text-stone-500">{guest.phone}</div>
-                      </td>
-
-                      <td className="py-3 px-4 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          {/* Test RSVP Link / Open Public Modal */}
-                          <button
-                            onClick={() => setActiveRsvpToken(guest.invitationToken)}
-                            title="Preview and test public RSVP form for this guest"
-                            className="p-1 rounded text-[#B85C3A] dark:text-[#E8D7C4] hover:bg-[#FAF0EB] dark:hover:bg-[#2E2222] transition cursor-pointer"
-                          >
-                            <Share2 className="w-3.5 h-3.5" />
-                          </button>
-
-                          {/* Dedicated QR Code Modal */}
-                          <button
-                            onClick={() => setQrModalGuest(guest)}
-                            data-testid={`guest-qr-btn-${guest.id}`}
-                            title={`Generate, preview, or print RSVP QR code for ${guest.name}`}
-                            className="p-1 rounded text-[#B85C3A] dark:text-[#D48668] hover:bg-[#FAF0EB] dark:hover:bg-[#2E2222] transition cursor-pointer"
-                          >
-                            <QrCode className="w-3.5 h-3.5" />
-                          </button>
-
-                          {/* Copy RSVP Link */}
-                          <button
-                            onClick={() => handleCopyRsvpLink(guest)}
-                            title="Copy dedicated RSVP link to clipboard"
-                            className="px-2 py-0.5 text-[10px] font-semibold rounded border border-border-subtle hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] transition cursor-pointer"
-                          >
-                            {isCopied ? 'Copied!' : 'Copy Link'}
-                          </button>
-
-                          {/* Edit Guest */}
-                          <button
-                            onClick={() => handleOpenEditModal(guest)}
-                            disabled={isReadOnly}
-                            title="Edit guest information"
-                            className="p-1 rounded text-tertiary hover:text-[#1C1917] dark:hover:text-[#FAF8F5] hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] transition cursor-pointer disabled:opacity-40"
-                          >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </button>
-
-                          {/* Delete Guest */}
-                          <button
-                            onClick={() => handleDelete(guest.id, guest.name)}
-                            disabled={isReadOnly}
-                            title="Remove guest"
-                            className="p-1 rounded text-tertiary hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer disabled:opacity-40"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                {paginatedGuests.map((guest) => (
+                  <GuestTableRow
+                    key={guest.id}
+                    guest={guest}
+                    isCopied={copiedToken === guest.invitationToken}
+                    isReadOnly={isReadOnly}
+                    onPreviewRsvp={setActiveRsvpToken}
+                    onOpenQrModal={setQrModalGuest}
+                    onCopyRsvpLink={handleCopyRsvpLink}
+                    onOpenEditModal={handleOpenEditModal}
+                    onDelete={handleDelete}
+                  />
+                ))}
               </tbody>
             </table>
+
+            {/* Accessible Pagination & Range Status */}
+            {filteredGuests.length > 0 && (
+              <nav
+                role="navigation"
+                aria-label="Guest list pagination"
+                className="border-t border-border-subtle bg-subtle px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs text-secondary"
+              >
+                <div className="flex items-center gap-2" aria-live="polite">
+                  <span>
+                    Showing{' '}
+                    <span className="font-semibold font-mono text-primary">
+                      {filteredGuests.length === 0 ? 0 : pageSize === 'all' ? 1 : (currentPage - 1) * pageSize + 1}
+                    </span>
+                    {' '}to{' '}
+                    <span className="font-semibold font-mono text-primary">
+                      {pageSize === 'all'
+                        ? filteredGuests.length
+                        : Math.min(currentPage * pageSize, filteredGuests.length)}
+                    </span>
+                    {' '}of{' '}
+                    <span className="font-semibold font-mono text-primary">{filteredGuests.length}</span> guests
+                  </span>
+
+                  <span className="text-stone-300 dark:text-stone-700">|</span>
+
+                  <div className="flex items-center gap-1.5">
+                    <label htmlFor="guest-page-size" className="text-tertiary">
+                      Per page:
+                    </label>
+                    <select
+                      id="guest-page-size"
+                      value={pageSize}
+                      onChange={(e) => {
+                        const val = e.target.value === 'all' ? 'all' : parseInt(e.target.value, 10);
+                        setPageSize(val);
+                        setCurrentPage(1);
+                      }}
+                      className="bg-surface border border-border-strong rounded px-2 py-0.5 text-xs text-primary cursor-pointer"
+                    >
+                      <option value={25}>25</option>
+                      <option value={50}>50</option>
+                      <option value={100}>100</option>
+                      <option value="all">All</option>
+                    </select>
+                  </div>
+                </div>
+
+                {pageSize !== 'all' && totalPages > 1 && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      aria-label="Previous page"
+                      className="p-1 rounded border border-border-subtle bg-surface hover:bg-subtle disabled:opacity-40 transition cursor-pointer"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+
+                    <span className="px-2 font-mono text-xs">
+                      Page {currentPage} of {totalPages}
+                    </span>
+
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      aria-label="Next page"
+                      className="p-1 rounded border border-border-subtle bg-surface hover:bg-subtle disabled:opacity-40 transition cursor-pointer"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </nav>
+            )}
           </div>
         )}
       </div>

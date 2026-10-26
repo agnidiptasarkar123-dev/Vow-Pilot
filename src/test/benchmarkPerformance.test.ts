@@ -152,4 +152,65 @@ describe('Phase 9: Rigorous Algorithmic Performance Benchmarks', () => {
     expect(comparison.rows.length).toBe(50);
     expect(durationMs).toBeLessThan(10);
   });
+
+  it('Benchmark 5: Large-Scale Guest List Processing & Windowed Slicing (2,000 guests)', () => {
+    // Generate 2,000 synthetic guests
+    const largeGuests = [];
+    const statuses = ['pending', 'accepted', 'declined'] as const;
+    for (let i = 0; i < 2000; i++) {
+      largeGuests.push({
+        id: `guest-synth-${i}`,
+        eventId: 'event-benchmark',
+        name: `Guest Family ${i}`,
+        email: `guest${i}@example.com`,
+        phone: '+91-9876543210',
+        householdGroup: `Household ${i % 50}`,
+        partySize: 1 + (i % 4),
+        confirmedCount: i % 3 === 1 ? 1 + (i % 4) : 0,
+        rsvpStatus: statuses[i % 3],
+        dietaryNotes: i % 5 === 0 ? 'Vegan / Nut Allergy' : undefined,
+        invitationToken: `vow_rsvp_bench_${i}`,
+        createdAt: '2026-10-01T00:00:00.000Z',
+      });
+    }
+
+    const start = performance.now();
+
+    // 1. Metric calculation across 2,000 guests
+    let totalInvitedSeats = 0;
+    let confirmedSeats = 0;
+    let declinedCount = 0;
+    let pendingSeats = 0;
+    for (const g of largeGuests) {
+      totalInvitedSeats += g.partySize;
+      if (g.rsvpStatus === 'accepted') {
+        confirmedSeats += g.confirmedCount > 0 ? g.confirmedCount : g.partySize;
+      } else if (g.rsvpStatus === 'declined') {
+        declinedCount += 1;
+      } else {
+        pendingSeats += g.partySize;
+      }
+    }
+
+    // 2. Multi-predicate filter
+    const query = 'vegan';
+    const filtered = largeGuests.filter((g) => {
+      if (g.rsvpStatus !== 'accepted' && g.rsvpStatus !== 'pending') return false;
+      return g.dietaryNotes?.toLowerCase().includes(query);
+    });
+
+    // 3. Paginated window slice (page 2, size 50)
+    const pageSize = 50;
+    const page = 2;
+    const paginatedSlice = filtered.slice((page - 1) * pageSize, page * pageSize);
+
+    const durationMs = performance.now() - start;
+
+    expect(largeGuests.length).toBe(2000);
+    expect(totalInvitedSeats).toBeGreaterThan(4000);
+    expect(confirmedSeats).toBeGreaterThan(1000);
+    expect(paginatedSlice.length).toBeLessThanOrEqual(50);
+    // Entire 2,000-guest KPI + filter + windowed slice must execute in < 8ms
+    expect(durationMs).toBeLessThan(8);
+  });
 });

@@ -18,26 +18,76 @@ import {
   MetricsRegistry,
 } from './observability';
 
-class SlidingWindowRateLimiter {
+export interface RateLimitCheckResult {
+  allowed: boolean;
+  limit: number;
+  remaining: number;
+  resetTimeMs: number;
+  retryAfterSeconds: number;
+}
+
+export class SlidingWindowRateLimiter {
   private requests = new Map<string, number[]>();
   constructor(private maxRequests: number, private windowMs: number) {}
 
-  public isAllowed(key: string): boolean {
+  public check(key: string): RateLimitCheckResult {
     const now = Date.now();
     const timestamps = this.requests.get(key) || [];
     const valid = timestamps.filter((t) => now - t < this.windowMs);
+
     if (valid.length >= this.maxRequests) {
       this.requests.set(key, valid);
-      return false;
+      const oldestInWindow = valid[0] || now;
+      const resetTimeMs = oldestInWindow + this.windowMs;
+      const retryAfterSeconds = Math.max(1, Math.ceil((resetTimeMs - now) / 1000));
+      return {
+        allowed: false,
+        limit: this.maxRequests,
+        remaining: 0,
+        resetTimeMs,
+        retryAfterSeconds,
+      };
     }
+
     valid.push(now);
     this.requests.set(key, valid);
-    return true;
+    const resetTimeMs = now + this.windowMs;
+    const remaining = Math.max(0, this.maxRequests - valid.length);
+
+    return {
+      allowed: true,
+      limit: this.maxRequests,
+      remaining,
+      resetTimeMs,
+      retryAfterSeconds: 0,
+    };
+  }
+
+  public isAllowed(key: string): boolean {
+    return this.check(key).allowed;
   }
 
   public reset(): void {
     this.requests.clear();
   }
+}
+
+/**
+ * Safely resolves the client IP address.
+ * Defends against spoofed X-Forwarded-For headers: only trusts proxy headers
+ * if trustProxy is explicitly enabled (e.g. running behind Render or Vercel edge reverse proxies).
+ */
+export function resolveClientIp(req: http.IncomingMessage, trustProxy: boolean = false): string {
+  if (trustProxy) {
+    const xff = req.headers['x-forwarded-for'];
+    if (typeof xff === 'string' && xff.trim()) {
+      const parts = xff.split(',').map((p) => p.trim()).filter(Boolean);
+      if (parts.length > 0) {
+        return parts[0];
+      }
+    }
+  }
+  return req.socket.remoteAddress || '127.0.0.1';
 }
 
 export function createServerApp(
@@ -46,7 +96,7 @@ export function createServerApp(
   emailService: EmailDispatchService = globalEmailService,
   logger: StructuredLogger = globalLogger,
   metrics: MetricsRegistry = globalMetrics,
-  options?: { isProduction?: boolean; allowedOrigins?: string[] }
+  options?: { isProduction?: boolean; allowedOrigins?: string[]; trustProxy?: boolean }
 ) {
   // Validate production security configuration on app initialization
   validateEnvironmentSecurity();
@@ -58,6 +108,8 @@ export function createServerApp(
   // Rate limiters for unauthenticated public endpoints
   const rsvpInspectLimiter = new SlidingWindowRateLimiter(30, 60_000); // 30 requests per minute
   const rsvpSubmitLimiter = new SlidingWindowRateLimiter(15, 60_000);  // 15 submissions per minute
+
+  const trustProxy = options?.trustProxy ?? (process.env.TRUST_PROXY === 'true' || process.env.RENDER === 'true' || !!process.env.VERCEL);
 
   return async function handleRequest(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
     const startTime = performance.now();
@@ -431,16 +483,24 @@ export function createServerApp(
 
       // Route: /api/public/rsvp/inspect (POST)
       if (pathname === '/api/public/rsvp/inspect' && method === 'POST') {
-        const clientIp = typeof req.headers['x-forwarded-for'] === 'string'
-          ? req.headers['x-forwarded-for'].split(',')[0].trim()
-          : req.socket.remoteAddress || 'unknown';
+        const clientIp = resolveClientIp(req, trustProxy);
+        const limitRes = rsvpInspectLimiter.check(clientIp);
 
-        if (!rsvpInspectLimiter.isAllowed(clientIp)) {
+        if (!limitRes.allowed) {
+          res.setHeader('Retry-After', limitRes.retryAfterSeconds.toString());
+          res.setHeader('RateLimit-Limit', limitRes.limit.toString());
+          res.setHeader('RateLimit-Remaining', '0');
+          res.setHeader('RateLimit-Reset', Math.ceil(limitRes.resetTimeMs / 1000).toString());
           sendJson(429, {
             error: 'Rate limit exceeded: Too many RSVP inspection requests from this IP address. Please retry shortly.',
+            retryAfter: limitRes.retryAfterSeconds,
           });
           return;
         }
+
+        res.setHeader('RateLimit-Limit', limitRes.limit.toString());
+        res.setHeader('RateLimit-Remaining', limitRes.remaining.toString());
+        res.setHeader('RateLimit-Reset', Math.ceil(limitRes.resetTimeMs / 1000).toString());
 
         const body = await readJsonBody<{ token?: string; rsvpToken?: string }>();
         const targetToken = body.token || body.rsvpToken;
@@ -459,16 +519,24 @@ export function createServerApp(
 
       // Route: /api/public/rsvp/submit (POST)
       if (pathname === '/api/public/rsvp/submit' && method === 'POST') {
-        const clientIp = typeof req.headers['x-forwarded-for'] === 'string'
-          ? req.headers['x-forwarded-for'].split(',')[0].trim()
-          : req.socket.remoteAddress || 'unknown';
+        const clientIp = resolveClientIp(req, trustProxy);
+        const limitRes = rsvpSubmitLimiter.check(clientIp);
 
-        if (!rsvpSubmitLimiter.isAllowed(clientIp)) {
+        if (!limitRes.allowed) {
+          res.setHeader('Retry-After', limitRes.retryAfterSeconds.toString());
+          res.setHeader('RateLimit-Limit', limitRes.limit.toString());
+          res.setHeader('RateLimit-Remaining', '0');
+          res.setHeader('RateLimit-Reset', Math.ceil(limitRes.resetTimeMs / 1000).toString());
           sendJson(429, {
             error: 'Rate limit exceeded: Too many RSVP submissions from this IP address. Please retry shortly.',
+            retryAfter: limitRes.retryAfterSeconds,
           });
           return;
         }
+
+        res.setHeader('RateLimit-Limit', limitRes.limit.toString());
+        res.setHeader('RateLimit-Remaining', limitRes.remaining.toString());
+        res.setHeader('RateLimit-Reset', Math.ceil(limitRes.resetTimeMs / 1000).toString());
 
         const body = await readJsonBody<{
           token?: string;

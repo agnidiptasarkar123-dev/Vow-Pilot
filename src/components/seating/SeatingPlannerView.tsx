@@ -70,12 +70,30 @@ export const SeatingPlannerView: React.FC = () => {
   const [isAddTableOpen, setIsAddTableOpen] = useState(false);
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
   const [editingTable, setEditingTable] = useState<SeatingTable | null>(null);
+  const [liveAnnouncement, setLiveAnnouncement] = useState('');
 
   // Form state
   const [formName, setFormName] = useState('');
   const [formCapacity, setFormCapacity] = useState(8);
   const [formShape, setFormShape] = useState<'round' | 'rectangular' | 'oval'>('round');
   const [formNotes, setFormNotes] = useState('');
+
+  const handleAssignGuest = (guest: GuestRecord, tableId: string) => {
+    const targetTable = tables.find((t) => t.id === tableId);
+    const targetName = targetTable ? targetTable.name : 'Table';
+    assignGuestToTable(guest.id, tableId);
+    const newCount = targetTable ? targetTable.assignedGuestIds.length + 1 : 1;
+    if (targetTable && newCount > targetTable.capacity) {
+      setLiveAnnouncement(`Warning: ${targetName} is now over capacity with ${newCount} of ${targetTable.capacity} seats assigned.`);
+    } else {
+      setLiveAnnouncement(`${guest.name} seated at ${targetName}.`);
+    }
+  };
+
+  const handleRemoveGuest = (guest: GuestRecord, tableName: string) => {
+    removeGuestFromTable(guest.id);
+    setLiveAnnouncement(`${guest.name} removed from ${tableName} and is now unassigned.`);
+  };
 
   const handleOpenAdd = () => {
     setFormName(`Table ${tables.length + 1}`);
@@ -104,6 +122,7 @@ export const SeatingPlannerView: React.FC = () => {
       shape: formShape,
       notes: formNotes.trim() || undefined,
     });
+    setLiveAnnouncement(`Table "${formName.trim()}" added with capacity for ${formCapacity} guests.`);
     setIsAddTableOpen(false);
   };
 
@@ -118,12 +137,14 @@ export const SeatingPlannerView: React.FC = () => {
       shape: formShape,
       notes: formNotes.trim() || undefined,
     });
+    setLiveAnnouncement(`Table "${formName.trim()}" updated.`);
     setEditingTable(null);
   };
 
   const handleDelete = (tableId: string, name: string) => {
     if (window.confirm(`Delete "${name}"? Seated guests will become unassigned.`)) {
       deleteTable(tableId);
+      setLiveAnnouncement(`Table "${name}" deleted. Seated guests are now unassigned.`);
     }
   };
 
@@ -133,6 +154,10 @@ export const SeatingPlannerView: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Screen Reader ARIA Live Region for Immediate Auditory Feedback */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {liveAnnouncement}
+      </div>
       {/* Printable Title (Print Only) */}
       <div className="print-only hidden mb-6 pb-4 border-b">
         <h1 className="font-serif-heading text-2xl font-bold">{state.event.name} — Guest Seating Plan</h1>
@@ -263,9 +288,10 @@ export const SeatingPlannerView: React.FC = () => {
                 {tables.length > 0 && (
                   <select
                     disabled={isReadOnly}
+                    aria-label={`Assign ${guest.name} to a reception table`}
                     onChange={(e) => {
                       if (e.target.value) {
-                        assignGuestToTable(guest.id, e.target.value);
+                        handleAssignGuest(guest, e.target.value);
                       }
                     }}
                     defaultValue=""
@@ -400,13 +426,14 @@ export const SeatingPlannerView: React.FC = () => {
                               {/* Re-assign dropdown */}
                               <select
                                 disabled={isReadOnly}
+                                aria-label={`Move ${guest.name} from ${table.name} to another table`}
                                 onChange={(e) => {
                                   if (e.target.value) {
-                                    assignGuestToTable(guestId, e.target.value);
+                                    handleAssignGuest(guest, e.target.value);
                                   }
                                 }}
                                 defaultValue=""
-                                title="Move guest to another table"
+                                title={`Move ${guest.name} to another table`}
                                 className="bg-surface border border-border-strong rounded text-[10px] px-1 py-0.5 cursor-pointer"
                               >
                                 <option value="" disabled>
@@ -423,9 +450,10 @@ export const SeatingPlannerView: React.FC = () => {
 
                               {/* Unseat button */}
                               <button
-                                onClick={() => removeGuestFromTable(guestId)}
+                                onClick={() => handleRemoveGuest(guest, table.name)}
                                 disabled={isReadOnly}
-                                title="Remove guest from this table"
+                                aria-label={`Remove ${guest.name} from ${table.name}`}
+                                title={`Remove ${guest.name} from ${table.name}`}
                                 className="p-1 rounded text-stone-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
                               >
                                 <UserMinus className="w-3 h-3" />
