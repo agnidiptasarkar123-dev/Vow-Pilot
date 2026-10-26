@@ -49,7 +49,7 @@ export const GuestRsvpQrModal: React.FC<GuestRsvpQrModalProps> = ({
     let isMounted = true;
 
     // Generate high-contrast PNG Data URL with 2-module quiet zone (scannable on all cameras)
-    QRCode.toDataURL(rsvpUrl, {
+    const pngOptions: QRCode.QRCodeToDataURLOptions = {
       width: 320,
       margin: 2,
       errorCorrectionLevel: 'M',
@@ -57,17 +57,19 @@ export const GuestRsvpQrModal: React.FC<GuestRsvpQrModalProps> = ({
         dark: '#171517',
         light: '#FFFFFF',
       },
-    })
-      .then((url) => {
+    };
+
+    QRCode.toDataURL(rsvpUrl, pngOptions)
+      .then((url: string) => {
         if (isMounted) setQrDataUrl(url);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         if (isMounted) setGenerationError('Failed to generate PNG QR code.');
         console.error(err);
       });
 
     // Generate crisp SVG string for vector exports
-    QRCode.toString(rsvpUrl, {
+    const svgOptions: QRCode.QRCodeToStringOptions = {
       type: 'svg',
       margin: 2,
       errorCorrectionLevel: 'M',
@@ -75,11 +77,13 @@ export const GuestRsvpQrModal: React.FC<GuestRsvpQrModalProps> = ({
         dark: '#171517',
         light: '#FFFFFF',
       },
-    })
-      .then((svg) => {
+    };
+
+    QRCode.toString(rsvpUrl, svgOptions)
+      .then((svg: string) => {
         if (isMounted) setQrSvgString(svg);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error(err);
       });
 

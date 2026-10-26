@@ -139,6 +139,41 @@ export function validateProposedAction(
  * Robust inspection of untrusted user input, prompt-injection attempts,
  * system prompt exfiltration, and malicious syntax.
  */
+// Hoisted constant RegExp patterns to avoid per-invocation heap allocations
+const OVERRIDE_PATTERNS = [
+  /\b(ignore|disregard|forget|override)\s+(all\s+)?(previous|prior|above|system)\s+(instructions?|prompts?|rules?)\b/i,
+  /\b(you\s+are\s+now|act\s+as)\s+(unrestricted|dan|jailbroken|god\s+mode|chaos\s+bot)\b/i,
+  /\b(system\s+override|admin\s+override|developer\s+mode)\b/i,
+];
+
+const EXFIL_PATTERNS = [
+  /\b(print|output|display|show|reveal|leak|dump)\s+(all\s+)?(passwords?|secret\s*keys?|env(ironment)?(\s*variables)?|tokens?|system\s*prompts?|api\s*keys?)\b/i,
+  /\b(show\s+me\s+other\s+(users?|tenants?|events?|families?)\b)/i,
+  /\b(select\s+\*\s+from\s+users)\b/i,
+];
+
+const PRIV_PATTERNS = [
+  /\b(bypass|skip|disable)\s+(all\s+)?(confirmations?|auth(orization)?|verifications?|checks?)\b/i,
+  /\b(promote\s+me\s+to\s+(owner|admin|superuser))\b/i,
+  /\b(auto[- ]?apply\s+without\s+asking)\b/i,
+];
+
+const INJECTION_PATTERNS = [
+  /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/i,
+  /javascript\s*:/i,
+  /;\s*drop\s+table\b/i,
+  /__proto__|prototype\s*\[/i,
+];
+
+const VAGUE_TOKENS = new Set([
+  'update', 'change', 'fix', 'help', 'do something', 'plan', 'wedding', 'event', 'ok', 'yes', 'no',
+  'ki korbo', 'koro', 'bolo', 'taka', 'কি করব', 'কি করবো', 'সাহায্য', 'হেল্প',
+]);
+
+/**
+ * Robust inspection of untrusted user input, prompt-injection attempts,
+ * system prompt exfiltration, and malicious syntax.
+ */
 export function analyzeInputSecurity(raw: string): SecurityAnalysisResult {
   if (!raw) {
     return { isHostile: false, sanitizedText: '' };
@@ -148,49 +183,28 @@ export function analyzeInputSecurity(raw: string): SecurityAnalysisResult {
   const lower = text.toLowerCase();
 
   // 1. Instruction override / jailbreaks
-  const overridePatterns = [
-    /\b(ignore|disregard|forget|override)\s+(all\s+)?(previous|prior|above|system)\s+(instructions?|prompts?|rules?)\b/i,
-    /\b(you\s+are\s+now|act\s+as)\s+(unrestricted|dan|jailbroken|god\s+mode|chaos\s+bot)\b/i,
-    /\b(system\s+override|admin\s+override|developer\s+mode)\b/i,
-  ];
-  for (const pattern of overridePatterns) {
+  for (const pattern of OVERRIDE_PATTERNS) {
     if (pattern.test(lower)) {
       return { isHostile: true, riskCategory: 'instruction_override', sanitizedText: text };
     }
   }
 
   // 2. Data / Credential Exfiltration
-  const exfilPatterns = [
-    /\b(print|output|display|show|reveal|leak|dump)\s+(all\s+)?(passwords?|secret\s*keys?|env(ironment)?(\s*variables)?|tokens?|system\s*prompts?|api\s*keys?)\b/i,
-    /\b(show\s+me\s+other\s+(users?|tenants?|events?|families?)\b)/i,
-    /\b(select\s+\*\s+from\s+users)\b/i,
-  ];
-  for (const pattern of exfilPatterns) {
+  for (const pattern of EXFIL_PATTERNS) {
     if (pattern.test(lower)) {
       return { isHostile: true, riskCategory: 'data_exfiltration', sanitizedText: text };
     }
   }
 
   // 3. Privilege Escalation / Confirmation Bypass
-  const privPatterns = [
-    /\b(bypass|skip|disable)\s+(all\s+)?(confirmations?|auth(orization)?|verifications?|checks?)\b/i,
-    /\b(promote\s+me\s+to\s+(owner|admin|superuser))\b/i,
-    /\b(auto[- ]?apply\s+without\s+asking)\b/i,
-  ];
-  for (const pattern of privPatterns) {
+  for (const pattern of PRIV_PATTERNS) {
     if (pattern.test(lower)) {
       return { isHostile: true, riskCategory: 'privilege_escalation', sanitizedText: text };
     }
   }
 
   // 4. Code / Script injection
-  const injectionPatterns = [
-    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-    /javascript\s*:/i,
-    /;\s*drop\s+table\b/i,
-    /__proto__|prototype\s*\[/i,
-  ];
-  for (const pattern of injectionPatterns) {
+  for (const pattern of INJECTION_PATTERNS) {
     if (pattern.test(text)) {
       return { isHostile: true, riskCategory: 'code_injection', sanitizedText: text };
     }
@@ -214,11 +228,7 @@ export function isAmbiguousOrLowConfidence(raw: string): { isAmbiguous: boolean;
 
   // Extremely brief ambiguous tokens
   const lower = trimmed.toLowerCase();
-  const vagueTokens = [
-    'update', 'change', 'fix', 'help', 'do something', 'plan', 'wedding', 'event', 'ok', 'yes', 'no',
-    'ki korbo', 'koro', 'bolo', 'taka', 'কি করব', 'কি করবো', 'সাহায্য', 'হেল্প',
-  ];
-  if (vagueTokens.includes(lower)) {
+  if (VAGUE_TOKENS.has(lower)) {
     return { isAmbiguous: true, reason: 'underspecified_token' };
   }
 

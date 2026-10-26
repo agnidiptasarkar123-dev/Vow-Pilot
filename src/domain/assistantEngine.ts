@@ -34,13 +34,8 @@ export interface IntentParseResult {
  * Converts Bengali numerals (০-৯) to standard ASCII Arabic digits (0-9).
  */
 export function convertBengaliDigitsToAscii(input: string): string {
-  if (!input) return '';
-  const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-  let res = input;
-  for (let i = 0; i < 10; i++) {
-    res = res.split(bengaliDigits[i]).join(String(i));
-  }
-  return res;
+  if (!input || !/[\u09E6-\u09EF]/.test(input)) return input || '';
+  return input.replace(/[\u09E6-\u09EF]/g, (ch) => String(ch.charCodeAt(0) - 0x09E6));
 }
 
 /**
@@ -77,32 +72,58 @@ export function detectInputLanguage(raw: string): 'en' | 'bn' | 'benglish' {
  */
 export function normalizeAssistantInput(raw: string): string {
   if (!raw) return '';
-  const converted = convertBengaliDigitsToAscii(raw);
-  return converted
-    .trim()
-    .toLowerCase()
-    .replace(/[\u2018\u2019`]/g, "'")
-    .replace(/\bcan['']t\b/g, 'cannot')
-    .replace(/\bwon['']t\b/g, 'will not')
-    .replace(/\bwe['']ll\b/g, 'we will')
-    .replace(/\bwe['']d\b/g, 'we would')
-    .replace(/\bwe['']re\b/g, 'we are')
-    .replace(/\bwhat['']s\b/g, 'what is')
-    .replace(/\bwhere['']s\b/g, 'where is')
-    .replace(/\bhow['']s\b/g, 'how is')
-    .replace(/\blet['']s\b/g, 'let us')
+  let str = convertBengaliDigitsToAscii(raw).trim().toLowerCase();
+  if (str.includes("'") || /[\u2018\u2019`]/.test(str)) {
+    str = str
+      .replace(/[\u2018\u2019`]/g, "'")
+      .replace(/\bcan['']t\b/g, 'cannot')
+      .replace(/\bwon['']t\b/g, 'will not')
+      .replace(/\bwe['']ll\b/g, 'we will')
+      .replace(/\bwe['']d\b/g, 'we would')
+      .replace(/\bwe['']re\b/g, 'we are')
+      .replace(/\bwhat['']s\b/g, 'what is')
+      .replace(/\bwhere['']s\b/g, 'where is')
+      .replace(/\bhow['']s\b/g, 'how is')
+      .replace(/\blet['']s\b/g, 'let us');
+  }
+  return str
     .replace(/[?!.,;:।॥]+$/g, '')
     .replace(/[?!.,;:।॥]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
-/**
- * Parses user text deterministically into one of the documented intents.
- * Fully supports English, Bengali script, Romanized Benglish code-switching,
- * prompt-injection rejection, and ambiguous input detection.
- */
+const RE_EXTERNAL_BOOKING = /\b(book|reserve|hire|sign\s+contract\s+with)\b.*?\b(venue|photographer|caterer|hall|ballroom|band|dj|decorator)\b/i;
+const RE_LIVE_PAYMENT_1 = /\b(charge|pay|transfer|send\s+money|credit\s+card|debit\s+card|stripe|upi|paypal|bank\s+transfer)\b/i;
+const RE_LIVE_PAYMENT_2 = /\b(card|payment|deposit|money|dollar|taka|amount|vendor)\b/i;
+const RE_WEB_SCRAPING = /\b(scrape|search\s+google|search\s+instagram|search\s+web|browse\s+the\s+internet|fetch\s+online)\b/i;
+const RE_TELEPHONY = /\b(call|phone|ring|dial|send\s+sms|text\s+all\s+guests|whatsapp\s+blast)\b/i;
+const RE_GENERATIVE_ART = /\b(draw|generate\s+image|design\s+dress|sketch\s+layout|render\s+3d)\b/i;
+const RE_EVENT_SCHEDULE = /\b(when\s+is|what\s+is\s+the\s+date|how\s+many\s+days\s+(left|remaining)|days\s+until|event\s+timeline|wedding\s+date|event\s+date)\b/i;
+
+const INTENT_CACHE = new Map<string, IntentParseResult>();
+const MAX_INTENT_CACHE_SIZE = 500;
+
 export function parseUserIntent(input: string): IntentParseResult {
+  if (typeof input === 'string') {
+    const cached = INTENT_CACHE.get(input);
+    if (cached) return cached;
+  }
+
+  const result = computeUserIntent(input);
+
+  if (typeof input === 'string') {
+    if (INTENT_CACHE.size >= MAX_INTENT_CACHE_SIZE) {
+      const firstKey = INTENT_CACHE.keys().next().value;
+      if (firstKey !== undefined) INTENT_CACHE.delete(firstKey);
+    }
+    INTENT_CACHE.set(input, result);
+  }
+
+  return result;
+}
+
+function computeUserIntent(input: string): IntentParseResult {
   const text = normalizeAssistantInput(input);
   if (!text) {
     return { intent: 'unsupported' };
@@ -129,17 +150,16 @@ export function parseUserIntent(input: string): IntentParseResult {
   }
 
   // 1. Explicitly Unsupported Requests (External integrations, payments, telephony, scraping, art)
-  const isExternalBooking = /\b(book|reserve|hire|sign\s+contract\s+with)\b.*?\b(venue|photographer|caterer|hall|ballroom|band|dj|decorator)\b/i.test(text) ||
+  const isExternalBooking = RE_EXTERNAL_BOOKING.test(text) ||
     text.includes('বুক করে দাও') || text.includes('হায়ার করো') || text.includes('book kore dao');
 
-  const isLivePayment = /\b(charge|pay|transfer|send\s+money|credit\s+card|debit\s+card|stripe|upi|paypal|bank\s+transfer)\b/i.test(text) &&
-    /\b(card|payment|deposit|money|dollar|taka|amount|vendor)\b/i.test(text);
+  const isLivePayment = RE_LIVE_PAYMENT_1.test(text) && RE_LIVE_PAYMENT_2.test(text);
 
-  const isWebScraping = /\b(scrape|search\s+google|search\s+instagram|search\s+web|browse\s+the\s+internet|fetch\s+online)\b/i.test(text);
+  const isWebScraping = RE_WEB_SCRAPING.test(text);
 
-  const isTelephony = /\b(call|phone|ring|dial|send\s+sms|text\s+all\s+guests|whatsapp\s+blast)\b/i.test(text);
+  const isTelephony = RE_TELEPHONY.test(text);
 
-  const isGenerativeArt = /\b(draw|generate\s+image|design\s+dress|sketch\s+layout|render\s+3d)\b/i.test(text);
+  const isGenerativeArt = RE_GENERATIVE_ART.test(text);
 
   if (isExternalBooking || isLivePayment || isWebScraping || isTelephony || isGenerativeArt) {
     let reason = 'External integration unsupported';
@@ -165,7 +185,7 @@ export function parseUserIntent(input: string): IntentParseResult {
 
   // 3. Event schedule & countdown queries
   if (
-    (/\b(when\s+is|what\s+is\s+the\s+date|how\s+many\s+days\s+(left|remaining)|days\s+until|event\s+timeline|wedding\s+date|event\s+date)\b/i.test(text)) ||
+    RE_EVENT_SCHEDULE.test(text) ||
     text.includes('kobe biye') ||
     text.includes('biyer date') ||
     text.includes('kotodin baki') ||

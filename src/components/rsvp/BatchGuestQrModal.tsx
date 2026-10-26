@@ -29,14 +29,15 @@ export const BatchGuestQrModal: React.FC<BatchGuestQrModalProps> = ({
       for (const g of guests) {
         const url = `${origin}/?rsvpToken=${g.invitationToken}`;
         try {
-          const dataUrl = await QRCode.toDataURL(url, {
+          const options: QRCode.QRCodeToDataURLOptions = {
             width: 200,
             margin: 2,
             errorCorrectionLevel: 'M',
             color: { dark: '#171517', light: '#FFFFFF' },
-          });
+          };
+          const dataUrl: string = await QRCode.toDataURL(url, options);
           nextMap.set(g.id, dataUrl);
-        } catch (e) {
+        } catch (e: unknown) {
           console.error('Error generating QR for', g.name, e);
         }
       }

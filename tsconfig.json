@@ -17,7 +17,7 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "types": ["vite/client"]
+    "types": ["vite/client", "qrcode"]
   },
   "include": ["src"],
   "exclude": ["src/test", "**/*.test.ts", "**/*.test.tsx"]
