@@ -176,7 +176,7 @@ Vow-Pilot/
 │   ├── domain/                      # Deterministic mathematical & NLU engines
 │   ├── persistence/                 # LocalStorage persistence, V1->V2 migrations, JSON import/export
 │   ├── services/                    # Collaboration & email client services
-│   ├── test/                        # Vitest test suite (48 files, 2,681 tests)
+│   ├── test/                        # Vitest test suite (49 files, 2,706 tests)
 │   └── types/                       # Shared TypeScript domain types
 ├── tsconfig.json                    # Base TypeScript compiler configuration
 ├── tsconfig.prod.json               # Isolated production build compiler options
@@ -211,7 +211,7 @@ cp .env.example .env
 # 4. Run TypeScript typecheck across app and test suites
 npm run typecheck
 
-# 5. Run full automated test suite (2,681 tests across 48 suites)
+# 5. Run full automated test suite (2,706 tests across 49 suites)
 npm test -- --run
 
 # 6. Run test suite with coverage report
@@ -259,9 +259,9 @@ VowPilot features an extensive, reproducible test suite built with Vitest, React
 
 ### Test Execution Summary
 
-* **Collected Test Files:** **48 test files**
-* **Collected & Executed Test Cases:** **2,681 tests**
-* **Passing Test Cases:** **2,681 / 2,681 tests (100% PASS RATE)** (exceeding the 2,500 test requirement)
+* **Collected Test Files:** **49 test files**
+* **Collected & Executed Test Cases:** **2,706 tests**
+* **Passing Test Cases:** **2,706 / 2,706 tests (100% PASS RATE)** (exceeding the 2,500 test requirement)
 * **TypeScript Static Typecheck (`npm run typecheck`):** **0 errors** across both `tsconfig.json` and `tsconfig.test.json`.
 * **Production Build (`npm run build`):** **Success in ~350ms** with clean TypeScript compilation.
 
@@ -279,13 +279,14 @@ VowPilot features an extensive, reproducible test suite built with Vitest, React
 | **Run Sheet Templates & Seating Drafts (V2.1)** | `runSheetAndSeatingDraftV21.test.ts` | **5 tests** | 5 timeline starter presets (wedding, birthday, corporate, cultural, general), Append vs. Replace safety strategies, conflict detection validation, intelligent table capacity allocation, duplicate seating prevention. |
 | **Vendor Category Starters & Quotes (V2.1)** | `vendorCategoryWorkflowV21.test.ts` | **4 tests** | Scope checklists and evaluation questions for Decor, Entertainment, Catering, Photography, Venue, Logistics, and custom fallback, supplier creation tagging (`isSample: false`), demo vendor distinction. |
 | **Midnight Cocoa Theme Tokens & Contrast (V2.1)** | `themeTokensAndContrastV21.test.ts` | **3 tests** | Full Midnight Cocoa / Muted Rose token definitions in `src/index.css`, preservation of light theme tokens, WCAG 2.1 AA and AAA contrast calculations (>11:1 primary, >6:1 secondary). |
+| **Assistant Invariants & Security Boundaries (V2.1)** | `assistantValidationInvariants.test.ts` | **25 tests** | Action proposal payload boundary tests, committed spend invariant guards against vendor budget cuts, negative and NaN allocations, instruction injection and jailbreak token detection, input disambiguation triggers. |
 | **Timeline Run Sheet & Conflict Detection** | `timelineAndSeatingComprehensive.test.ts` | **130 tests** | Chronological run sheet ordering, multi-event span overlap detection, invalid time/duration handling, resource clash identification (`[Location Clash]`, `[Personnel Conflict]`, `[Vendor Conflict]`). |
 | **Banquet Seating & Table Capacity** | `timelineAndSeatingComprehensive.test.ts` | **120 tests** | Table capacity limits, unassigned guest pool tracking, duplicate seat assignment detection, orphaned guest reference cleanup, accessible list-based table assignment. |
 | **Email Delivery & Outbound Safeguards** | `emailDeliveryWorkflow.test.ts` | **18 tests** | SMTP error classification, exponential backoff with jitter, recipient anti-harassment rate limiting (max 3/10 min), Ethereal and Nodemailer transport verification. |
 | **Multilingual NLU & Adversarial Safety** | `assistantEvaluationSuite.test.ts`, `assistantMultilingualAdversarial.test.ts`, `assistantEngine.test.ts` | **123 tests** | Multilingual intent parsing (English, Bengali Unicode, Romanized Benglish), prompt injection defense, jailbreak resistance, structured Action Proposal Cards requiring explicit user confirmation. |
 | **Full User Journeys & Performance** | `userJourneys.test.ts`, `benchmarkPerformance.test.ts`, `performanceBudget.test.ts`, `sreResilienceAndLoad.test.ts` | **45 tests** | Multi-step end-to-end planning journeys, synthetic 500-guest / 100-task load benchmarks, bundle size budgets, memory leak prevention. |
 | **Branding, Theme & UI Accessibility** | `themeAndBranding.test.tsx`, `ui.test.tsx`, `visualSnapshot.test.ts` | **30 tests** | SVG logo rendering, Midnight Cocoa dark mode vs light theme persistence, keyboard navigation, focus trapping, WCAG 2.2 AA contrast compliance. |
-| **Total Test Suite** | **48 Test Files** | **2,681 tests** | **Over 2,500 tests verified (100% executable)** |
+| **Total Test Suite** | **49 Test Files** | **2,706 tests** | **Over 2,500 tests verified (100% executable)** |
 
 ### V8 Code Coverage Report
 
@@ -293,10 +294,10 @@ VowPilot features an extensive, reproducible test suite built with Vitest, React
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 -------------------|---------|----------|---------|---------|-------------------
-All files          |   88.21 |    81.69 |   93.54 |   92.13 |
- domain            |   91.02 |    83.52 |   91.78 |   91.15 |
-  ...tantEngine.ts |   94.31 |    85.85 |   94.44 |   94.13 | ...1097,1135,1162
-  ...Validation.ts |   57.44 |    57.77 |      50 |   58.88 | ...23,128,144,212
+All files          |   91.74 |    84.19 |   97.89 |   95.81 |
+ domain            |   95.75 |    87.15 |   97.33 |   95.88 |
+  ...tantEngine.ts |   93.76 |    85.39 |   94.73 |   93.82 | ...1117,1155,1182
+  ...Validation.ts |   97.87 |    95.55 |     100 |   97.77 | 98,179
   budgetEngine.ts  |   96.55 |    79.22 |     100 |   97.36 | 69-70,201
   currency.ts      |     100 |    97.22 |     100 |     100 | 47
   taskEngine.ts    |   96.29 |     87.5 |     100 |   96.18 | ...53-154,261,265

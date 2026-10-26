@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import http from 'node:http';
 import { createServerApp } from '../../server/app';
 import { EventStore } from '../../server/events';
@@ -11,8 +11,24 @@ describe('Security & Authorization Matrix Comprehensive Suite (100 Tests)', () =
   let dbContext: DatabaseContext;
   let authStore: AuthStore;
   let eventStore: EventStore;
+  let activeAuthStore: AuthStore;
+  let activeEventStore: EventStore;
   let server: http.Server;
   let baseUrl: string;
+
+  const authStoreProxy = new Proxy({} as AuthStore, {
+    get(_target, prop) {
+      const val = (activeAuthStore as any)[prop];
+      return typeof val === 'function' ? val.bind(activeAuthStore) : val;
+    },
+  });
+
+  const eventStoreProxy = new Proxy({} as EventStore, {
+    get(_target, prop) {
+      const val = (activeEventStore as any)[prop];
+      return typeof val === 'function' ? val.bind(activeEventStore) : val;
+    },
+  });
 
   const ownerUser: User = {
     id: 'usr_owner_matrix',
@@ -52,12 +68,8 @@ describe('Security & Authorization Matrix Comprehensive Suite (100 Tests)', () =
   let strangerToken: string;
   let eventId: string;
 
-  beforeEach(async () => {
-    dbContext = new DatabaseContext({ filename: ':memory:' });
-    authStore = new AuthStore(dbContext);
-    eventStore = new EventStore(dbContext);
-
-    const app = createServerApp(authStore, eventStore, undefined, undefined, undefined, { isProduction: false });
+  beforeAll(async () => {
+    const app = createServerApp(authStoreProxy, eventStoreProxy, undefined, undefined, undefined, { isProduction: false });
     server = http.createServer(app);
 
     await new Promise<void>((resolve) => {
@@ -69,6 +81,21 @@ describe('Security & Authorization Matrix Comprehensive Suite (100 Tests)', () =
         resolve();
       });
     });
+  });
+
+  afterAll(async () => {
+    (server as any)?.closeAllConnections?.();
+    await new Promise<void>((resolve) => {
+      server.close(() => resolve());
+    });
+  });
+
+  beforeEach(() => {
+    dbContext = new DatabaseContext({ filename: ':memory:' });
+    authStore = new AuthStore(dbContext);
+    eventStore = new EventStore(dbContext);
+    activeAuthStore = authStore;
+    activeEventStore = eventStore;
 
     // Create users in db
     dbContext.users.createUser(ownerUser);
@@ -91,11 +118,7 @@ describe('Security & Authorization Matrix Comprehensive Suite (100 Tests)', () =
     dbContext.events.addMember(eventId, viewerUser, 'viewer');
   });
 
-  afterEach(async () => {
-    (server as any).closeAllConnections?.();
-    await new Promise<void>((resolve) => {
-      server.close(() => resolve());
-    });
+  afterEach(() => {
     dbContext.close();
   });
 
