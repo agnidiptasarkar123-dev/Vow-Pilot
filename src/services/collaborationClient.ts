@@ -52,7 +52,7 @@ export interface CollaborationState {
 
 export type CollaborationListener = (state: CollaborationState) => void;
 
-class CollaborationClient {
+export class CollaborationClient {
   private serverUrl = 'http://localhost:3001';
   private authToken: string | null = null;
   private state: CollaborationState = {
@@ -70,25 +70,38 @@ class CollaborationClient {
   private reconnectAttempt = 0;
   private onRemoteUpdateCallback?: (state: AppState) => void;
 
-  constructor() {
-    if (typeof window !== 'undefined') {
-      this.authToken = localStorage.getItem('vowpilot_auth_token');
-      // Resolve backend server URL: custom localStorage override > Vite env variable > default origin
-      const storedUrl = localStorage.getItem('vowpilot_server_url');
-      const envUrl = (import.meta as any).env?.VITE_API_URL;
-      const origin = window.location.origin;
-
-      if (storedUrl && storedUrl.trim()) {
-        this.serverUrl = storedUrl.trim().replace(/\/+$/, '');
-      } else if (envUrl && typeof envUrl === 'string' && envUrl.trim()) {
-        this.serverUrl = envUrl.trim().replace(/\/+$/, '');
-      } else if (origin.includes('localhost:5173') || origin.includes('localhost:3000')) {
-        this.serverUrl = 'http://localhost:3001';
-      } else {
-        this.serverUrl = origin;
-      }
+  constructor(customServerUrl?: string) {
+    if (customServerUrl) {
+      this.serverUrl = customServerUrl.replace(/\/+$/, '');
       this.state.serverUrl = this.serverUrl;
     }
+    if (typeof window !== 'undefined') {
+      this.authToken = localStorage.getItem('vowpilot_auth_token');
+      if (!customServerUrl) {
+        // Resolve backend server URL: custom localStorage override > Vite env variable > default origin
+        const storedUrl = localStorage.getItem('vowpilot_server_url');
+        const envUrl = (import.meta as any).env?.VITE_API_URL;
+        const origin = window.location.origin;
+
+        if (storedUrl && storedUrl.trim()) {
+          this.serverUrl = storedUrl.trim().replace(/\/+$/, '');
+        } else if (envUrl && typeof envUrl === 'string' && envUrl.trim()) {
+          this.serverUrl = envUrl.trim().replace(/\/+$/, '');
+        } else if (origin.includes('localhost:5173') || origin.includes('localhost:3000')) {
+          this.serverUrl = 'http://localhost:3001';
+        } else if (origin.includes('vowpilot.vercel.app') || !origin.includes('localhost')) {
+          // Default to live Render backend for Vercel deployment or production
+          this.serverUrl = 'https://vow-pilot.onrender.com';
+        } else {
+          this.serverUrl = origin;
+        }
+        this.state.serverUrl = this.serverUrl;
+      }
+    }
+  }
+
+  public getServerUrl(): string {
+    return this.serverUrl;
   }
 
   public subscribe(listener: CollaborationListener): () => void {
@@ -117,6 +130,10 @@ class CollaborationClient {
         localStorage.removeItem('vowpilot_auth_token');
       }
     }
+  }
+
+  public setAuthToken(token: string | null): void {
+    this.setToken(token);
   }
 
   public getToken(): string | null {
@@ -428,7 +445,7 @@ class CollaborationClient {
     eventId: string,
     role: 'owner' | 'editor' | 'viewer',
     expiresInHours = 48
-  ): Promise<{ success: boolean; invite?: PendingInvite; error?: string }> {
+  ): Promise<{ success: boolean; invite?: PendingInvite; token?: string; error?: string }> {
     if (!this.authToken) {
       return { success: false, error: 'Authentication required' };
     }
@@ -450,7 +467,7 @@ class CollaborationClient {
       }
 
       const invite = await res.json();
-      return { success: true, invite };
+      return { success: true, invite, token: invite.token };
     } catch (err: unknown) {
       return { success: false, error: err instanceof Error ? err.message : 'Network error' };
     }
@@ -614,6 +631,234 @@ class CollaborationClient {
       return { success: true };
     } catch (err: unknown) {
       return { success: false, error: err instanceof Error ? err.message : 'Network error' };
+    }
+  }
+
+  /**
+   * Updates an existing member's role (owner-only).
+   */
+  public async updateMemberRole(
+    eventId: string,
+    targetUserId: string,
+    newRole: 'owner' | 'editor' | 'viewer'
+  ): Promise<{ success: boolean; error?: string; event?: any }> {
+    if (!this.authToken) return { success: false, error: 'Authentication required' };
+
+    try {
+      const res = await fetch(`${this.serverUrl}/api/events/${eventId}/members/${targetUserId}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.authToken}`,
+        },
+        body: JSON.stringify({ role: newRole }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        return { success: false, error: data.error || 'Failed to update member role' };
+      }
+
+      const updated = await res.json();
+      if (updated.members) {
+        this.state.members = updated.members;
+        this.notify();
+      }
+      return { success: true, event: updated };
+    } catch (err: unknown) {
+      return { success: false, error: err instanceof Error ? err.message : 'Network error' };
+    }
+  }
+
+  /**
+   * Creates a persistent event on the backend server for the authenticated user.
+   */
+  public async createEventOnServer(
+    initialState: AppState
+  ): Promise<{ success: boolean; eventId?: string; error?: string }> {
+    if (!this.authToken) {
+      return { success: false, error: 'Authentication required' };
+    }
+
+    try {
+      const res = await fetch(`${this.serverUrl}/api/events`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.authToken}`,
+        },
+        body: JSON.stringify({ state: initialState }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        return { success: false, error: data.error || 'Failed to create event on server' };
+      }
+
+      const created = await res.json();
+      this.state.activeEventId = created.id;
+      this.state.serverVersion = created.version || 1;
+      this.state.localVersion = created.version || 1;
+      this.state.role = 'owner';
+      this.state.members = created.members || [];
+      this.state.status = 'synced';
+      this.notify();
+
+      // Automatically connect to the new event's SSE stream
+      await this.connectToEvent(created.id, this.onRemoteUpdateCallback);
+
+      return { success: true, eventId: created.id };
+    } catch (err: unknown) {
+      return { success: false, error: err instanceof Error ? err.message : 'Network error' };
+    }
+  }
+
+  /**
+   * Retrieves all events associated with the authenticated user.
+   */
+  public async listUserEvents(): Promise<{ success: boolean; events?: any[]; error?: string }> {
+    if (!this.authToken) return { success: false, error: 'Authentication required' };
+
+    try {
+      const res = await fetch(`${this.serverUrl}/api/events`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { Authorization: `Bearer ${this.authToken}` },
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        return { success: false, error: data.error || 'Failed to list events' };
+      }
+
+      const data = await res.json();
+      return { success: true, events: data.events };
+    } catch (err: unknown) {
+      return { success: false, error: err instanceof Error ? err.message : 'Network error' };
+    }
+  }
+
+  /**
+   * Authenticate user with email and password.
+   */
+  public async login(
+    email: string,
+    pass: string
+  ): Promise<{ success: boolean; user?: { id: string; name: string; email: string }; token?: string; error?: string }> {
+    try {
+      const res = await fetch(`${this.serverUrl}/api/auth/login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim().toLowerCase(), password: pass }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Login failed' };
+      }
+
+      this.setToken(data.token);
+      this.setCurrentUser(data.user.id, data.user.name);
+      return { success: true, user: data.user, token: data.token };
+    } catch (err: unknown) {
+      return { success: false, error: err instanceof Error ? err.message : 'Network error' };
+    }
+  }
+
+  /**
+   * Register a new user account.
+   */
+  public async register(
+    name: string,
+    email: string,
+    pass: string
+  ): Promise<{ success: boolean; user?: { id: string; name: string; email: string }; token?: string; error?: string }> {
+    try {
+      const res = await fetch(`${this.serverUrl}/api/auth/register`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name.trim(), email: email.trim().toLowerCase(), password: pass }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Registration failed' };
+      }
+
+      this.setToken(data.token);
+      this.setCurrentUser(data.user.id, data.user.name);
+      return { success: true, user: data.user, token: data.token };
+    } catch (err: unknown) {
+      return { success: false, error: err instanceof Error ? err.message : 'Network error' };
+    }
+  }
+
+  /**
+   * Verify session and retrieve current authenticated user.
+   */
+  public async checkAuth(): Promise<{ isAuthenticated: boolean; authenticated: boolean; user?: { id: string; name: string; email: string } }> {
+    const token = this.authToken;
+    try {
+      const res = await fetch(`${this.serverUrl}/api/auth/me`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.user) {
+          this.setCurrentUser(data.user.id, data.user.name);
+          return { isAuthenticated: true, authenticated: true, user: data.user };
+        }
+      }
+      return { isAuthenticated: false, authenticated: false };
+    } catch {
+      return { isAuthenticated: false, authenticated: false };
+    }
+  }
+
+  /**
+   * Log out active session.
+   */
+  public async logout(): Promise<{ success: boolean }> {
+    try {
+      await fetch(`${this.serverUrl}/api/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: this.authToken ? { Authorization: `Bearer ${this.authToken}` } : {},
+      });
+    } catch {
+      // Ignore network failure on logout
+    } finally {
+      this.setToken(null);
+      this.state.currentUserId = undefined;
+      this.state.currentUserName = undefined;
+      this.disconnect();
+    }
+    return { success: true };
+  }
+
+  /**
+   * Checks backend connectivity and health.
+   */
+  public async checkServerHealth(): Promise<{ ok: boolean; provider?: string; error?: string }> {
+    try {
+      const res = await fetch(`${this.serverUrl}/health`, {
+        method: 'GET',
+        headers: { Accept: 'application/json' },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return { ok: true, provider: data.email?.provider };
+      }
+      return { ok: false, error: `Server returned HTTP ${res.status}` };
+    } catch (err: unknown) {
+      return { ok: false, error: err instanceof Error ? err.message : 'Server unreachable' };
     }
   }
 

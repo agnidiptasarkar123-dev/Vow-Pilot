@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../common/Modal';
+import { useEvent } from '../../context/EventContext';
 import {
   collaborationClient,
   CollaborationState,
@@ -18,6 +19,9 @@ import {
   Eye,
   AlertCircle,
   XCircle,
+  Cloud,
+  Lock,
+  LogIn,
 } from 'lucide-react';
 
 interface CollaborationModalProps {
@@ -31,6 +35,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
   onClose,
   eventId,
 }) => {
+  const { setAuthModalOpen, currentUser, createEventOnServer } = useEvent();
   const [collabState, setCollabState] = useState<CollaborationState>(() => collaborationClient.getState());
   const [invites, setInvites] = useState<PendingInvite[]>([]);
   const [inviteRole, setInviteRole] = useState<'owner' | 'editor' | 'viewer'>('editor');
@@ -42,6 +47,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
   const [actionError, setActionError] = useState<string | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSyncingToCloud, setIsSyncingToCloud] = useState(false);
 
   useEffect(() => {
     const unsubscribe = collaborationClient.subscribe((state) => {
@@ -132,6 +138,39 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
     }
   };
 
+  const handleUpdateMemberRole = async (targetUserId: string, newRole: 'owner' | 'editor' | 'viewer') => {
+    setIsLoading(true);
+    setActionError(null);
+    setActionSuccess(null);
+    try {
+      const res = await collaborationClient.updateMemberRole(eventId, targetUserId, newRole);
+      if (res.success) {
+        setActionSuccess(`Collaborator role updated to ${newRole.toUpperCase()}.`);
+      } else {
+        setActionError(res.error || 'Failed to update member role.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSyncToCloud = async () => {
+    setIsSyncingToCloud(true);
+    setActionError(null);
+    setActionSuccess(null);
+    try {
+      const res = await createEventOnServer();
+      if (res.success) {
+        setActionSuccess('Event successfully synchronized to cloud! Real-time multi-user collaboration enabled.');
+        await loadInvites();
+      } else {
+        setActionError(res.error || 'Failed to sync event to cloud.');
+      }
+    } finally {
+      setIsSyncingToCloud(false);
+    }
+  };
+
   const handleInspectJoinToken = async () => {
     if (!joinTokenInput.trim()) return;
     setIsLoading(true);
@@ -209,6 +248,53 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
           </div>
         )}
 
+        {/* Authentication Notice Banner */}
+        {!currentUser && !collaborationClient.getToken() && (
+          <div className="p-3.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-start gap-2">
+              <Lock className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-amber-950">Authentication Required for Team Collaboration</p>
+                <p className="text-[11px] text-amber-800 mt-0.5">
+                  You are currently planning in Local Mode. Sign in or register to sync this event to the backend, invite collaborators, and assign roles.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setAuthModalOpen(true)}
+              data-testid="collab-auth-btn"
+              className="px-3.5 py-1.5 bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-semibold rounded shrink-0 shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Sign In / Register</span>
+            </button>
+          </div>
+        )}
+
+        {/* Authenticated Cloud Sync Banner */}
+        {currentUser && collabState.status === 'local_only' && (
+          <div className="p-3.5 rounded-lg bg-blue-50 border border-blue-200 text-blue-900 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-start gap-2">
+              <Cloud className="w-4 h-4 text-blue-700 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-blue-950">Sync Event to Cloud</p>
+                <p className="text-[11px] text-blue-800 mt-0.5">
+                  Signed in as <strong>{currentUser.name}</strong>. This plan is currently saved in local browser storage. Sync it to the server to enable real-time collaboration.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleSyncToCloud}
+              disabled={isSyncingToCloud}
+              data-testid="sync-to-cloud-btn"
+              className="px-3.5 py-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold rounded shrink-0 shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            >
+              <Cloud className="w-3.5 h-3.5" />
+              <span>{isSyncingToCloud ? 'Syncing...' : 'Sync Event to Cloud'}</span>
+            </button>
+          </div>
+        )}
+
         {/* Status & Active Role Overview */}
         <div className="bg-[#FAF8F5] p-3.5 rounded-lg border border-[#E6DFD5] flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
@@ -272,13 +358,33 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                   </div>
 
                   {isOwner && member.role !== 'owner' && (
-                    <button
-                      onClick={() => handleRemoveMember(member.userId, member.userName)}
-                      className="p-1 rounded text-[#78716C] hover:text-rose-700 hover:bg-rose-50 transition"
-                      title="Revoke access"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <select
+                        aria-label={`Change role for ${member.userName}`}
+                        data-testid={`member-role-select-${member.userId}`}
+                        value={member.role}
+                        onChange={(e) =>
+                          handleUpdateMemberRole(
+                            member.userId,
+                            e.target.value as 'owner' | 'editor' | 'viewer'
+                          )
+                        }
+                        disabled={isLoading}
+                        className="text-[11px] py-1 px-1.5 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#1C1917] focus:outline-hidden focus:border-[#A2421D]"
+                      >
+                        <option value="editor">Editor</option>
+                        <option value="viewer">Viewer</option>
+                        <option value="owner">Owner</option>
+                      </select>
+
+                      <button
+                        onClick={() => handleRemoveMember(member.userId, member.userName)}
+                        className="p-1 rounded text-[#78716C] hover:text-rose-700 hover:bg-rose-50 transition"
+                        title="Revoke access"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   )}
                 </div>
               ))
@@ -305,7 +411,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                 >
                   <option value="editor">Editor (Can edit budget, tasks & vendors)</option>
                   <option value="viewer">Viewer (Read-only observation)</option>
-                  {isOwner && <option value="owner">Co-Owner (Full event control)</option>}
+                  {isOwner && <option value="owner">Owner (Full event control)</option>}
                 </select>
               </div>
 

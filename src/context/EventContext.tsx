@@ -104,6 +104,14 @@ export interface EventContextType {
   resolveConflictAcceptServer: () => void;
   resolveConflictReapplyLocal: () => Promise<boolean>;
   connectToCollabEvent: (eventId: string) => Promise<void>;
+  // Authentication & Cloud Sync
+  isAuthModalOpen: boolean;
+  setAuthModalOpen: (open: boolean) => void;
+  currentUser: { id: string; name: string; email?: string } | null;
+  createEventOnServer: () => Promise<{ success: boolean; eventId?: string; error?: string }>;
+  logoutUser: () => Promise<void>;
+  syncError: string | null;
+  clearSyncError: () => void;
 }
 
 const EventContext = createContext<EventContextType | undefined>(undefined);
@@ -116,6 +124,9 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [collabState, setCollabState] = useState<CollaborationState>(() => collaborationClient.getState());
   const [isCollabModalOpen, setCollabModalOpen] = useState(false);
+  const [isAuthModalOpen, setAuthModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ id: string; name: string; email?: string } | null>(null);
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   // Sync to localStorage on state changes
   useEffect(() => {
@@ -126,8 +137,26 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     const unsubscribe = collaborationClient.subscribe((latest) => {
       setCollabState(latest);
+      if (latest.currentUserId && latest.currentUserName) {
+        setCurrentUser((prev) => ({
+          id: latest.currentUserId!,
+          name: latest.currentUserName!,
+          email: prev?.email,
+        }));
+      } else if (!latest.currentUserId) {
+        setCurrentUser(null);
+      }
     });
     return unsubscribe;
+  }, []);
+
+  // Check auth session on startup
+  useEffect(() => {
+    collaborationClient.checkAuth().then(({ isAuthenticated, user }) => {
+      if (isAuthenticated && user) {
+        setCurrentUser(user);
+      }
+    });
   }, []);
 
   // Check URL query parameters on mount (e.g. invite token or event deep-link)
@@ -147,9 +176,35 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const pushUpdateIfConnected = (nextState: AppState) => {
     if (collabState.activeEventId && collabState.status !== 'local_only') {
       if (collabState.role !== 'viewer') {
-        collaborationClient.pushStateUpdate(collabState.activeEventId, nextState);
+        collaborationClient.pushStateUpdate(collabState.activeEventId, nextState).then((res) => {
+          if (!res.success && res.error) {
+            setSyncError(res.error);
+          } else {
+            setSyncError(null);
+          }
+        });
       }
     }
+  };
+
+  const createEventOnServer = async () => {
+    const res = await collaborationClient.createEventOnServer(state);
+    if (!res.success && res.error) {
+      setSyncError(res.error);
+    } else {
+      setSyncError(null);
+    }
+    return res;
+  };
+
+  const logoutUser = async () => {
+    await collaborationClient.logout();
+    setCurrentUser(null);
+    setSyncError(null);
+  };
+
+  const clearSyncError = () => {
+    setSyncError(null);
   };
 
   const isReadOnly = collabState.role === 'viewer';
@@ -425,8 +480,26 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       resolveConflictAcceptServer,
       resolveConflictReapplyLocal,
       connectToCollabEvent,
+      isAuthModalOpen,
+      setAuthModalOpen,
+      currentUser,
+      createEventOnServer,
+      logoutUser,
+      syncError,
+      clearSyncError,
     }),
-    [state, activeTab, collabState, isReadOnly, userRole, isCollabModalOpen, isConflictModalOpen]
+    [
+      state,
+      activeTab,
+      collabState,
+      isReadOnly,
+      userRole,
+      isCollabModalOpen,
+      isConflictModalOpen,
+      isAuthModalOpen,
+      currentUser,
+      syncError,
+    ]
   );
 
   return <EventContext.Provider value={contextValue}>{children}</EventContext.Provider>;

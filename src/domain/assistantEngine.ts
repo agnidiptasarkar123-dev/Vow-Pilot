@@ -1036,7 +1036,7 @@ export function generateAssistantResponse(
         };
       }
 
-      let content = `### ⚠️ Overdue Tasks Requiring Attention (${overdue.length})\n\n`;
+      let content = `### ⚠️ Overdue Tasks Requiring Attention (${overdue.length})\n\nThe following tasks in your schedule are currently overdue:\n\n`;
       for (const item of overdue) {
         content += `* **${item.task.title}** (Due: ${item.task.dueDate}, Priority: ${item.task.priority.toUpperCase()})\n` +
           `  *Risk:* ${item.risks.putsDownstreamAtRisk ? `Blocks downstream tasks (${item.risks.downstreamTaskTitles.join(', ')})` : 'Individual deadline passed.'}\n`;

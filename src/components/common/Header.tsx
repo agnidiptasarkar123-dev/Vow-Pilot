@@ -13,6 +13,8 @@ import {
   MessageSquare,
   Settings,
   RotateCcw,
+  LogIn,
+  LogOut,
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -20,7 +22,18 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
-  const { state, activeTab, setActiveTab, resetToDemo, collabState, setCollabModalOpen, userRole } = useEvent();
+  const {
+    state,
+    activeTab,
+    setActiveTab,
+    resetToDemo,
+    collabState,
+    setCollabModalOpen,
+    userRole,
+    currentUser,
+    setAuthModalOpen,
+    logoutUser,
+  } = useEvent();
   const overview = calculateBudgetOverview(state.event.totalBudget, state.categories, state.expenses);
   const evaluations = evaluateTasks(state.tasks, state.event.date);
   const overdueCount = evaluations.filter((e) => e.risks.isOverdue).length;
@@ -48,36 +61,48 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
           bg: 'bg-emerald-50 text-emerald-800 border-emerald-200',
           dot: 'bg-emerald-600',
           label: 'Live Synced',
+          version: `Rev #${collabState.serverVersion}`,
+          tooltip: `Live Synced with backend. Event Revision #${collabState.serverVersion}.`,
         };
       case 'syncing':
         return {
           bg: 'bg-blue-50 text-blue-800 border-blue-200',
           dot: 'bg-blue-600 animate-pulse',
           label: 'Syncing...',
+          version: `Rev #${collabState.serverVersion}`,
+          tooltip: 'Syncing updates with server...',
         };
       case 'connecting':
         return {
           bg: 'bg-amber-50 text-amber-800 border-amber-200',
           dot: 'bg-amber-600 animate-pulse',
           label: 'Connecting...',
+          version: `v${collabState.serverVersion}`,
+          tooltip: 'Connecting to server SSE stream...',
         };
       case 'conflict':
         return {
           bg: 'bg-rose-50 text-rose-800 border-rose-300 animate-pulse',
           dot: 'bg-rose-600',
           label: 'Conflict Detected',
+          version: `Rev #${collabState.serverVersion}`,
+          tooltip: 'Version mismatch detected. Open Collaborate to resolve.',
         };
       case 'error':
         return {
           bg: 'bg-red-50 text-red-800 border-red-200',
           dot: 'bg-red-600',
           label: 'Sync Offline',
+          version: `v${collabState.serverVersion}`,
+          tooltip: 'Backend is offline or unreachable. Saving in local storage.',
         };
       default:
         return {
           bg: 'bg-stone-50 text-stone-700 border-stone-200',
           dot: 'bg-stone-400',
           label: 'Local Mode',
+          version: 'Storage v1',
+          tooltip: 'Operating in local browser storage (Schema v1). Click to connect to cloud or collaborate.',
         };
     }
   };
@@ -141,12 +166,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
             onClick={() => setCollabModalOpen(true)}
             data-testid="collab-status-badge"
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border shadow-2xs hover:opacity-90 transition cursor-pointer ${collabBadge.bg}`}
-            title={`Collaboration status: ${collabBadge.label} (Version ${collabState.serverVersion}). Click to manage collaborators & invitations.`}
+            title={collabBadge.tooltip}
           >
             <span className="sr-only">Collaboration status: </span>
             <span className={`w-1.5 h-1.5 rounded-full ${collabBadge.dot}`} />
             <span className="hidden sm:inline">{collabBadge.label}</span>
-            <span className="font-mono text-[10px] opacity-75 font-bold">v{collabState.serverVersion}</span>
+            <span className="font-mono text-[10px] opacity-75 font-bold">{collabBadge.version}</span>
             {userRole && (
               <span className="ml-1 uppercase text-[9px] px-1.5 py-0.2 rounded bg-black/5 font-extrabold tracking-wider">
                 {userRole}
@@ -171,6 +196,44 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
                 </span>
               )}
             </button>
+
+            {/* Account / Authentication Button */}
+            {currentUser ? (
+              <div className="flex items-center gap-1 pl-1 border-l border-[#E6DFD5]">
+                <button
+                  onClick={() => setCollabModalOpen(true)}
+                  title={`Signed in as ${currentUser.name}. Click to view collaboration settings.`}
+                  className="px-2 py-1 rounded bg-[#FAF8F5] border border-[#E6DFD5] text-[#1C1917] text-xs font-medium flex items-center gap-1.5 hover:bg-[#F4EFEA] transition cursor-pointer"
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span className="max-w-[100px] truncate">{currentUser.name}</span>
+                </button>
+                <button
+                  onClick={() => {
+                    if (window.confirm('Sign out of your VowPilot account? Local event data will be preserved.')) {
+                      logoutUser();
+                    }
+                  }}
+                  data-testid="header-sign-out-btn"
+                  title="Sign out"
+                  aria-label="Sign out"
+                  className="p-1.5 rounded text-[#78716C] hover:text-[#BE123C] hover:bg-rose-50 transition cursor-pointer"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setAuthModalOpen(true)}
+                data-testid="header-sign-in-btn"
+                title="Sign in or create an account"
+                className="px-2.5 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#F4EFEA] text-[#1C1917] border border-[#D6CFC7] text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+              >
+                <LogIn className="w-3.5 h-3.5 text-[#A2421D]" />
+                <span className="hidden sm:inline">Sign In</span>
+              </button>
+            )}
+
             <button
               onClick={handleResetWithConfirm}
               aria-label="Reset Demo to Jaipur data"
@@ -180,6 +243,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
               <RotateCcw className="w-3.5 h-3.5" />
               <span className="hidden lg:inline">Reset Demo</span>
             </button>
+
             <button
               onClick={onOpenNewEventWizard}
               className="px-3 py-1.5 rounded bg-[#A2421D] hover:bg-[#863414] text-white text-xs font-medium transition shadow-xs"

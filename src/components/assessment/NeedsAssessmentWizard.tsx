@@ -16,7 +16,7 @@ interface WizardProps {
 }
 
 export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCancel }) => {
-  const { updateEvent } = useEvent();
+  const { updateEvent, currentUser, createEventOnServer } = useEvent();
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -134,7 +134,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
     }
   };
 
-  const handleFinalSubmit = () => {
+  const handleFinalSubmit = async () => {
     const totalBudgetMinor = parseDisplayToMinor(budgetDisplay);
 
     const newEvent: EventDetails = {
@@ -164,6 +164,11 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
     };
 
     updateEvent(newEvent);
+
+    if (currentUser) {
+      await createEventOnServer();
+    }
+
     onComplete();
   };
 

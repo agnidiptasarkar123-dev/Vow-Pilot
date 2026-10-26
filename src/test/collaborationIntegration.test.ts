@@ -316,6 +316,98 @@ describe('VowPilot Multi-User Collaboration & Email Delivery Integration Suite',
       });
       expect(revokedRead.status).toBe(403);
     });
+
+    it('allows owner to update collaborator role to viewer and enforces read-only access', async () => {
+      // Collaborator joins as editor
+      const inv = await fetch(`${baseUrl}/api/events/${eventId}/invites`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ownerToken}` },
+        body: JSON.stringify({ role: 'editor' }),
+      });
+      const { token: inviteToken } = await inv.json();
+
+      await fetch(`${baseUrl}/api/events/join`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${collaboratorToken}` },
+        body: JSON.stringify({ inviteToken }),
+      });
+
+      const me = await fetch(`${baseUrl}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${collaboratorToken}` },
+      });
+      const { user: collabUser } = await me.json();
+
+      // Owner updates collaborator role to viewer via PATCH
+      const patchRes = await fetch(`${baseUrl}/api/events/${eventId}/members/${collabUser.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ownerToken}` },
+        body: JSON.stringify({ role: 'viewer' }),
+      });
+      expect(patchRes.status).toBe(200);
+      const patchData = await patchRes.json();
+      expect(patchData.role).toBe('viewer');
+
+      // Collaborator now attempts to write (modify event) -> must be rejected with 403 Forbidden
+      const writeAttempt = await fetch(`${baseUrl}/api/events/${eventId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${collaboratorToken}`,
+          'X-Expected-Version': '1',
+        },
+        body: JSON.stringify({ expectedVersion: 1, state: DEMO_STATE }),
+      });
+      expect(writeAttempt.status).toBe(403);
+      const writeErr = await writeAttempt.json();
+      expect(writeErr.error).toContain('Forbidden');
+    });
+
+    it('rejects unauthorized role changes and invalid role values', async () => {
+      // Collaborator joins as editor
+      const inv = await fetch(`${baseUrl}/api/events/${eventId}/invites`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ownerToken}` },
+        body: JSON.stringify({ role: 'editor' }),
+      });
+      const { token: inviteToken } = await inv.json();
+
+      await fetch(`${baseUrl}/api/events/join`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${collaboratorToken}` },
+        body: JSON.stringify({ inviteToken }),
+      });
+
+      const me = await fetch(`${baseUrl}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${collaboratorToken}` },
+      });
+      const { user: collabUser } = await me.json();
+
+      // Stranger tries to update role -> 403
+      const strangerAttempt = await fetch(`${baseUrl}/api/events/${eventId}/members/${collabUser.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${strangerToken}` },
+        body: JSON.stringify({ role: 'viewer' }),
+      });
+      expect(strangerAttempt.status).toBe(403);
+
+      // Collaborator (editor) tries to promote themselves to owner -> 403
+      const selfPromote = await fetch(`${baseUrl}/api/events/${eventId}/members/${collabUser.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${collaboratorToken}` },
+        body: JSON.stringify({ role: 'owner' }),
+      });
+      expect(selfPromote.status).toBe(403);
+
+      // Owner sends invalid role value -> 400
+      const invalidRole = await fetch(`${baseUrl}/api/events/${eventId}/members/${collabUser.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ownerToken}` },
+        body: JSON.stringify({ role: 'superadmin' }),
+      });
+      expect(invalidRole.status).toBe(400);
+      const invData = await invalidRole.json();
+      expect(invData.error).toContain('Invalid or missing role');
+    });
   });
 
   // ==========================================================================

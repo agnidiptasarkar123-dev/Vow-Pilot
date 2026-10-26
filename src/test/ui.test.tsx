@@ -68,20 +68,14 @@ describe('VowPilot End-to-End User Journeys and UI Integration', () => {
     const tasksTab = screen.getByRole('button', { name: /Tasks & Graph/i });
     fireEvent.click(tasksTab);
 
-    // Task "Sign Catering Contract & Lock Per-Plate Price"
-    const blockedElements = await screen.findAllByText(/Sign Catering Contract & Lock Per-Plate Price/i);
-    const blockedTaskHeading = blockedElements[0];
-    expect(blockedTaskHeading).toBeInTheDocument();
-
-    // Find its completion toggle button
-    const taskContainer = blockedTaskHeading.closest('.p-5');
-    expect(taskContainer).not.toBeNull();
-
-    const completeBtn = taskContainer!.querySelector('button[title*="Cannot complete"]');
-    expect(completeBtn).not.toBeNull();
+    // Task "Sign Catering Contract & Lock Per-Plate Price" is blocked by prerequisites
+    const completeBtn = await screen.findByRole('button', {
+      name: /Task blocked: Sign Catering Contract & Lock Per-Plate Price/i,
+    });
+    expect(completeBtn).toBeInTheDocument();
 
     // Attempt to click the completion button
-    fireEvent.click(completeBtn!);
+    fireEvent.click(completeBtn);
 
     // Should display the dependency rule warning banner
     expect(await screen.findByText(/Dependency Rule Enforced:/i)).toBeInTheDocument();

@@ -60,7 +60,7 @@ export function createServerApp(
       res.setHeader('Access-Control-Allow-Origin', '*');
     }
 
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Expected-Version, Last-Event-ID, X-Request-Id');
 
     // Strict Security & Defense-in-Depth Headers
@@ -514,13 +514,37 @@ export function createServerApp(
 
       // Route: /api/events/:eventId/members/:userId
       const memberMatch = pathname.match(/^\/api\/events\/([a-zA-Z0-9_-]+)\/members\/([a-zA-Z0-9_-]+)$/);
-      if (memberMatch && method === 'DELETE') {
+      if (memberMatch) {
         const eventId = memberMatch[1];
         const targetUserId = memberMatch[2];
-        const user = getAuthUser();
-        const updated = eventStore.removeMember(eventId, user, targetUserId);
-        sendJson(200, updated);
-        return;
+
+        if (method === 'PUT' || method === 'PATCH') {
+          const user = getAuthUser();
+          const body = await readJsonBody<{ role?: string }>();
+          if (!body.role || (body.role !== 'owner' && body.role !== 'editor' && body.role !== 'viewer')) {
+            sendJson(400, { error: 'Invalid or missing role: Must be owner, editor, or viewer.' });
+            return;
+          }
+          const updated = eventStore.updateMemberRole(eventId, user, targetUserId, body.role);
+          const targetMember = updated.members.find((m) => m.userId === targetUserId);
+          sendJson(200, {
+            ...updated,
+            success: true,
+            role: targetMember?.role || body.role,
+          });
+          return;
+        }
+
+        if (method === 'DELETE') {
+          const user = getAuthUser();
+          const updated = eventStore.removeMember(eventId, user, targetUserId);
+          sendJson(200, {
+            ...updated,
+            success: true,
+            removedUserId: targetUserId,
+          });
+          return;
+        }
       }
 
       // Route: /api/events/:eventId/stream (Server-Sent Events)

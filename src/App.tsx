@@ -34,6 +34,9 @@ const CollaborationModal = lazy(() =>
 const ConflictModal = lazy(() =>
   import('./components/collaboration/ConflictModal').then((m) => ({ default: m.ConflictModal }))
 );
+const AuthModal = lazy(() =>
+  import('./components/auth/AuthModal').then((m) => ({ default: m.AuthModal }))
+);
 
 const AppContent: React.FC = () => {
   const {
@@ -46,6 +49,10 @@ const AppContent: React.FC = () => {
     isConflictModalOpen,
     resolveConflictAcceptServer,
     resolveConflictReapplyLocal,
+    isAuthModalOpen,
+    setAuthModalOpen,
+    syncError,
+    clearSyncError,
   } = useEvent();
   const [isWizardOpen, setIsWizardOpen] = useState(false);
 
@@ -120,6 +127,39 @@ const AppContent: React.FC = () => {
             onKeepLocal={resolveConflictReapplyLocal}
           />
         </Suspense>
+      )}
+
+      {/* User Authentication Modal */}
+      {isAuthModalOpen && (
+        <Suspense fallback={null}>
+          <AuthModal
+            isOpen={isAuthModalOpen}
+            onClose={() => setAuthModalOpen(false)}
+          />
+        </Suspense>
+      )}
+
+      {/* Real-time Cloud Sync Error Toast */}
+      {syncError && (
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="fixed bottom-4 right-4 z-50 max-w-md p-3.5 bg-rose-50 border border-rose-300 rounded-lg shadow-lg text-xs text-rose-900 flex items-start justify-between gap-3 animate-fade-in"
+        >
+          <div>
+            <p className="font-semibold text-rose-950 flex items-center gap-1">
+              <span>Cloud Sync Interruption</span>
+            </p>
+            <p className="mt-0.5 text-rose-800">{syncError}</p>
+          </div>
+          <button
+            onClick={clearSyncError}
+            className="text-rose-600 hover:text-rose-900 font-bold p-1 cursor-pointer"
+            aria-label="Dismiss error notice"
+          >
+            ✕
+          </button>
+        </div>
       )}
 
       {/* Subtle Footer */}

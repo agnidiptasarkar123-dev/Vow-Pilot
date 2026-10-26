@@ -346,6 +346,54 @@ export class EventRepository {
     return this.getEvent(eventId, user);
   }
 
+  public updateMemberRole(
+    eventId: string,
+    requestingUser: User,
+    targetUserId: string,
+    newRole: UserRole
+  ): ServerEventRecord {
+    const event = this.getEvent(eventId, requestingUser);
+    AuthPolicy.authorize(event, requestingUser, 'manage_members');
+
+    if (newRole !== 'owner' && newRole !== 'editor' && newRole !== 'viewer') {
+      throw new Error('Invalid role: Must be owner, editor, or viewer.');
+    }
+
+    if (targetUserId === event.ownerId && newRole !== 'owner') {
+      throw new Error('Cannot change the role of the primary event owner.');
+    }
+
+    const members = this.getEventMembers(eventId);
+    const targetMember = members.find((m) => m.userId === targetUserId);
+    if (!targetMember) {
+      throw new Error('Target user is not a member of this event.');
+    }
+
+    const updateTx = this.db.transaction(() => {
+      this.db
+        .prepare<[string, string, string]>('UPDATE event_members SET role = ? WHERE event_id = ? AND user_id = ?')
+        .run(newRole, eventId, targetUserId);
+
+      this.db
+        .prepare<[string, string, string, string, number, string, string]>(`
+          INSERT INTO event_activity_history (id, event_id, user_id, user_name, action, version, details_json, created_at)
+          VALUES (?, ?, ?, ?, 'member_role_updated', ?, ?, ?)
+        `)
+        .run(
+          `act_${crypto.randomBytes(8).toString('hex')}`,
+          eventId,
+          requestingUser.id,
+          requestingUser.name,
+          event.version,
+          JSON.stringify({ targetUserId, oldRole: targetMember.role, newRole }),
+          new Date().toISOString()
+        );
+    });
+
+    updateTx();
+    return this.getEvent(eventId, requestingUser);
+  }
+
   public removeMember(eventId: string, requestingUser: User, targetUserId: string): ServerEventRecord {
     const event = this.getEvent(eventId, requestingUser);
     AuthPolicy.authorize(event, requestingUser, 'manage_members');

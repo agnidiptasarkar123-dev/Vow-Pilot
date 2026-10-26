@@ -265,10 +265,26 @@ export class EventStore {
   }
 
   /**
+   * Updates a member's role on an event.
+   */
+  public updateMemberRole(
+    eventId: string,
+    requestingUser: User,
+    targetUserId: string,
+    newRole: UserRole
+  ): ServerEventRecord {
+    const updated = this.dbContext.events.updateMemberRole(eventId, requestingUser, targetUserId, newRole);
+    this.notifySubscribers(eventId, updated);
+    return updated;
+  }
+
+  /**
    * Removes a member from an event (access revocation).
    */
   public removeMember(eventId: string, requestingUser: User, targetUserId: string): ServerEventRecord {
-    return this.dbContext.events.removeMember(eventId, requestingUser, targetUserId);
+    const updated = this.dbContext.events.removeMember(eventId, requestingUser, targetUserId);
+    this.notifySubscribers(eventId, updated);
+    return updated;
   }
 
   public deleteEvent(eventId: string, requestingUser: User): void {

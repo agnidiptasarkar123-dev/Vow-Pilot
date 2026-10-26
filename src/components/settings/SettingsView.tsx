@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 export const SettingsView: React.FC = () => {
-  const { state, updateEvent, resetToDemo, importState, clearAllData } = useEvent();
+  const { state, updateEvent, resetToDemo, importState, clearAllData, currentUser, collabState, setAuthModalOpen } = useEvent();
 
   // Form State
   const [eventName, setEventName] = useState(state.event.name);
@@ -319,28 +319,46 @@ export const SettingsView: React.FC = () => {
           </h3>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
           <div className="p-3 bg-white rounded-lg border border-[#E6DFD5] space-y-0.5">
-            <span className="text-[#78716C] font-semibold">Storage Engine</span>
+            <span className="text-[#78716C] font-semibold">Local Storage</span>
             <p className="font-mono text-sm font-bold text-[#1C1917]">Browser LocalStorage</p>
-            <span className="text-[10px] text-[#78716C]">Stored exclusively on your device</span>
+            <span className="text-[10px] text-[#78716C]">Client-side zero-latency cache</span>
           </div>
 
           <div className="p-3 bg-white rounded-lg border border-[#E6DFD5] space-y-0.5">
             <span className="text-[#78716C] font-semibold">Schema Version</span>
             <p className="font-mono text-sm font-bold text-[#1C1917]">Version {CURRENT_SCHEMA_VERSION}</p>
-            <span className="text-[10px] text-[#78716C]">Validated on read</span>
+            <span className="text-[10px] text-[#78716C]">Validated schema structure</span>
           </div>
 
           <div className="p-3 bg-white rounded-lg border border-[#E6DFD5] space-y-0.5">
-            <span className="text-[#78716C] font-semibold">Occupied Footprint</span>
+            <span className="text-[#78716C] font-semibold">Local Footprint</span>
             <p className="font-mono text-sm font-bold text-[#1C1917]">{storageKb} KB</p>
-            <span className="text-[10px] text-[#78716C]">Far below 5MB browser quota</span>
+            <span className="text-[10px] text-[#78716C]">Below 5MB browser quota</span>
+          </div>
+
+          <div className="p-3 bg-white rounded-lg border border-[#E6DFD5] space-y-0.5">
+            <span className="text-[#78716C] font-semibold">Cloud Sync & Auth</span>
+            <p className="font-mono text-sm font-bold text-[#1C1917]">
+              {currentUser ? ((collabState.status === 'synced' || collabState.status === 'syncing') ? `Live (Rev #${collabState.serverVersion})` : 'Cloud Ready') : 'Local Mode'}
+            </p>
+            <span className="text-[10px] text-[#78716C]">
+              {currentUser ? `User: ${currentUser.name}` : (
+                <button
+                  type="button"
+                  onClick={() => setAuthModalOpen(true)}
+                  className="text-[#A2421D] underline hover:font-bold"
+                >
+                  Sign in to sync
+                </button>
+              )}
+            </span>
           </div>
         </div>
 
         <p className="text-xs text-[#5C554E] leading-relaxed">
-          <strong>Privacy Notice:</strong> VowPilot functions completely on the client side. No personal event data, vendor contacts, or budgets are sent to external servers or third-party tracking services. Browser-local data is unencrypted on your device.
+          <strong>Offline-First Architecture:</strong> VowPilot functions reliably offline using client-side Browser LocalStorage. When signed in to your account, events can be synchronized to the backend cloud database for multi-user collaboration and role-based permissions. No third-party ad networks or trackers are loaded.
         </p>
 
         {/* Danger Zone Actions */}
