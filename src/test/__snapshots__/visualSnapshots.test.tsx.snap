@@ -9,35 +9,35 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
       class="max-w-5xl mx-auto py-8 px-4 sm:px-6 space-y-6"
     >
       <div
-        class="bg-white p-6 rounded-xl border border-[#E6DFD5] shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+        class="bg-surface p-6 rounded-xl border border-subtle shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
       >
         <div>
           <div
             class="flex items-center gap-2"
           >
             <h1
-              class="text-2xl font-bold text-[#26221F] font-serif-heading"
+              class="text-2xl font-bold text-primary font-serif-heading"
             >
               Context-Aware Planning Coordinator
             </h1>
             <span
-              class="text-[10px] px-2 py-0.5 rounded-full bg-[#FAF0EB] text-[#B85C3A] font-bold border border-[#E8C8BD] uppercase"
+              class="text-[10px] px-2 py-0.5 rounded-full bg-subtle text-[#B85C3A] dark:text-[#D48668] font-bold border border-subtle uppercase"
             >
               Rule-Based Engine
             </span>
           </div>
           <p
-            class="text-xs text-[#78716C] mt-1"
+            class="text-xs text-secondary mt-1"
           >
             Deterministic decision analysis powered strictly by your active event data, constraints, and priorities.
           </p>
         </div>
         <div
-          class="p-2.5 bg-[#FAF8F5] border border-[#E6DFD5] rounded-lg text-xs text-[#5C554E] max-w-sm flex items-start gap-2"
+          class="p-2.5 bg-subtle border border-subtle rounded-lg text-xs text-secondary max-w-sm flex items-start gap-2"
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-info w-4 h-4 text-[#B85C3A] shrink-0 mt-0.5"
+            class="lucide lucide-info w-4 h-4 text-[#B85C3A] dark:text-[#D48668] shrink-0 mt-0.5"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -72,7 +72,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
         class="space-y-2"
       >
         <span
-          class="text-xs font-semibold text-[#5C554E] block"
+          class="text-xs font-semibold text-secondary block"
         >
           Documented Planning Commands:
         </span>
@@ -80,55 +80,55 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           class="flex flex-wrap gap-2"
         >
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Explain my current budget"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Change guest count to 175"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Suggest ways to reduce expenses"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Protect my highest-priority category"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Find tasks that are overdue"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Explain which tasks are blocked"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Compare vendor quotations"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Identify missing vendor information"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Summarize the current event plan"
@@ -136,13 +136,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
         </div>
       </div>
       <div
-        class="bg-white rounded-xl border border-[#E6DFD5] shadow-xs overflow-hidden flex flex-col h-[520px]"
+        class="bg-surface rounded-xl border border-subtle shadow-xs overflow-hidden flex flex-col h-[520px]"
       >
         <div
           aria-atomic="false"
           aria-label="Planning assistant conversation history"
           aria-live="polite"
-          class="flex-1 p-6 overflow-y-auto space-y-5 divide-y divide-[#F4EFEA]/60 focus:outline-hidden"
+          class="flex-1 p-6 overflow-y-auto space-y-5 divide-y divide-subtle/60 focus:outline-hidden"
           role="log"
           tabindex="0"
         >
@@ -198,7 +198,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 <p>
                   Welcome to 
                   <strong
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     VowPilot
                   </strong>
@@ -207,7 +207,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 <p>
                   Your event, 
                   <strong
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     Aarav & Meera's Wedding Celebration
                   </strong>
@@ -231,7 +231,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   </em>
                    
                   <strong
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     Milestone Alert:
                   </strong>
@@ -263,19 +263,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 <p>
                   How would you like to proceed? You can type commands like 
                   <strong
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     "Explain my current budget"
                   </strong>
                   , 
                   <strong
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     "Change guest count to 175"
                   </strong>
                   , or 
                   <strong
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     "Find tasks that are overdue"
                   </strong>
@@ -286,7 +286,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </div>
         </div>
         <div
-          class="p-4 border-t border-[#E6DFD5] bg-[#FAF8F5] flex items-center gap-2"
+          class="p-4 border-t border-subtle bg-subtle flex items-center gap-2"
         >
           <label
             class="sr-only"
@@ -296,7 +296,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </label>
           <input
             aria-label="Planning command input"
-            class="flex-1 text-xs px-3.5 py-2.5 bg-white border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] text-[#26221F]"
+            class="flex-1 text-xs px-3.5 py-2.5 bg-surface border border-subtle rounded-lg focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] text-primary"
             id="assistant-prompt-input"
             placeholder="Type a planning command, e.g. 'Explain my current budget' or 'Change guest count to 160'..."
             type="text"
@@ -304,7 +304,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           />
           <button
             aria-label="Ask: Send planning command"
-            class="px-4 py-2.5 bg-[#B85C3A] hover:bg-[#9E4B2D] disabled:opacity-40 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+            class="px-4 py-2.5 bg-[#B85C3A] hover:bg-[#9E4B2D] disabled:opacity-40 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
             disabled=""
             type="button"
           >
@@ -352,12 +352,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
       >
         <div>
           <h1
-            class="text-2xl sm:text-3xl font-bold text-[#26221F] font-serif-heading tracking-tight"
+            class="text-2xl sm:text-3xl font-bold text-primary font-serif-heading tracking-tight"
           >
             Budget & Trade-Off Planner
           </h1>
           <p
-            class="text-xs text-[#6E665E] mt-1"
+            class="text-xs text-secondary mt-1"
           >
             Strict separation of Estimated, Quoted, Confirmed, and Actual commitments. No guesswork.
           </p>
@@ -391,18 +391,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
         </button>
       </div>
       <div
-        class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4"
+        class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4"
       >
         <div
           class="space-y-0.5"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-muted font-medium uppercase tracking-wider"
           >
             Total Budget
           </span>
           <p
-            class="font-mono text-base sm:text-lg font-bold text-[#26221F]"
+            class="font-mono text-base sm:text-lg font-bold text-primary"
           >
             ₹25,00,000
           </p>
@@ -411,12 +411,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           class="space-y-0.5"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-muted font-medium uppercase tracking-wider"
           >
             Total Allocated
           </span>
           <p
-            class="font-mono text-base sm:text-lg font-semibold text-[#5C554E]"
+            class="font-mono text-base sm:text-lg font-semibold text-secondary"
           >
             ₹25,00,000
           </p>
@@ -425,12 +425,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           class="space-y-0.5"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-muted font-medium uppercase tracking-wider"
           >
             Committed (Actual/Conf.)
           </span>
           <p
-            class="font-mono text-base sm:text-lg font-semibold text-[#047857]"
+            class="font-mono text-base sm:text-lg font-semibold text-[#047857] dark:text-emerald-400"
           >
             ₹7,50,000
           </p>
@@ -439,12 +439,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           class="space-y-0.5"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-muted font-medium uppercase tracking-wider"
           >
             Projected Total
           </span>
           <p
-            class="font-mono text-base sm:text-lg font-semibold text-[#26221F]"
+            class="font-mono text-base sm:text-lg font-semibold text-primary"
           >
             ₹23,75,000
           </p>
@@ -465,19 +465,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
         </div>
       </div>
       <div
-        class="bg-white rounded-xl border border-[#E6DFD5] shadow-xs overflow-hidden"
+        class="bg-surface rounded-xl border border-subtle shadow-xs overflow-hidden"
       >
         <div
-          class="p-5 border-b border-[#F4EFEA] flex items-center justify-between"
+          class="p-5 border-b border-subtle flex items-center justify-between"
         >
           <div>
             <h3
-              class="text-base font-bold text-[#26221F] font-serif-heading"
+              class="text-base font-bold text-primary font-serif-heading"
             >
               Category Allocations
             </h3>
             <p
-              class="text-xs text-[#6E665E]"
+              class="text-xs text-secondary"
             >
               Real-time balance of category caps vs recorded commitments.
             </p>
@@ -490,7 +490,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             class="w-full text-left text-xs"
           >
             <thead
-              class="bg-[#FAF8F5] text-[#5C554E] uppercase font-semibold border-b border-[#E6DFD5]"
+              class="bg-subtle text-secondary uppercase font-semibold border-b border-subtle"
             >
               <tr>
                 <th
@@ -538,10 +538,10 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
               </tr>
             </thead>
             <tbody
-              class="divide-y divide-[#F4EFEA]"
+              class="divide-y divide-subtle"
             >
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -656,7 +656,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -771,7 +771,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -881,7 +881,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -991,7 +991,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -1101,7 +1101,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -1211,7 +1211,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -2204,25 +2204,25 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
         </div>
       </div>
       <div
-        class="bg-white rounded-xl border border-[#E6DFD5] shadow-xs overflow-hidden"
+        class="bg-surface rounded-xl border border-subtle shadow-xs overflow-hidden"
       >
         <div
-          class="p-5 border-b border-[#F4EFEA] flex items-center justify-between"
+          class="p-5 border-b border-subtle flex items-center justify-between"
         >
           <div>
             <h3
-              class="text-base font-bold text-[#26221F] font-serif-heading"
+              class="text-base font-bold text-primary font-serif-heading"
             >
               Recorded Expense Items (5)
             </h3>
             <p
-              class="text-xs text-[#6E665E]"
+              class="text-xs text-secondary"
             >
               Itemized entries linked to vendors or internal estimates.
             </p>
           </div>
           <button
-            class="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 cursor-pointer"
+            class="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 cursor-pointer"
           >
             <svg
               aria-hidden="true"
@@ -2256,7 +2256,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             class="w-full text-left text-xs"
           >
             <thead
-              class="bg-[#FAF8F5] text-[#5C554E] uppercase font-semibold border-b border-[#E6DFD5]"
+              class="bg-subtle text-secondary uppercase font-semibold border-b border-subtle"
             >
               <tr>
                 <th
@@ -2292,21 +2292,21 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
               </tr>
             </thead>
             <tbody
-              class="divide-y divide-[#F4EFEA]"
+              class="divide-y divide-subtle"
             >
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3 px-4"
                 >
                   <span
-                    class="font-semibold text-sm text-[#26221F] block"
+                    class="font-semibold text-sm text-primary block"
                   >
                     Palace Courtyard Advance Deposit
                   </span>
                   <span
-                    class="text-[11px] text-[#6E665E]"
+                    class="text-[11px] text-muted"
                   >
                     50% initial non-refundable booking deposit paid.
                   </span>
@@ -2371,18 +2371,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3 px-4"
                 >
                   <span
-                    class="font-semibold text-sm text-[#26221F] block"
+                    class="font-semibold text-sm text-primary block"
                   >
                     Palace Courtyard Remaining Balance
                   </span>
                   <span
-                    class="text-[11px] text-[#6E665E]"
+                    class="text-[11px] text-muted"
                   >
                     Due 2 weeks before event date.
                   </span>
@@ -2447,18 +2447,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3 px-4"
                 >
                   <span
-                    class="font-semibold text-sm text-[#26221F] block"
+                    class="font-semibold text-sm text-primary block"
                   >
                     Catering Proposal - Royal Feast Caterers
                   </span>
                   <span
-                    class="text-[11px] text-[#6E665E]"
+                    class="text-[11px] text-muted"
                   >
                     Quotation under review pending menu tasting session.
                   </span>
@@ -2523,18 +2523,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3 px-4"
                 >
                   <span
-                    class="font-semibold text-sm text-[#26221F] block"
+                    class="font-semibold text-sm text-primary block"
                   >
                     Wedding Cinema Package - Lumina Stories
                   </span>
                   <span
-                    class="text-[11px] text-[#6E665E]"
+                    class="text-[11px] text-muted"
                   >
                     Includes full wedding coverage plus 1-hour pre-wedding session.
                   </span>
@@ -2599,18 +2599,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3 px-4"
                 >
                   <span
-                    class="font-semibold text-sm text-[#26221F] block"
+                    class="font-semibold text-sm text-primary block"
                   >
                     Initial Stage & Mandap Mockup Estimate
                   </span>
                   <span
-                    class="text-[11px] text-[#6E665E]"
+                    class="text-[11px] text-muted"
                   >
                     Internal estimate prior to final vendor walk-through.
                   </span>
@@ -3071,7 +3071,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
       class="max-w-7xl mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8"
     >
       <div
-        class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 bg-white border-[#E6DFD5]"
+        class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 "
       >
         <div
           class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5"
@@ -3083,7 +3083,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
               class="flex flex-wrap items-center gap-2.5"
             >
               <h1
-                class="text-2xl sm:text-3xl font-bold text-[#1C1917] font-serif-heading tracking-tight"
+                class="text-2xl sm:text-3xl font-bold text-primary font-serif-heading tracking-tight"
               >
                 Aarav & Meera's Wedding Celebration
               </h1>
@@ -3094,14 +3094,14 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
               </span>
             </div>
             <div
-              class="text-xs text-[#5C554E] flex flex-wrap items-center gap-3 pt-1"
+              class="text-xs text-secondary flex flex-wrap items-center gap-3 pt-1"
             >
               <span
                 class="flex items-center gap-1.5"
               >
                 <svg
                   aria-hidden="true"
-                  class="lucide lucide-map-pin w-3.5 h-3.5 text-[#B85C3A]"
+                  class="lucide lucide-map-pin w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]"
                   fill="none"
                   height="24"
                   stroke="currentColor"
@@ -3124,7 +3124,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                  Jaipur Heritage Palace, Rajasthan
               </span>
               <span
-                class="text-[#D5CCC0]"
+                class="text-tertiary"
               >
                 •
               </span>
@@ -3133,7 +3133,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
               >
                 <svg
                   aria-hidden="true"
-                  class="lucide lucide-calendar w-3.5 h-3.5 text-[#B85C3A]"
+                  class="lucide lucide-calendar w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]"
                   fill="none"
                   height="24"
                   stroke="currentColor"
@@ -3164,7 +3164,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                  2026-12-18
               </span>
               <span
-                class="text-[#D5CCC0]"
+                class="text-tertiary"
               >
                 •
               </span>
@@ -3173,7 +3173,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
               >
                 <svg
                   aria-hidden="true"
-                  class="lucide lucide-users w-3.5 h-3.5 text-[#B85C3A]"
+                  class="lucide lucide-users w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]"
                   fill="none"
                   height="24"
                   stroke="currentColor"
@@ -3285,7 +3285,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
         class="space-y-3"
       />
       <div
-        class="bg-[#FAF8F5] border border-[#E6DFD5] rounded-xl p-5 sm:p-6 space-y-4"
+        class="bg-subtle border border-subtle rounded-xl p-5 sm:p-6 space-y-4"
       >
         <div
           class="flex items-center justify-between"
@@ -3295,7 +3295,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           >
             <svg
               aria-hidden="true"
-              class="lucide lucide-git-branch w-4 h-4 text-[#B85C3A]"
+              class="lucide lucide-git-branch w-4 h-4 text-[#B85C3A] dark:text-[#D48668]"
               fill="none"
               height="24"
               stroke="currentColor"
@@ -3321,13 +3321,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
               />
             </svg>
             <h2
-              class="text-sm sm:text-base font-bold text-[#1C1917] font-serif-heading"
+              class="text-sm sm:text-base font-bold text-primary font-serif-heading"
             >
               Planning Progression & Next Logical Actions
             </h2>
           </div>
           <span
-            class="text-xs text-[#6E665E] hidden sm:inline"
+            class="text-xs text-secondary hidden sm:inline"
           >
             Actionable workflow guide
           </span>
@@ -3336,7 +3336,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"
         >
           <div
-            class="bg-white p-3.5 rounded-lg border border-[#E6DFD5] flex flex-col justify-between space-y-2.5 shadow-2xs"
+            class="bg-surface p-3.5 rounded-lg border border-subtle flex flex-col justify-between space-y-2.5 shadow-2xs"
           >
             <div
               class="space-y-1"
@@ -3345,7 +3345,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 class="flex items-center justify-between text-xs"
               >
                 <span
-                  class="font-semibold text-[#1C1917]"
+                  class="font-semibold text-primary"
                 >
                   1. Budget Strategy
                 </span>
@@ -3359,13 +3359,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </span>
               </div>
               <p
-                class="text-[11px] text-[#6E665E] leading-relaxed"
+                class="text-[11px] text-secondary leading-relaxed"
               >
                 ₹1,25,000 runway uncommitted
               </p>
             </div>
             <button
-              class="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              class="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Review Budget 
               <svg
@@ -3391,7 +3391,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             </button>
           </div>
           <div
-            class="bg-white p-3.5 rounded-lg border border-[#E6DFD5] flex flex-col justify-between space-y-2.5 shadow-2xs"
+            class="bg-surface p-3.5 rounded-lg border border-subtle flex flex-col justify-between space-y-2.5 shadow-2xs"
           >
             <div
               class="space-y-1"
@@ -3400,7 +3400,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 class="flex items-center justify-between text-xs"
               >
                 <span
-                  class="font-semibold text-[#1C1917]"
+                  class="font-semibold text-primary"
                 >
                   2. Critical Path
                 </span>
@@ -3414,13 +3414,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </span>
               </div>
               <p
-                class="text-[11px] text-[#6E665E] leading-relaxed"
+                class="text-[11px] text-secondary leading-relaxed"
               >
                 2 tasks blocked by prerequisites
               </p>
             </div>
             <button
-              class="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              class="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Inspect Tasks 
               <svg
@@ -3446,7 +3446,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             </button>
           </div>
           <div
-            class="bg-white p-3.5 rounded-lg border border-[#E6DFD5] flex flex-col justify-between space-y-2.5 shadow-2xs"
+            class="bg-surface p-3.5 rounded-lg border border-subtle flex flex-col justify-between space-y-2.5 shadow-2xs"
           >
             <div
               class="space-y-1"
@@ -3455,7 +3455,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 class="flex items-center justify-between text-xs"
               >
                 <span
-                  class="font-semibold text-[#1C1917]"
+                  class="font-semibold text-primary"
                 >
                   3. Vendor Quotes
                 </span>
@@ -3469,13 +3469,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </span>
               </div>
               <p
-                class="text-[11px] text-[#6E665E] leading-relaxed"
+                class="text-[11px] text-secondary leading-relaxed"
               >
                 3 proposal inquiries pending evaluation
               </p>
             </div>
             <button
-              class="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              class="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Compare Quotes 
               <svg
@@ -3501,7 +3501,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             </button>
           </div>
           <div
-            class="bg-white p-3.5 rounded-lg border border-[#E6DFD5] flex flex-col justify-between space-y-2.5 shadow-2xs"
+            class="bg-surface p-3.5 rounded-lg border border-subtle flex flex-col justify-between space-y-2.5 shadow-2xs"
           >
             <div
               class="space-y-1"
@@ -3510,7 +3510,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 class="flex items-center justify-between text-xs"
               >
                 <span
-                  class="font-semibold text-[#1C1917]"
+                  class="font-semibold text-primary"
                 >
                   4. Collaboration
                 </span>
@@ -3524,13 +3524,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </span>
               </div>
               <p
-                class="text-[11px] text-[#6E665E] leading-relaxed"
+                class="text-[11px] text-secondary leading-relaxed"
               >
                 Invite planners, partners, and coordinators
               </p>
             </div>
             <button
-              class="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              class="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Manage Sharing 
               <svg
@@ -3561,7 +3561,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
       >
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-2"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-2"
         >
           <div
             class="flex items-center justify-between text-xs text-[#6E665E] font-medium"
@@ -3621,7 +3621,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </div>
         </div>
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-2"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-2"
         >
           <div
             class="flex items-center justify-between text-xs text-[#6E665E] font-medium"
@@ -3671,7 +3671,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </p>
         </div>
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-2"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-2"
         >
           <div
             class="flex items-center justify-between text-xs text-[#6E665E] font-medium"
@@ -3740,7 +3740,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </p>
         </div>
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-2"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-2"
         >
           <div
             class="flex items-center justify-between text-xs text-[#6E665E] font-medium"
@@ -3812,7 +3812,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           class="lg:col-span-2 space-y-6"
         >
           <div
-            class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-4"
+            class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-4"
           >
             <div
               class="flex items-center justify-between"
@@ -4040,7 +4040,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             </div>
           </div>
           <div
-            class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-4"
+            class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-4"
           >
             <div
               class="flex items-center justify-between"
@@ -4470,7 +4470,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             </button>
           </div>
           <div
-            class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-4"
+            class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-4"
           >
             <h3
               class="text-base font-bold text-[#1C1917] font-serif-heading"
@@ -4554,7 +4554,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           class="flex items-center gap-2"
         >
           <button
-            class="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#5C554E] hover:text-[#26221F] bg-white border border-[#D5CCC0] flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
+            class="px-3.5 py-2 rounded-lg text-xs font-semibold text-secondary hover:text-primary bg-surface border border-subtle hover:bg-subtle flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
           >
             <svg
               aria-hidden="true"
@@ -4616,7 +4616,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           class="lg:col-span-2 space-y-6"
         >
           <div
-            class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-4"
+            class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-4"
           >
             <div
               class="flex items-center justify-between"
@@ -4689,7 +4689,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             />
           </div>
           <div
-            class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-4"
+            class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-4"
           >
             <h3
               class="text-base font-bold text-[#26221F] font-serif-heading"
@@ -5110,7 +5110,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
         </div>
       </div>
       <div
-        class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-4"
+        class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-4"
       >
         <div>
           <h3
@@ -5788,12 +5788,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
       >
         <div>
           <h1
-            class="text-2xl sm:text-3xl font-bold text-[#26221F] font-serif-heading tracking-tight"
+            class="text-2xl sm:text-3xl font-bold text-primary font-serif-heading tracking-tight"
           >
             Tasks & Dependency Graph
           </h1>
           <p
-            class="text-xs text-[#6E665E] mt-1"
+            class="text-xs text-secondary mt-1"
           >
             Topological ordering with cycle detection. Blocked milestones cannot be prematurely marked complete.
           </p>
@@ -5830,64 +5830,64 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
         class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4"
       >
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-4 space-y-1"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-4 space-y-1"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-secondary font-medium uppercase tracking-wider"
           >
             Total Milestones
           </span>
           <p
-            class="text-xl sm:text-2xl font-bold tracking-tight text-[#26221F]"
+            class="text-xl sm:text-2xl font-bold tracking-tight text-primary"
           >
             8
           </p>
         </div>
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-4 space-y-1"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-4 space-y-1"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-secondary font-medium uppercase tracking-wider"
           >
             Completed
           </span>
           <p
-            class="text-xl sm:text-2xl font-bold tracking-tight text-[#047857]"
+            class="text-xl sm:text-2xl font-bold tracking-tight text-[#047857] dark:text-[#91B8A0]"
           >
             2
           </p>
         </div>
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-4 space-y-1"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-4 space-y-1"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-secondary font-medium uppercase tracking-wider"
           >
             Overdue
           </span>
           <p
-            class="text-xl sm:text-2xl font-bold tracking-tight text-[#26221F]"
+            class="text-xl sm:text-2xl font-bold tracking-tight text-primary"
           >
             0
           </p>
         </div>
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-4 space-y-1"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-4 space-y-1"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-secondary font-medium uppercase tracking-wider"
           >
             Blocked Prereqs
           </span>
           <p
-            class="text-xl sm:text-2xl font-bold tracking-tight text-[#B45309]"
+            class="text-xl sm:text-2xl font-bold tracking-tight text-[#B45309] dark:text-[#E5BD76]"
           >
             2
           </p>
         </div>
       </div>
       <div
-        class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-4 flex flex-wrap items-center justify-between gap-3"
+        class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-4 flex flex-wrap items-center justify-between gap-3"
       >
         <div
           class="flex flex-wrap items-center gap-1.5"
@@ -6011,7 +6011,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
         class="space-y-3"
       >
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-[#E6DFD5] bg-[#FBF9F7]"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-subtle/70 opacity-80"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -6021,7 +6021,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             >
               <button
                 aria-label="Reopen task: Finalize Guest List & Primary Contacts"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer bg-[#047857] border-[#047857] text-white"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer bg-[#047857] dark:bg-[#91B8A0] border-[#047857] dark:border-[#91B8A0] text-white dark:text-[#171517]"
                 title="Click to reopen task"
                 type="button"
               >
@@ -6055,12 +6055,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold line-through text-[#6E665E]"
+                    class="text-sm sm:text-base font-bold line-through text-secondary"
                   >
                     Finalize Guest List & Primary Contacts
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Venue & Lawns
                   </span>
@@ -6092,19 +6092,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-09-15
                 </span>
               </div>
               <button
                 aria-label="Delete task: Finalize Guest List & Primary Contacts"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -6141,7 +6141,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-[#E6DFD5] bg-[#FBF9F7]"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-subtle/70 opacity-80"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -6151,7 +6151,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             >
               <button
                 aria-label="Reopen task: Sign Heritage Palace Venue Contract"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer bg-[#047857] border-[#047857] text-white"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer bg-[#047857] dark:bg-[#91B8A0] border-[#047857] dark:border-[#91B8A0] text-white dark:text-[#171517]"
                 title="Click to reopen task"
                 type="button"
               >
@@ -6185,12 +6185,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold line-through text-[#6E665E]"
+                    class="text-sm sm:text-base font-bold line-through text-secondary"
                   >
                     Sign Heritage Palace Venue Contract
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Venue & Lawns
                   </span>
@@ -6236,19 +6236,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-09-20
                 </span>
               </div>
               <button
                 aria-label="Delete task: Sign Heritage Palace Venue Contract"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -6285,7 +6285,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-[#E6DFD5]"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-surface"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -6295,7 +6295,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             >
               <button
                 aria-label="Complete task: Schedule Catering Tasting & Menu Approval"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-[#D5CCC0] hover:border-[#B85C3A] bg-white"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-subtle hover:border-[#B85C3A] bg-surface text-primary"
                 title="Mark complete"
                 type="button"
               />
@@ -6306,12 +6306,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold text-[#26221F]"
+                    class="text-sm sm:text-base font-bold text-primary"
                   >
                     Schedule Catering Tasting & Menu Approval
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Catering & Beverages
                   </span>
@@ -6357,19 +6357,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-10-25
                 </span>
               </div>
               <button
                 aria-label="Delete task: Schedule Catering Tasting & Menu Approval"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -6406,7 +6406,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-neutral-300 bg-neutral-50/50"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-subtle/50"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -6416,7 +6416,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             >
               <button
                 aria-label="Task blocked: Sign Catering Contract & Lock Per-Plate Price"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-neutral-300 bg-neutral-100 text-neutral-400 cursor-not-allowed"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-neutral-300 dark:border-[#41373D] bg-neutral-100 dark:bg-[#2A2428] text-neutral-400 cursor-not-allowed"
                 title="Cannot complete: Pending prerequisites (Schedule Catering Tasting & Menu Approval)"
                 type="button"
               >
@@ -6453,12 +6453,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold text-[#26221F]"
+                    class="text-sm sm:text-base font-bold text-primary"
                   >
                     Sign Catering Contract & Lock Per-Plate Price
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Catering & Beverages
                   </span>
@@ -6567,19 +6567,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-11-05
                 </span>
               </div>
               <button
                 aria-label="Delete task: Sign Catering Contract & Lock Per-Plate Price"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -6616,7 +6616,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-[#E6DFD5]"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-surface"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -6626,7 +6626,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             >
               <button
                 aria-label="Complete task: Confirm Photography & Cinematography Crew"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-[#D5CCC0] hover:border-[#B85C3A] bg-white"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-subtle hover:border-[#B85C3A] bg-surface text-primary"
                 title="Mark complete"
                 type="button"
               />
@@ -6637,12 +6637,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold text-[#26221F]"
+                    class="text-sm sm:text-base font-bold text-primary"
                   >
                     Confirm Photography & Cinematography Crew
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Photography & Cinema
                   </span>
@@ -6688,19 +6688,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-10-30
                 </span>
               </div>
               <button
                 aria-label="Delete task: Confirm Photography & Cinematography Crew"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -6737,7 +6737,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-[#E6DFD5]"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-surface"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -6747,7 +6747,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             >
               <button
                 aria-label="Complete task: Mandap & Lighting Design Approval"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-[#D5CCC0] hover:border-[#B85C3A] bg-white"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-subtle hover:border-[#B85C3A] bg-surface text-primary"
                 title="Mark complete"
                 type="button"
               />
@@ -6758,12 +6758,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold text-[#26221F]"
+                    class="text-sm sm:text-base font-bold text-primary"
                   >
                     Mandap & Lighting Design Approval
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Decor & Production
                   </span>
@@ -6809,19 +6809,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-11-15
                 </span>
               </div>
               <button
                 aria-label="Delete task: Mandap & Lighting Design Approval"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -6858,7 +6858,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-[#E6DFD5]"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-surface"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -6868,7 +6868,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             >
               <button
                 aria-label="Complete task: Sound & Acoustic Permit Compliance Check"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-[#D5CCC0] hover:border-[#B85C3A] bg-white"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-subtle hover:border-[#B85C3A] bg-surface text-primary"
                 title="Mark complete"
                 type="button"
               />
@@ -6879,12 +6879,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold text-[#26221F]"
+                    class="text-sm sm:text-base font-bold text-primary"
                   >
                     Sound & Acoustic Permit Compliance Check
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Music & Entertainment
                   </span>
@@ -6930,19 +6930,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-11-20
                 </span>
               </div>
               <button
                 aria-label="Delete task: Sound & Acoustic Permit Compliance Check"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -6979,7 +6979,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-neutral-300 bg-neutral-50/50"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-subtle/50"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -6989,7 +6989,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             >
               <button
                 aria-label="Task blocked: Final Headcount & Table Placement Handoff"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-neutral-300 bg-neutral-100 text-neutral-400 cursor-not-allowed"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-neutral-300 dark:border-[#41373D] bg-neutral-100 dark:bg-[#2A2428] text-neutral-400 cursor-not-allowed"
                 title="Cannot complete: Pending prerequisites (Sign Catering Contract & Lock Per-Plate Price)"
                 type="button"
               >
@@ -7026,12 +7026,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold text-[#26221F]"
+                    class="text-sm sm:text-base font-bold text-primary"
                   >
                     Final Headcount & Table Placement Handoff
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Venue & Lawns
                   </span>
@@ -7107,19 +7107,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-12-08
                 </span>
               </div>
               <button
                 aria-label="Delete task: Final Headcount & Table Placement Handoff"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -7174,12 +7174,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
       >
         <div>
           <h1
-            class="text-2xl sm:text-3xl font-bold text-[#26221F] font-serif-heading"
+            class="text-2xl sm:text-3xl font-bold text-primary font-serif-heading"
           >
             Vendor Directory & Quotation Matrix
           </h1>
           <p
-            class="text-xs text-[#78716C] mt-1"
+            class="text-xs text-secondary mt-1"
           >
             Compare service inclusions side-by-side, detect missing contract terms, and draft clarification requests.
           </p>
@@ -7188,11 +7188,11 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           class="flex items-center gap-2"
         >
           <button
-            class="px-3.5 py-2 rounded-md bg-white border border-[#D5CCC0] text-[#26221F] hover:bg-[#FAF8F5] text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+            class="px-3.5 py-2 rounded-md bg-surface border border-subtle text-primary hover:bg-subtle text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
           >
             <svg
               aria-hidden="true"
-              class="lucide lucide-file-text w-3.5 h-3.5 text-[#B85C3A]"
+              class="lucide lucide-file-text w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]"
               fill="none"
               height="24"
               stroke="currentColor"
@@ -7222,7 +7222,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             Log Quotation
           </button>
           <button
-            class="px-4 py-2 rounded-md bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+            class="px-4 py-2 rounded-md bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
           >
             <svg
               aria-hidden="true"
@@ -7249,10 +7249,10 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
         </div>
       </div>
       <div
-        class="flex overflow-x-auto no-scrollbar gap-2 border-b border-[#E6DFD5] pb-2"
+        class="flex overflow-x-auto no-scrollbar gap-2 border-b border-subtle pb-2"
       >
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-[#26221F] text-white font-bold shadow-xs"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-[#B85C3A] text-white font-bold shadow-xs"
         >
           <span>
             Venue & Lawns
@@ -7264,73 +7264,73 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </span>
         </button>
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-surface text-secondary hover:text-primary border border-subtle"
         >
           <span>
             Catering & Beverages
           </span>
           <span
-            class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FAF8F5] text-[#78716C]"
+            class="text-[10px] px-1.5 py-0.2 rounded-full bg-subtle text-secondary"
           >
             2
           </span>
         </button>
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-surface text-secondary hover:text-primary border border-subtle"
         >
           <span>
             Photography & Cinema
           </span>
           <span
-            class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FAF8F5] text-[#78716C]"
+            class="text-[10px] px-1.5 py-0.2 rounded-full bg-subtle text-secondary"
           >
             2
           </span>
         </button>
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-surface text-secondary hover:text-primary border border-subtle"
         >
           <span>
             Decor & Production
           </span>
           <span
-            class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FAF8F5] text-[#78716C]"
+            class="text-[10px] px-1.5 py-0.2 rounded-full bg-subtle text-secondary"
           >
             0
           </span>
         </button>
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-surface text-secondary hover:text-primary border border-subtle"
         >
           <span>
             Music & Entertainment
           </span>
           <span
-            class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FAF8F5] text-[#78716C]"
+            class="text-[10px] px-1.5 py-0.2 rounded-full bg-subtle text-secondary"
           >
             0
           </span>
         </button>
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-surface text-secondary hover:text-primary border border-subtle"
         >
           <span>
             Guest Logistics & Transport
           </span>
           <span
-            class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FAF8F5] text-[#78716C]"
+            class="text-[10px] px-1.5 py-0.2 rounded-full bg-subtle text-secondary"
           >
             0
           </span>
         </button>
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-surface text-secondary hover:text-primary border border-subtle"
         >
           <span>
             Buffer & Contingency
           </span>
           <span
-            class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FAF8F5] text-[#78716C]"
+            class="text-[10px] px-1.5 py-0.2 rounded-full bg-subtle text-secondary"
           >
             0
           </span>
@@ -7340,7 +7340,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
         class="space-y-6"
       >
         <div
-          class="flex items-center justify-between text-xs text-[#78716C]"
+          class="flex items-center justify-between text-xs text-secondary"
         >
           <span>
             Showing quotations for 
@@ -7349,7 +7349,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
             </strong>
              • Category Average: 
             <span
-              class="font-mono font-semibold text-[#26221F]"
+              class="font-mono font-semibold text-primary"
             >
               ₹7,50,000
             </span>
@@ -7362,7 +7362,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           <div
-            class="bg-white rounded-xl border p-5 flex flex-col justify-between transition shadow-xs relative border-[#047857] ring-1 ring-[#047857]"
+            class="bg-surface rounded-xl border p-5 flex flex-col justify-between transition shadow-xs relative border-[#047857] ring-1 ring-[#047857]"
           >
             <div
               class="space-y-3"
@@ -7375,20 +7375,20 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                     class="flex items-center gap-1.5"
                   >
                     <h3
-                      class="font-bold text-base text-[#26221F] font-serif-heading"
+                      class="font-bold text-base text-primary font-serif-heading"
                     >
                       Jaipur Heritage Palace Estates (Sample)
                     </h3>
                   </div>
                   <span
-                    class="inline-block mt-0.5 px-1.5 py-0.2 rounded text-[9px] font-bold uppercase bg-amber-50 text-amber-800 border border-amber-200"
+                    class="inline-block mt-0.5 px-1.5 py-0.2 rounded text-[9px] font-bold uppercase bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
                   >
                     Fictional Demonstration Record
                   </span>
                 </div>
                 <button
                   aria-label="Delete vendor: Jaipur Heritage Palace Estates (Sample)"
-                  class="p-1 rounded text-neutral-400 hover:text-red-600 transition"
+                  class="p-1 rounded text-secondary hover:text-red-500 transition cursor-pointer"
                   title="Delete Vendor"
                 >
                   <svg
@@ -7423,13 +7423,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </button>
               </div>
               <div
-                class="text-xs text-[#78716C] space-y-1"
+                class="text-xs text-secondary space-y-1"
               >
                 <p
                   class="flex items-center gap-1.5"
                 >
                   <span
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     Contact:
                   </span>
@@ -7493,7 +7493,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   </span>
                 </p>
                 <p
-                  class="flex items-center gap-1 text-amber-700"
+                  class="flex items-center gap-1 text-amber-600 dark:text-amber-400"
                 >
                   <svg
                     aria-hidden="true"
@@ -7518,42 +7518,42 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                     4.9
                   </span>
                   <span
-                    class="text-[10px] text-[#78716C]"
+                    class="text-[10px] text-muted"
                   >
                     (Sample Verified Hospitality Review)
                   </span>
                 </p>
               </div>
               <div
-                class="p-3 bg-[#FAF8F5] rounded-lg border border-[#E6DFD5] space-y-1"
+                class="p-3 bg-subtle rounded-lg border border-subtle space-y-1"
               >
                 <div
                   class="flex items-center justify-between"
                 >
                   <span
-                    class="text-[11px] text-[#78716C] font-semibold"
+                    class="text-[11px] text-secondary font-semibold"
                   >
                     Quoted Price
                   </span>
                   <span
-                    class="text-[10px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-[#047857]"
+                    class="text-[10px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-950/60 text-[#047857] dark:text-emerald-400"
                   >
                     SELECTED
                   </span>
                 </div>
                 <div
-                  class="text-xl font-bold font-mono text-[#26221F]"
+                  class="text-xl font-bold font-mono text-primary"
                 >
                   ₹7,50,000
                 </div>
                 <span
-                  class="text-[11px] font-mono block text-[#047857]"
+                  class="text-[11px] font-mono block text-[#047857] dark:text-emerald-400"
                 >
                   +₹0 vs avg
                 </span>
               </div>
               <div
-                class="p-2.5 bg-red-50 border border-red-200 rounded-lg text-xs text-red-900 flex items-start gap-1.5"
+                class="p-2.5 bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-900 rounded-lg text-xs text-red-900 dark:text-red-200 flex items-start gap-1.5"
               >
                 <svg
                   aria-hidden="true"
@@ -7600,18 +7600,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
               >
                 <div>
                   <span
-                    class="font-semibold text-[#26221F] block mb-1"
+                    class="font-semibold text-primary block mb-1"
                   >
                     Included Services (3):
                   </span>
                   <ul
-                    class="space-y-0.5 text-[11px] text-[#5C554E]"
+                    class="space-y-0.5 text-[11px] text-secondary"
                   >
                     <li
                       class="flex items-start gap-1"
                     >
                       <span
-                        class="text-[#047857] font-bold"
+                        class="text-[#047857] dark:text-emerald-400 font-bold"
                       >
                         ✓
                       </span>
@@ -7621,7 +7621,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                       class="flex items-start gap-1"
                     >
                       <span
-                        class="text-[#047857] font-bold"
+                        class="text-[#047857] dark:text-emerald-400 font-bold"
                       >
                         ✓
                       </span>
@@ -7631,7 +7631,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                       class="flex items-start gap-1"
                     >
                       <span
-                        class="text-[#047857] font-bold"
+                        class="text-[#047857] dark:text-emerald-400 font-bold"
                       >
                         ✓
                       </span>
@@ -7641,18 +7641,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </div>
                 <div>
                   <span
-                    class="font-semibold text-[#BE123C] block mb-1"
+                    class="font-semibold text-[#BE123C] dark:text-rose-400 block mb-1"
                   >
                     Explicit Exclusions (2):
                   </span>
                   <ul
-                    class="space-y-0.5 text-[11px] text-[#78716C]"
+                    class="space-y-0.5 text-[11px] text-muted"
                   >
                     <li
                       class="flex items-start gap-1"
                     >
                       <span
-                        class="text-[#BE123C]"
+                        class="text-[#BE123C] dark:text-rose-400"
                       >
                         ✕
                       </span>
@@ -7662,7 +7662,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                       class="flex items-start gap-1"
                     >
                       <span
-                        class="text-[#BE123C]"
+                        class="text-[#BE123C] dark:text-rose-400"
                       >
                         ✕
                       </span>
@@ -7673,18 +7673,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
               </div>
             </div>
             <div
-              class="pt-4 border-t border-[#F4EFEA] flex items-center justify-between gap-2 mt-4"
+              class="pt-4 border-t border-subtle flex items-center justify-between gap-2 mt-4"
             >
               <button
                 aria-label="Draft clarification message for Jaipur Heritage Palace Estates (Sample)"
-                class="px-2.5 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#EAE4DB] text-[#26221F] text-[11px] font-semibold border border-[#D5CCC0] transition"
+                class="px-2.5 py-1.5 rounded bg-subtle hover:bg-surface text-primary text-[11px] font-semibold border border-subtle transition cursor-pointer"
                 data-testid="draft-clarification-btn"
               >
                 Draft Clarification
               </button>
               <button
                 aria-label="Proposal currently selected for Jaipur Heritage Palace Estates (Sample)"
-                class="px-3 py-1.5 rounded text-[11px] font-semibold transition bg-[#047857] text-white"
+                class="px-3 py-1.5 rounded text-[11px] font-semibold transition cursor-pointer bg-[#047857] text-white"
               >
                 ✓ Selected
               </button>
@@ -7706,35 +7706,35 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
       class="max-w-5xl mx-auto py-8 px-4 sm:px-6 space-y-6"
     >
       <div
-        class="bg-white p-6 rounded-xl border border-[#E6DFD5] shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+        class="bg-surface p-6 rounded-xl border border-subtle shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
       >
         <div>
           <div
             class="flex items-center gap-2"
           >
             <h1
-              class="text-2xl font-bold text-[#26221F] font-serif-heading"
+              class="text-2xl font-bold text-primary font-serif-heading"
             >
               Context-Aware Planning Coordinator
             </h1>
             <span
-              class="text-[10px] px-2 py-0.5 rounded-full bg-[#FAF0EB] text-[#B85C3A] font-bold border border-[#E8C8BD] uppercase"
+              class="text-[10px] px-2 py-0.5 rounded-full bg-subtle text-[#B85C3A] dark:text-[#D48668] font-bold border border-subtle uppercase"
             >
               Rule-Based Engine
             </span>
           </div>
           <p
-            class="text-xs text-[#78716C] mt-1"
+            class="text-xs text-secondary mt-1"
           >
             Deterministic decision analysis powered strictly by your active event data, constraints, and priorities.
           </p>
         </div>
         <div
-          class="p-2.5 bg-[#FAF8F5] border border-[#E6DFD5] rounded-lg text-xs text-[#5C554E] max-w-sm flex items-start gap-2"
+          class="p-2.5 bg-subtle border border-subtle rounded-lg text-xs text-secondary max-w-sm flex items-start gap-2"
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-info w-4 h-4 text-[#B85C3A] shrink-0 mt-0.5"
+            class="lucide lucide-info w-4 h-4 text-[#B85C3A] dark:text-[#D48668] shrink-0 mt-0.5"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -7769,7 +7769,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
         class="space-y-2"
       >
         <span
-          class="text-xs font-semibold text-[#5C554E] block"
+          class="text-xs font-semibold text-secondary block"
         >
           Documented Planning Commands:
         </span>
@@ -7777,55 +7777,55 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           class="flex flex-wrap gap-2"
         >
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Explain my current budget"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Change guest count to 175"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Suggest ways to reduce expenses"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Protect my highest-priority category"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Find tasks that are overdue"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Explain which tasks are blocked"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Compare vendor quotations"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Identify missing vendor information"
           </button>
           <button
-            class="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+            class="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             type="button"
           >
             "Summarize the current event plan"
@@ -7833,13 +7833,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
         </div>
       </div>
       <div
-        class="bg-white rounded-xl border border-[#E6DFD5] shadow-xs overflow-hidden flex flex-col h-[520px]"
+        class="bg-surface rounded-xl border border-subtle shadow-xs overflow-hidden flex flex-col h-[520px]"
       >
         <div
           aria-atomic="false"
           aria-label="Planning assistant conversation history"
           aria-live="polite"
-          class="flex-1 p-6 overflow-y-auto space-y-5 divide-y divide-[#F4EFEA]/60 focus:outline-hidden"
+          class="flex-1 p-6 overflow-y-auto space-y-5 divide-y divide-subtle/60 focus:outline-hidden"
           role="log"
           tabindex="0"
         >
@@ -7895,7 +7895,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 <p>
                   Welcome to 
                   <strong
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     VowPilot
                   </strong>
@@ -7904,7 +7904,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 <p>
                   Your event, 
                   <strong
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     Aarav & Meera's Wedding Celebration
                   </strong>
@@ -7928,7 +7928,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   </em>
                    
                   <strong
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     Milestone Alert:
                   </strong>
@@ -7960,19 +7960,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 <p>
                   How would you like to proceed? You can type commands like 
                   <strong
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     "Explain my current budget"
                   </strong>
                   , 
                   <strong
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     "Change guest count to 175"
                   </strong>
                   , or 
                   <strong
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     "Find tasks that are overdue"
                   </strong>
@@ -7983,7 +7983,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </div>
         </div>
         <div
-          class="p-4 border-t border-[#E6DFD5] bg-[#FAF8F5] flex items-center gap-2"
+          class="p-4 border-t border-subtle bg-subtle flex items-center gap-2"
         >
           <label
             class="sr-only"
@@ -7993,7 +7993,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </label>
           <input
             aria-label="Planning command input"
-            class="flex-1 text-xs px-3.5 py-2.5 bg-white border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] text-[#26221F]"
+            class="flex-1 text-xs px-3.5 py-2.5 bg-surface border border-subtle rounded-lg focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] text-primary"
             id="assistant-prompt-input"
             placeholder="Type a planning command, e.g. 'Explain my current budget' or 'Change guest count to 160'..."
             type="text"
@@ -8001,7 +8001,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           />
           <button
             aria-label="Ask: Send planning command"
-            class="px-4 py-2.5 bg-[#B85C3A] hover:bg-[#9E4B2D] disabled:opacity-40 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+            class="px-4 py-2.5 bg-[#B85C3A] hover:bg-[#9E4B2D] disabled:opacity-40 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
             disabled=""
             type="button"
           >
@@ -8049,12 +8049,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
       >
         <div>
           <h1
-            class="text-2xl sm:text-3xl font-bold text-[#26221F] font-serif-heading tracking-tight"
+            class="text-2xl sm:text-3xl font-bold text-primary font-serif-heading tracking-tight"
           >
             Budget & Trade-Off Planner
           </h1>
           <p
-            class="text-xs text-[#6E665E] mt-1"
+            class="text-xs text-secondary mt-1"
           >
             Strict separation of Estimated, Quoted, Confirmed, and Actual commitments. No guesswork.
           </p>
@@ -8088,18 +8088,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
         </button>
       </div>
       <div
-        class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4"
+        class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4"
       >
         <div
           class="space-y-0.5"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-muted font-medium uppercase tracking-wider"
           >
             Total Budget
           </span>
           <p
-            class="font-mono text-base sm:text-lg font-bold text-[#26221F]"
+            class="font-mono text-base sm:text-lg font-bold text-primary"
           >
             ₹25,00,000
           </p>
@@ -8108,12 +8108,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           class="space-y-0.5"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-muted font-medium uppercase tracking-wider"
           >
             Total Allocated
           </span>
           <p
-            class="font-mono text-base sm:text-lg font-semibold text-[#5C554E]"
+            class="font-mono text-base sm:text-lg font-semibold text-secondary"
           >
             ₹25,00,000
           </p>
@@ -8122,12 +8122,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           class="space-y-0.5"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-muted font-medium uppercase tracking-wider"
           >
             Committed (Actual/Conf.)
           </span>
           <p
-            class="font-mono text-base sm:text-lg font-semibold text-[#047857]"
+            class="font-mono text-base sm:text-lg font-semibold text-[#047857] dark:text-emerald-400"
           >
             ₹7,50,000
           </p>
@@ -8136,12 +8136,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           class="space-y-0.5"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-muted font-medium uppercase tracking-wider"
           >
             Projected Total
           </span>
           <p
-            class="font-mono text-base sm:text-lg font-semibold text-[#26221F]"
+            class="font-mono text-base sm:text-lg font-semibold text-primary"
           >
             ₹23,75,000
           </p>
@@ -8162,19 +8162,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
         </div>
       </div>
       <div
-        class="bg-white rounded-xl border border-[#E6DFD5] shadow-xs overflow-hidden"
+        class="bg-surface rounded-xl border border-subtle shadow-xs overflow-hidden"
       >
         <div
-          class="p-5 border-b border-[#F4EFEA] flex items-center justify-between"
+          class="p-5 border-b border-subtle flex items-center justify-between"
         >
           <div>
             <h3
-              class="text-base font-bold text-[#26221F] font-serif-heading"
+              class="text-base font-bold text-primary font-serif-heading"
             >
               Category Allocations
             </h3>
             <p
-              class="text-xs text-[#6E665E]"
+              class="text-xs text-secondary"
             >
               Real-time balance of category caps vs recorded commitments.
             </p>
@@ -8187,7 +8187,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             class="w-full text-left text-xs"
           >
             <thead
-              class="bg-[#FAF8F5] text-[#5C554E] uppercase font-semibold border-b border-[#E6DFD5]"
+              class="bg-subtle text-secondary uppercase font-semibold border-b border-subtle"
             >
               <tr>
                 <th
@@ -8235,10 +8235,10 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
               </tr>
             </thead>
             <tbody
-              class="divide-y divide-[#F4EFEA]"
+              class="divide-y divide-subtle"
             >
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -8353,7 +8353,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -8468,7 +8468,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -8578,7 +8578,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -8688,7 +8688,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -8798,7 +8798,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -8908,7 +8908,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3.5 px-4"
@@ -9901,25 +9901,25 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
         </div>
       </div>
       <div
-        class="bg-white rounded-xl border border-[#E6DFD5] shadow-xs overflow-hidden"
+        class="bg-surface rounded-xl border border-subtle shadow-xs overflow-hidden"
       >
         <div
-          class="p-5 border-b border-[#F4EFEA] flex items-center justify-between"
+          class="p-5 border-b border-subtle flex items-center justify-between"
         >
           <div>
             <h3
-              class="text-base font-bold text-[#26221F] font-serif-heading"
+              class="text-base font-bold text-primary font-serif-heading"
             >
               Recorded Expense Items (5)
             </h3>
             <p
-              class="text-xs text-[#6E665E]"
+              class="text-xs text-secondary"
             >
               Itemized entries linked to vendors or internal estimates.
             </p>
           </div>
           <button
-            class="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 cursor-pointer"
+            class="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 cursor-pointer"
           >
             <svg
               aria-hidden="true"
@@ -9953,7 +9953,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             class="w-full text-left text-xs"
           >
             <thead
-              class="bg-[#FAF8F5] text-[#5C554E] uppercase font-semibold border-b border-[#E6DFD5]"
+              class="bg-subtle text-secondary uppercase font-semibold border-b border-subtle"
             >
               <tr>
                 <th
@@ -9989,21 +9989,21 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
               </tr>
             </thead>
             <tbody
-              class="divide-y divide-[#F4EFEA]"
+              class="divide-y divide-subtle"
             >
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3 px-4"
                 >
                   <span
-                    class="font-semibold text-sm text-[#26221F] block"
+                    class="font-semibold text-sm text-primary block"
                   >
                     Palace Courtyard Advance Deposit
                   </span>
                   <span
-                    class="text-[11px] text-[#6E665E]"
+                    class="text-[11px] text-muted"
                   >
                     50% initial non-refundable booking deposit paid.
                   </span>
@@ -10068,18 +10068,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3 px-4"
                 >
                   <span
-                    class="font-semibold text-sm text-[#26221F] block"
+                    class="font-semibold text-sm text-primary block"
                   >
                     Palace Courtyard Remaining Balance
                   </span>
                   <span
-                    class="text-[11px] text-[#6E665E]"
+                    class="text-[11px] text-muted"
                   >
                     Due 2 weeks before event date.
                   </span>
@@ -10144,18 +10144,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3 px-4"
                 >
                   <span
-                    class="font-semibold text-sm text-[#26221F] block"
+                    class="font-semibold text-sm text-primary block"
                   >
                     Catering Proposal - Royal Feast Caterers
                   </span>
                   <span
-                    class="text-[11px] text-[#6E665E]"
+                    class="text-[11px] text-muted"
                   >
                     Quotation under review pending menu tasting session.
                   </span>
@@ -10220,18 +10220,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3 px-4"
                 >
                   <span
-                    class="font-semibold text-sm text-[#26221F] block"
+                    class="font-semibold text-sm text-primary block"
                   >
                     Wedding Cinema Package - Lumina Stories
                   </span>
                   <span
-                    class="text-[11px] text-[#6E665E]"
+                    class="text-[11px] text-muted"
                   >
                     Includes full wedding coverage plus 1-hour pre-wedding session.
                   </span>
@@ -10296,18 +10296,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </td>
               </tr>
               <tr
-                class="hover:bg-[#FAF8F5]/60 transition"
+                class="hover:bg-subtle/60 transition"
               >
                 <td
                   class="py-3 px-4"
                 >
                   <span
-                    class="font-semibold text-sm text-[#26221F] block"
+                    class="font-semibold text-sm text-primary block"
                   >
                     Initial Stage & Mandap Mockup Estimate
                   </span>
                   <span
-                    class="text-[11px] text-[#6E665E]"
+                    class="text-[11px] text-muted"
                   >
                     Internal estimate prior to final vendor walk-through.
                   </span>
@@ -10768,7 +10768,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
       class="max-w-7xl mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8"
     >
       <div
-        class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 bg-white border-[#E6DFD5]"
+        class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 "
       >
         <div
           class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5"
@@ -10780,7 +10780,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
               class="flex flex-wrap items-center gap-2.5"
             >
               <h1
-                class="text-2xl sm:text-3xl font-bold text-[#1C1917] font-serif-heading tracking-tight"
+                class="text-2xl sm:text-3xl font-bold text-primary font-serif-heading tracking-tight"
               >
                 Aarav & Meera's Wedding Celebration
               </h1>
@@ -10791,14 +10791,14 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
               </span>
             </div>
             <div
-              class="text-xs text-[#5C554E] flex flex-wrap items-center gap-3 pt-1"
+              class="text-xs text-secondary flex flex-wrap items-center gap-3 pt-1"
             >
               <span
                 class="flex items-center gap-1.5"
               >
                 <svg
                   aria-hidden="true"
-                  class="lucide lucide-map-pin w-3.5 h-3.5 text-[#B85C3A]"
+                  class="lucide lucide-map-pin w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]"
                   fill="none"
                   height="24"
                   stroke="currentColor"
@@ -10821,7 +10821,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                  Jaipur Heritage Palace, Rajasthan
               </span>
               <span
-                class="text-[#D5CCC0]"
+                class="text-tertiary"
               >
                 •
               </span>
@@ -10830,7 +10830,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
               >
                 <svg
                   aria-hidden="true"
-                  class="lucide lucide-calendar w-3.5 h-3.5 text-[#B85C3A]"
+                  class="lucide lucide-calendar w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]"
                   fill="none"
                   height="24"
                   stroke="currentColor"
@@ -10861,7 +10861,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                  2026-12-18
               </span>
               <span
-                class="text-[#D5CCC0]"
+                class="text-tertiary"
               >
                 •
               </span>
@@ -10870,7 +10870,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
               >
                 <svg
                   aria-hidden="true"
-                  class="lucide lucide-users w-3.5 h-3.5 text-[#B85C3A]"
+                  class="lucide lucide-users w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]"
                   fill="none"
                   height="24"
                   stroke="currentColor"
@@ -10982,7 +10982,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
         class="space-y-3"
       />
       <div
-        class="bg-[#FAF8F5] border border-[#E6DFD5] rounded-xl p-5 sm:p-6 space-y-4"
+        class="bg-subtle border border-subtle rounded-xl p-5 sm:p-6 space-y-4"
       >
         <div
           class="flex items-center justify-between"
@@ -10992,7 +10992,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           >
             <svg
               aria-hidden="true"
-              class="lucide lucide-git-branch w-4 h-4 text-[#B85C3A]"
+              class="lucide lucide-git-branch w-4 h-4 text-[#B85C3A] dark:text-[#D48668]"
               fill="none"
               height="24"
               stroke="currentColor"
@@ -11018,13 +11018,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
               />
             </svg>
             <h2
-              class="text-sm sm:text-base font-bold text-[#1C1917] font-serif-heading"
+              class="text-sm sm:text-base font-bold text-primary font-serif-heading"
             >
               Planning Progression & Next Logical Actions
             </h2>
           </div>
           <span
-            class="text-xs text-[#6E665E] hidden sm:inline"
+            class="text-xs text-secondary hidden sm:inline"
           >
             Actionable workflow guide
           </span>
@@ -11033,7 +11033,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"
         >
           <div
-            class="bg-white p-3.5 rounded-lg border border-[#E6DFD5] flex flex-col justify-between space-y-2.5 shadow-2xs"
+            class="bg-surface p-3.5 rounded-lg border border-subtle flex flex-col justify-between space-y-2.5 shadow-2xs"
           >
             <div
               class="space-y-1"
@@ -11042,7 +11042,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 class="flex items-center justify-between text-xs"
               >
                 <span
-                  class="font-semibold text-[#1C1917]"
+                  class="font-semibold text-primary"
                 >
                   1. Budget Strategy
                 </span>
@@ -11056,13 +11056,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </span>
               </div>
               <p
-                class="text-[11px] text-[#6E665E] leading-relaxed"
+                class="text-[11px] text-secondary leading-relaxed"
               >
                 ₹1,25,000 runway uncommitted
               </p>
             </div>
             <button
-              class="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              class="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Review Budget 
               <svg
@@ -11088,7 +11088,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             </button>
           </div>
           <div
-            class="bg-white p-3.5 rounded-lg border border-[#E6DFD5] flex flex-col justify-between space-y-2.5 shadow-2xs"
+            class="bg-surface p-3.5 rounded-lg border border-subtle flex flex-col justify-between space-y-2.5 shadow-2xs"
           >
             <div
               class="space-y-1"
@@ -11097,7 +11097,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 class="flex items-center justify-between text-xs"
               >
                 <span
-                  class="font-semibold text-[#1C1917]"
+                  class="font-semibold text-primary"
                 >
                   2. Critical Path
                 </span>
@@ -11111,13 +11111,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </span>
               </div>
               <p
-                class="text-[11px] text-[#6E665E] leading-relaxed"
+                class="text-[11px] text-secondary leading-relaxed"
               >
                 2 tasks blocked by prerequisites
               </p>
             </div>
             <button
-              class="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              class="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Inspect Tasks 
               <svg
@@ -11143,7 +11143,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             </button>
           </div>
           <div
-            class="bg-white p-3.5 rounded-lg border border-[#E6DFD5] flex flex-col justify-between space-y-2.5 shadow-2xs"
+            class="bg-surface p-3.5 rounded-lg border border-subtle flex flex-col justify-between space-y-2.5 shadow-2xs"
           >
             <div
               class="space-y-1"
@@ -11152,7 +11152,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 class="flex items-center justify-between text-xs"
               >
                 <span
-                  class="font-semibold text-[#1C1917]"
+                  class="font-semibold text-primary"
                 >
                   3. Vendor Quotes
                 </span>
@@ -11166,13 +11166,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </span>
               </div>
               <p
-                class="text-[11px] text-[#6E665E] leading-relaxed"
+                class="text-[11px] text-secondary leading-relaxed"
               >
                 3 proposal inquiries pending evaluation
               </p>
             </div>
             <button
-              class="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              class="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Compare Quotes 
               <svg
@@ -11198,7 +11198,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             </button>
           </div>
           <div
-            class="bg-white p-3.5 rounded-lg border border-[#E6DFD5] flex flex-col justify-between space-y-2.5 shadow-2xs"
+            class="bg-surface p-3.5 rounded-lg border border-subtle flex flex-col justify-between space-y-2.5 shadow-2xs"
           >
             <div
               class="space-y-1"
@@ -11207,7 +11207,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 class="flex items-center justify-between text-xs"
               >
                 <span
-                  class="font-semibold text-[#1C1917]"
+                  class="font-semibold text-primary"
                 >
                   4. Collaboration
                 </span>
@@ -11221,13 +11221,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </span>
               </div>
               <p
-                class="text-[11px] text-[#6E665E] leading-relaxed"
+                class="text-[11px] text-secondary leading-relaxed"
               >
                 Invite planners, partners, and coordinators
               </p>
             </div>
             <button
-              class="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              class="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Manage Sharing 
               <svg
@@ -11258,7 +11258,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
       >
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-2"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-2"
         >
           <div
             class="flex items-center justify-between text-xs text-[#6E665E] font-medium"
@@ -11318,7 +11318,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </div>
         </div>
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-2"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-2"
         >
           <div
             class="flex items-center justify-between text-xs text-[#6E665E] font-medium"
@@ -11368,7 +11368,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </p>
         </div>
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-2"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-2"
         >
           <div
             class="flex items-center justify-between text-xs text-[#6E665E] font-medium"
@@ -11437,7 +11437,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </p>
         </div>
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-2"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-2"
         >
           <div
             class="flex items-center justify-between text-xs text-[#6E665E] font-medium"
@@ -11509,7 +11509,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           class="lg:col-span-2 space-y-6"
         >
           <div
-            class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-4"
+            class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-4"
           >
             <div
               class="flex items-center justify-between"
@@ -11737,7 +11737,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             </div>
           </div>
           <div
-            class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-4"
+            class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-4"
           >
             <div
               class="flex items-center justify-between"
@@ -12167,7 +12167,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             </button>
           </div>
           <div
-            class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-4"
+            class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-4"
           >
             <h3
               class="text-base font-bold text-[#1C1917] font-serif-heading"
@@ -12251,7 +12251,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           class="flex items-center gap-2"
         >
           <button
-            class="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#5C554E] hover:text-[#26221F] bg-white border border-[#D5CCC0] flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
+            class="px-3.5 py-2 rounded-lg text-xs font-semibold text-secondary hover:text-primary bg-surface border border-subtle hover:bg-subtle flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
           >
             <svg
               aria-hidden="true"
@@ -12313,7 +12313,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           class="lg:col-span-2 space-y-6"
         >
           <div
-            class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-4"
+            class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-4"
           >
             <div
               class="flex items-center justify-between"
@@ -12386,7 +12386,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             />
           </div>
           <div
-            class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-4"
+            class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-4"
           >
             <h3
               class="text-base font-bold text-[#26221F] font-serif-heading"
@@ -12807,7 +12807,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
         </div>
       </div>
       <div
-        class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-5 sm:p-6 space-y-4"
+        class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-5 sm:p-6 space-y-4"
       >
         <div>
           <h3
@@ -13485,12 +13485,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
       >
         <div>
           <h1
-            class="text-2xl sm:text-3xl font-bold text-[#26221F] font-serif-heading tracking-tight"
+            class="text-2xl sm:text-3xl font-bold text-primary font-serif-heading tracking-tight"
           >
             Tasks & Dependency Graph
           </h1>
           <p
-            class="text-xs text-[#6E665E] mt-1"
+            class="text-xs text-secondary mt-1"
           >
             Topological ordering with cycle detection. Blocked milestones cannot be prematurely marked complete.
           </p>
@@ -13527,64 +13527,64 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
         class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4"
       >
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-4 space-y-1"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-4 space-y-1"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-secondary font-medium uppercase tracking-wider"
           >
             Total Milestones
           </span>
           <p
-            class="text-xl sm:text-2xl font-bold tracking-tight text-[#26221F]"
+            class="text-xl sm:text-2xl font-bold tracking-tight text-primary"
           >
             8
           </p>
         </div>
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-4 space-y-1"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-4 space-y-1"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-secondary font-medium uppercase tracking-wider"
           >
             Completed
           </span>
           <p
-            class="text-xl sm:text-2xl font-bold tracking-tight text-[#047857]"
+            class="text-xl sm:text-2xl font-bold tracking-tight text-[#047857] dark:text-[#91B8A0]"
           >
             2
           </p>
         </div>
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-4 space-y-1"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-4 space-y-1"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-secondary font-medium uppercase tracking-wider"
           >
             Overdue
           </span>
           <p
-            class="text-xl sm:text-2xl font-bold tracking-tight text-[#26221F]"
+            class="text-xl sm:text-2xl font-bold tracking-tight text-primary"
           >
             0
           </p>
         </div>
         <div
-          class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-4 space-y-1"
+          class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-4 space-y-1"
         >
           <span
-            class="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider"
+            class="text-[11px] text-secondary font-medium uppercase tracking-wider"
           >
             Blocked Prereqs
           </span>
           <p
-            class="text-xl sm:text-2xl font-bold tracking-tight text-[#B45309]"
+            class="text-xl sm:text-2xl font-bold tracking-tight text-[#B45309] dark:text-[#E5BD76]"
           >
             2
           </p>
         </div>
       </div>
       <div
-        class="rounded-xl bg-white border border-[#E6DFD5] shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] p-4 flex flex-wrap items-center justify-between gap-3"
+        class="rounded-xl bg-surface border border-subtle shadow-[0_1px_3px_rgba(31,29,26,0.06),0_1px_2px_rgba(31,29,26,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] text-primary p-4 flex flex-wrap items-center justify-between gap-3"
       >
         <div
           class="flex flex-wrap items-center gap-1.5"
@@ -13708,7 +13708,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
         class="space-y-3"
       >
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-[#E6DFD5] bg-[#FBF9F7]"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-subtle/70 opacity-80"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -13718,7 +13718,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             >
               <button
                 aria-label="Reopen task: Finalize Guest List & Primary Contacts"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer bg-[#047857] border-[#047857] text-white"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer bg-[#047857] dark:bg-[#91B8A0] border-[#047857] dark:border-[#91B8A0] text-white dark:text-[#171517]"
                 title="Click to reopen task"
                 type="button"
               >
@@ -13752,12 +13752,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold line-through text-[#6E665E]"
+                    class="text-sm sm:text-base font-bold line-through text-secondary"
                   >
                     Finalize Guest List & Primary Contacts
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Venue & Lawns
                   </span>
@@ -13789,19 +13789,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-09-15
                 </span>
               </div>
               <button
                 aria-label="Delete task: Finalize Guest List & Primary Contacts"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -13838,7 +13838,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-[#E6DFD5] bg-[#FBF9F7]"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-subtle/70 opacity-80"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -13848,7 +13848,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             >
               <button
                 aria-label="Reopen task: Sign Heritage Palace Venue Contract"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer bg-[#047857] border-[#047857] text-white"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer bg-[#047857] dark:bg-[#91B8A0] border-[#047857] dark:border-[#91B8A0] text-white dark:text-[#171517]"
                 title="Click to reopen task"
                 type="button"
               >
@@ -13882,12 +13882,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold line-through text-[#6E665E]"
+                    class="text-sm sm:text-base font-bold line-through text-secondary"
                   >
                     Sign Heritage Palace Venue Contract
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Venue & Lawns
                   </span>
@@ -13933,19 +13933,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-09-20
                 </span>
               </div>
               <button
                 aria-label="Delete task: Sign Heritage Palace Venue Contract"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -13982,7 +13982,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-[#E6DFD5]"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-surface"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -13992,7 +13992,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             >
               <button
                 aria-label="Complete task: Schedule Catering Tasting & Menu Approval"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-[#D5CCC0] hover:border-[#B85C3A] bg-white"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-subtle hover:border-[#B85C3A] bg-surface text-primary"
                 title="Mark complete"
                 type="button"
               />
@@ -14003,12 +14003,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold text-[#26221F]"
+                    class="text-sm sm:text-base font-bold text-primary"
                   >
                     Schedule Catering Tasting & Menu Approval
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Catering & Beverages
                   </span>
@@ -14054,19 +14054,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-10-25
                 </span>
               </div>
               <button
                 aria-label="Delete task: Schedule Catering Tasting & Menu Approval"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -14103,7 +14103,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-neutral-300 bg-neutral-50/50"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-subtle/50"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -14113,7 +14113,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             >
               <button
                 aria-label="Task blocked: Sign Catering Contract & Lock Per-Plate Price"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-neutral-300 bg-neutral-100 text-neutral-400 cursor-not-allowed"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-neutral-300 dark:border-[#41373D] bg-neutral-100 dark:bg-[#2A2428] text-neutral-400 cursor-not-allowed"
                 title="Cannot complete: Pending prerequisites (Schedule Catering Tasting & Menu Approval)"
                 type="button"
               >
@@ -14150,12 +14150,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold text-[#26221F]"
+                    class="text-sm sm:text-base font-bold text-primary"
                   >
                     Sign Catering Contract & Lock Per-Plate Price
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Catering & Beverages
                   </span>
@@ -14264,19 +14264,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-11-05
                 </span>
               </div>
               <button
                 aria-label="Delete task: Sign Catering Contract & Lock Per-Plate Price"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -14313,7 +14313,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-[#E6DFD5]"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-surface"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -14323,7 +14323,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             >
               <button
                 aria-label="Complete task: Confirm Photography & Cinematography Crew"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-[#D5CCC0] hover:border-[#B85C3A] bg-white"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-subtle hover:border-[#B85C3A] bg-surface text-primary"
                 title="Mark complete"
                 type="button"
               />
@@ -14334,12 +14334,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold text-[#26221F]"
+                    class="text-sm sm:text-base font-bold text-primary"
                   >
                     Confirm Photography & Cinematography Crew
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Photography & Cinema
                   </span>
@@ -14385,19 +14385,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-10-30
                 </span>
               </div>
               <button
                 aria-label="Delete task: Confirm Photography & Cinematography Crew"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -14434,7 +14434,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-[#E6DFD5]"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-surface"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -14444,7 +14444,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             >
               <button
                 aria-label="Complete task: Mandap & Lighting Design Approval"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-[#D5CCC0] hover:border-[#B85C3A] bg-white"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-subtle hover:border-[#B85C3A] bg-surface text-primary"
                 title="Mark complete"
                 type="button"
               />
@@ -14455,12 +14455,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold text-[#26221F]"
+                    class="text-sm sm:text-base font-bold text-primary"
                   >
                     Mandap & Lighting Design Approval
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Decor & Production
                   </span>
@@ -14506,19 +14506,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-11-15
                 </span>
               </div>
               <button
                 aria-label="Delete task: Mandap & Lighting Design Approval"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -14555,7 +14555,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-[#E6DFD5]"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-surface"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -14565,7 +14565,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             >
               <button
                 aria-label="Complete task: Sound & Acoustic Permit Compliance Check"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-[#D5CCC0] hover:border-[#B85C3A] bg-white"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-subtle hover:border-[#B85C3A] bg-surface text-primary"
                 title="Mark complete"
                 type="button"
               />
@@ -14576,12 +14576,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold text-[#26221F]"
+                    class="text-sm sm:text-base font-bold text-primary"
                   >
                     Sound & Acoustic Permit Compliance Check
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Music & Entertainment
                   </span>
@@ -14627,19 +14627,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-11-20
                 </span>
               </div>
               <button
                 aria-label="Delete task: Sound & Acoustic Permit Compliance Check"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -14676,7 +14676,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </div>
         </div>
         <div
-          class="p-5 rounded-xl border transition bg-white shadow-xs border-neutral-300 bg-neutral-50/50"
+          class="p-5 rounded-xl border transition shadow-xs text-primary border-subtle bg-subtle/50"
         >
           <div
             class="flex flex-col sm:flex-row items-start justify-between gap-4"
@@ -14686,7 +14686,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             >
               <button
                 aria-label="Task blocked: Final Headcount & Table Placement Handoff"
-                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-neutral-300 bg-neutral-100 text-neutral-400 cursor-not-allowed"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer border-neutral-300 dark:border-[#41373D] bg-neutral-100 dark:bg-[#2A2428] text-neutral-400 cursor-not-allowed"
                 title="Cannot complete: Pending prerequisites (Sign Catering Contract & Lock Per-Plate Price)"
                 type="button"
               >
@@ -14723,12 +14723,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   class="flex flex-wrap items-center gap-2"
                 >
                   <span
-                    class="text-sm sm:text-base font-bold text-[#26221F]"
+                    class="text-sm sm:text-base font-bold text-primary"
                   >
                     Final Headcount & Table Placement Handoff
                   </span>
                   <span
-                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle"
                   >
                     Venue & Lawns
                   </span>
@@ -14804,19 +14804,19 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 class="text-right"
               >
                 <span
-                  class="text-[11px] text-[#6E665E] block"
+                  class="text-[11px] text-secondary block"
                 >
                   Target Deadline
                 </span>
                 <span
-                  class="font-mono text-xs font-semibold text-[#26221F]"
+                  class="font-mono text-xs font-semibold text-primary"
                 >
                   2026-12-08
                 </span>
               </div>
               <button
                 aria-label="Delete task: Final Headcount & Table Placement Handoff"
-                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                class="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete Task"
               >
                 <svg
@@ -14871,12 +14871,12 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
       >
         <div>
           <h1
-            class="text-2xl sm:text-3xl font-bold text-[#26221F] font-serif-heading"
+            class="text-2xl sm:text-3xl font-bold text-primary font-serif-heading"
           >
             Vendor Directory & Quotation Matrix
           </h1>
           <p
-            class="text-xs text-[#78716C] mt-1"
+            class="text-xs text-secondary mt-1"
           >
             Compare service inclusions side-by-side, detect missing contract terms, and draft clarification requests.
           </p>
@@ -14885,11 +14885,11 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           class="flex items-center gap-2"
         >
           <button
-            class="px-3.5 py-2 rounded-md bg-white border border-[#D5CCC0] text-[#26221F] hover:bg-[#FAF8F5] text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+            class="px-3.5 py-2 rounded-md bg-surface border border-subtle text-primary hover:bg-subtle text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
           >
             <svg
               aria-hidden="true"
-              class="lucide lucide-file-text w-3.5 h-3.5 text-[#B85C3A]"
+              class="lucide lucide-file-text w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]"
               fill="none"
               height="24"
               stroke="currentColor"
@@ -14919,7 +14919,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             Log Quotation
           </button>
           <button
-            class="px-4 py-2 rounded-md bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+            class="px-4 py-2 rounded-md bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
           >
             <svg
               aria-hidden="true"
@@ -14946,10 +14946,10 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
         </div>
       </div>
       <div
-        class="flex overflow-x-auto no-scrollbar gap-2 border-b border-[#E6DFD5] pb-2"
+        class="flex overflow-x-auto no-scrollbar gap-2 border-b border-subtle pb-2"
       >
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-[#26221F] text-white font-bold shadow-xs"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-[#B85C3A] text-white font-bold shadow-xs"
         >
           <span>
             Venue & Lawns
@@ -14961,73 +14961,73 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </span>
         </button>
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-surface text-secondary hover:text-primary border border-subtle"
         >
           <span>
             Catering & Beverages
           </span>
           <span
-            class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FAF8F5] text-[#78716C]"
+            class="text-[10px] px-1.5 py-0.2 rounded-full bg-subtle text-secondary"
           >
             2
           </span>
         </button>
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-surface text-secondary hover:text-primary border border-subtle"
         >
           <span>
             Photography & Cinema
           </span>
           <span
-            class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FAF8F5] text-[#78716C]"
+            class="text-[10px] px-1.5 py-0.2 rounded-full bg-subtle text-secondary"
           >
             2
           </span>
         </button>
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-surface text-secondary hover:text-primary border border-subtle"
         >
           <span>
             Decor & Production
           </span>
           <span
-            class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FAF8F5] text-[#78716C]"
+            class="text-[10px] px-1.5 py-0.2 rounded-full bg-subtle text-secondary"
           >
             0
           </span>
         </button>
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-surface text-secondary hover:text-primary border border-subtle"
         >
           <span>
             Music & Entertainment
           </span>
           <span
-            class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FAF8F5] text-[#78716C]"
+            class="text-[10px] px-1.5 py-0.2 rounded-full bg-subtle text-secondary"
           >
             0
           </span>
         </button>
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-surface text-secondary hover:text-primary border border-subtle"
         >
           <span>
             Guest Logistics & Transport
           </span>
           <span
-            class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FAF8F5] text-[#78716C]"
+            class="text-[10px] px-1.5 py-0.2 rounded-full bg-subtle text-secondary"
           >
             0
           </span>
         </button>
         <button
-          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer bg-surface text-secondary hover:text-primary border border-subtle"
         >
           <span>
             Buffer & Contingency
           </span>
           <span
-            class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FAF8F5] text-[#78716C]"
+            class="text-[10px] px-1.5 py-0.2 rounded-full bg-subtle text-secondary"
           >
             0
           </span>
@@ -15037,7 +15037,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
         class="space-y-6"
       >
         <div
-          class="flex items-center justify-between text-xs text-[#78716C]"
+          class="flex items-center justify-between text-xs text-secondary"
         >
           <span>
             Showing quotations for 
@@ -15046,7 +15046,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
             </strong>
              • Category Average: 
             <span
-              class="font-mono font-semibold text-[#26221F]"
+              class="font-mono font-semibold text-primary"
             >
               ₹7,50,000
             </span>
@@ -15059,7 +15059,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           <div
-            class="bg-white rounded-xl border p-5 flex flex-col justify-between transition shadow-xs relative border-[#047857] ring-1 ring-[#047857]"
+            class="bg-surface rounded-xl border p-5 flex flex-col justify-between transition shadow-xs relative border-[#047857] ring-1 ring-[#047857]"
           >
             <div
               class="space-y-3"
@@ -15072,20 +15072,20 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                     class="flex items-center gap-1.5"
                   >
                     <h3
-                      class="font-bold text-base text-[#26221F] font-serif-heading"
+                      class="font-bold text-base text-primary font-serif-heading"
                     >
                       Jaipur Heritage Palace Estates (Sample)
                     </h3>
                   </div>
                   <span
-                    class="inline-block mt-0.5 px-1.5 py-0.2 rounded text-[9px] font-bold uppercase bg-amber-50 text-amber-800 border border-amber-200"
+                    class="inline-block mt-0.5 px-1.5 py-0.2 rounded text-[9px] font-bold uppercase bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
                   >
                     Fictional Demonstration Record
                   </span>
                 </div>
                 <button
                   aria-label="Delete vendor: Jaipur Heritage Palace Estates (Sample)"
-                  class="p-1 rounded text-neutral-400 hover:text-red-600 transition"
+                  class="p-1 rounded text-secondary hover:text-red-500 transition cursor-pointer"
                   title="Delete Vendor"
                 >
                   <svg
@@ -15120,13 +15120,13 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </button>
               </div>
               <div
-                class="text-xs text-[#78716C] space-y-1"
+                class="text-xs text-secondary space-y-1"
               >
                 <p
                   class="flex items-center gap-1.5"
                 >
                   <span
-                    class="font-semibold text-[#26221F]"
+                    class="font-semibold text-primary"
                   >
                     Contact:
                   </span>
@@ -15190,7 +15190,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   </span>
                 </p>
                 <p
-                  class="flex items-center gap-1 text-amber-700"
+                  class="flex items-center gap-1 text-amber-600 dark:text-amber-400"
                 >
                   <svg
                     aria-hidden="true"
@@ -15215,42 +15215,42 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                     4.9
                   </span>
                   <span
-                    class="text-[10px] text-[#78716C]"
+                    class="text-[10px] text-muted"
                   >
                     (Sample Verified Hospitality Review)
                   </span>
                 </p>
               </div>
               <div
-                class="p-3 bg-[#FAF8F5] rounded-lg border border-[#E6DFD5] space-y-1"
+                class="p-3 bg-subtle rounded-lg border border-subtle space-y-1"
               >
                 <div
                   class="flex items-center justify-between"
                 >
                   <span
-                    class="text-[11px] text-[#78716C] font-semibold"
+                    class="text-[11px] text-secondary font-semibold"
                   >
                     Quoted Price
                   </span>
                   <span
-                    class="text-[10px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-[#047857]"
+                    class="text-[10px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-950/60 text-[#047857] dark:text-emerald-400"
                   >
                     SELECTED
                   </span>
                 </div>
                 <div
-                  class="text-xl font-bold font-mono text-[#26221F]"
+                  class="text-xl font-bold font-mono text-primary"
                 >
                   ₹7,50,000
                 </div>
                 <span
-                  class="text-[11px] font-mono block text-[#047857]"
+                  class="text-[11px] font-mono block text-[#047857] dark:text-emerald-400"
                 >
                   +₹0 vs avg
                 </span>
               </div>
               <div
-                class="p-2.5 bg-red-50 border border-red-200 rounded-lg text-xs text-red-900 flex items-start gap-1.5"
+                class="p-2.5 bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-900 rounded-lg text-xs text-red-900 dark:text-red-200 flex items-start gap-1.5"
               >
                 <svg
                   aria-hidden="true"
@@ -15297,18 +15297,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
               >
                 <div>
                   <span
-                    class="font-semibold text-[#26221F] block mb-1"
+                    class="font-semibold text-primary block mb-1"
                   >
                     Included Services (3):
                   </span>
                   <ul
-                    class="space-y-0.5 text-[11px] text-[#5C554E]"
+                    class="space-y-0.5 text-[11px] text-secondary"
                   >
                     <li
                       class="flex items-start gap-1"
                     >
                       <span
-                        class="text-[#047857] font-bold"
+                        class="text-[#047857] dark:text-emerald-400 font-bold"
                       >
                         ✓
                       </span>
@@ -15318,7 +15318,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                       class="flex items-start gap-1"
                     >
                       <span
-                        class="text-[#047857] font-bold"
+                        class="text-[#047857] dark:text-emerald-400 font-bold"
                       >
                         ✓
                       </span>
@@ -15328,7 +15328,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                       class="flex items-start gap-1"
                     >
                       <span
-                        class="text-[#047857] font-bold"
+                        class="text-[#047857] dark:text-emerald-400 font-bold"
                       >
                         ✓
                       </span>
@@ -15338,18 +15338,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </div>
                 <div>
                   <span
-                    class="font-semibold text-[#BE123C] block mb-1"
+                    class="font-semibold text-[#BE123C] dark:text-rose-400 block mb-1"
                   >
                     Explicit Exclusions (2):
                   </span>
                   <ul
-                    class="space-y-0.5 text-[11px] text-[#78716C]"
+                    class="space-y-0.5 text-[11px] text-muted"
                   >
                     <li
                       class="flex items-start gap-1"
                     >
                       <span
-                        class="text-[#BE123C]"
+                        class="text-[#BE123C] dark:text-rose-400"
                       >
                         ✕
                       </span>
@@ -15359,7 +15359,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                       class="flex items-start gap-1"
                     >
                       <span
-                        class="text-[#BE123C]"
+                        class="text-[#BE123C] dark:text-rose-400"
                       >
                         ✕
                       </span>
@@ -15370,18 +15370,18 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
               </div>
             </div>
             <div
-              class="pt-4 border-t border-[#F4EFEA] flex items-center justify-between gap-2 mt-4"
+              class="pt-4 border-t border-subtle flex items-center justify-between gap-2 mt-4"
             >
               <button
                 aria-label="Draft clarification message for Jaipur Heritage Palace Estates (Sample)"
-                class="px-2.5 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#EAE4DB] text-[#26221F] text-[11px] font-semibold border border-[#D5CCC0] transition"
+                class="px-2.5 py-1.5 rounded bg-subtle hover:bg-surface text-primary text-[11px] font-semibold border border-subtle transition cursor-pointer"
                 data-testid="draft-clarification-btn"
               >
                 Draft Clarification
               </button>
               <button
                 aria-label="Proposal currently selected for Jaipur Heritage Palace Estates (Sample)"
-                class="px-3 py-1.5 rounded text-[11px] font-semibold transition bg-[#047857] text-white"
+                class="px-3 py-1.5 rounded text-[11px] font-semibold transition cursor-pointer bg-[#047857] text-white"
               >
                 ✓ Selected
               </button>

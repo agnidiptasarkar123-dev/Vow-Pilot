@@ -67,6 +67,7 @@ import {
   handleUpdateTimelineItem,
   handleDeleteTimelineItem,
   handleReorderTimeline,
+  handleApplyTimelinePreset,
 } from './slices/timelineSlice';
 import {
   handleAddTable,
@@ -74,6 +75,7 @@ import {
   handleDeleteTable,
   handleAssignGuestToTable,
   handleRemoveGuestFromTable,
+  handleApplySeatingDraft,
 } from './slices/seatingSlice';
 import {
   InvitationDesign,
@@ -137,12 +139,14 @@ export interface EventContextType {
   updateTimelineItem: (item: TimelineItem) => void;
   deleteTimelineItem: (itemId: string) => void;
   reorderTimeline: (itemIds: string[]) => void;
+  applyTimelinePreset: (items: Array<Omit<TimelineItem, 'id'>>, strategy: 'replace' | 'append') => void;
   // V2 Seating & Tables
   addTable: (table: Omit<SeatingTable, 'id' | 'assignedGuestIds'>) => void;
   updateTable: (table: SeatingTable) => void;
   deleteTable: (tableId: string) => void;
   assignGuestToTable: (guestId: string, tableId: string) => void;
   removeGuestFromTable: (guestId: string) => void;
+  applySeatingDraft: (newTables: SeatingTable[], updatedGuests: GuestRecord[], description: string) => void;
   // Storage & Reset
   resetToDemo: () => void;
   importState: (newState: AppState) => void;
@@ -562,6 +566,13 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     pushUpdateIfConnected(next);
   };
 
+  const applyTimelinePreset = (items: Array<Omit<TimelineItem, 'id'>>, strategy: 'replace' | 'append') => {
+    if (isReadOnly) return;
+    const next = handleApplyTimelinePreset(state, items, strategy);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
   // V2 Seating Handlers
   const addTable = (table: Omit<SeatingTable, 'id' | 'assignedGuestIds'>) => {
     if (isReadOnly) return;
@@ -594,6 +605,13 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const removeGuestFromTable = (guestId: string) => {
     if (isReadOnly) return;
     const next = handleRemoveGuestFromTable(state, guestId);
+    setState(next);
+    pushUpdateIfConnected(next);
+  };
+
+  const applySeatingDraft = (newTables: SeatingTable[], updatedGuests: GuestRecord[], description: string) => {
+    if (isReadOnly) return;
+    const next = handleApplySeatingDraft(state, newTables, updatedGuests, description);
     setState(next);
     pushUpdateIfConnected(next);
   };
@@ -662,11 +680,13 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       updateTimelineItem,
       deleteTimelineItem,
       reorderTimeline,
+      applyTimelinePreset,
       addTable,
       updateTable,
       deleteTable,
       assignGuestToTable,
       removeGuestFromTable,
+      applySeatingDraft,
       resetToDemo,
       importState,
       clearAllData,

@@ -251,3 +251,26 @@ export function detectSeatingConflicts(
 
   return conflicts;
 }
+
+export function handleApplySeatingDraft(
+  state: AppState,
+  newTables: SeatingTable[],
+  updatedGuests: GuestRecord[],
+  description: string
+): AppState {
+  const now = new Date().toISOString();
+  const changeRecord: ChangeRecord = {
+    id: `chg-tbl-${Date.now()}`,
+    timestamp: now,
+    changeType: 'seating',
+    description,
+  };
+
+  return {
+    ...state,
+    tables: newTables,
+    guests: updatedGuests,
+    changeLog: [changeRecord, ...state.changeLog],
+  };
+}
+

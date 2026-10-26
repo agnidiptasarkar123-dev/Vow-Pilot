@@ -131,10 +131,10 @@ export const TaskManagementView: React.FC = () => {
       {/* Header and Quick Actions */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#26221F] font-serif-heading tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary font-serif-heading tracking-tight">
             Tasks & Dependency Graph
           </h1>
-          <p className="text-xs text-[#6E665E] mt-1">
+          <p className="text-xs text-secondary mt-1">
             Topological ordering with cycle detection. Blocked milestones cannot be prematurely marked complete.
           </p>
         </div>
@@ -148,7 +148,7 @@ export const TaskManagementView: React.FC = () => {
             <span>Add Actionable Task</span>
           </button>
         ) : (
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-100 text-stone-500 text-xs font-medium border border-stone-200">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-100 dark:bg-[#2A2428] text-stone-500 dark:text-[#A99C96] text-xs font-medium border border-stone-200 dark:border-[#41373D]">
             <Lock className="w-3.5 h-3.5" />
             <span>Read-Only Mode</span>
           </div>
@@ -158,20 +158,20 @@ export const TaskManagementView: React.FC = () => {
       {/* Top Milestone Health Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         <Card padding="sm" className="space-y-1">
-          <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Total Milestones</span>
-          <p className="text-xl sm:text-2xl font-bold tracking-tight text-[#26221F]">{state.tasks.length}</p>
+          <span className="text-[11px] text-secondary font-medium uppercase tracking-wider">Total Milestones</span>
+          <p className="text-xl sm:text-2xl font-bold tracking-tight text-primary">{state.tasks.length}</p>
         </Card>
         <Card padding="sm" className="space-y-1">
-          <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Completed</span>
-          <p className="text-xl sm:text-2xl font-bold tracking-tight text-[#047857]">{completedCount}</p>
+          <span className="text-[11px] text-secondary font-medium uppercase tracking-wider">Completed</span>
+          <p className="text-xl sm:text-2xl font-bold tracking-tight text-[#047857] dark:text-[#91B8A0]">{completedCount}</p>
         </Card>
         <Card padding="sm" className="space-y-1">
-          <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Overdue</span>
-          <p className={`text-xl sm:text-2xl font-bold tracking-tight ${overdueCount > 0 ? 'text-[#BE123C]' : 'text-[#26221F]'}`}>{overdueCount}</p>
+          <span className="text-[11px] text-secondary font-medium uppercase tracking-wider">Overdue</span>
+          <p className={`text-xl sm:text-2xl font-bold tracking-tight ${overdueCount > 0 ? 'text-[#BE123C] dark:text-[#E58C91]' : 'text-primary'}`}>{overdueCount}</p>
         </Card>
         <Card padding="sm" className="space-y-1">
-          <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Blocked Prereqs</span>
-          <p className={`text-xl sm:text-2xl font-bold tracking-tight ${blockedCount > 0 ? 'text-[#B45309]' : 'text-[#26221F]'}`}>{blockedCount}</p>
+          <span className="text-[11px] text-secondary font-medium uppercase tracking-wider">Blocked Prereqs</span>
+          <p className={`text-xl sm:text-2xl font-bold tracking-tight ${blockedCount > 0 ? 'text-[#B45309] dark:text-[#E5BD76]' : 'text-primary'}`}>{blockedCount}</p>
         </Card>
       </div>
 
@@ -266,14 +266,14 @@ export const TaskManagementView: React.FC = () => {
             return (
               <div
                 key={task.id}
-                className={`p-5 rounded-xl border transition bg-white shadow-xs ${
+                className={`p-5 rounded-xl border transition shadow-xs text-primary ${
                   isCompleted
-                    ? 'border-[#E6DFD5] bg-[#FBF9F7]'
+                    ? 'border-subtle bg-subtle/70 opacity-80'
                     : isBlocked
-                    ? 'border-neutral-300 bg-neutral-50/50'
+                    ? 'border-subtle bg-subtle/50'
                     : isOverdue
-                    ? 'border-red-200'
-                    : 'border-[#E6DFD5]'
+                    ? 'border-red-300 dark:border-red-900/60 bg-surface'
+                    : 'border-subtle bg-surface'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
@@ -294,12 +294,12 @@ export const TaskManagementView: React.FC = () => {
                       }
                       className={`mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition border shrink-0 cursor-pointer ${
                         isReadOnly
-                          ? 'border-neutral-200 bg-neutral-100 text-neutral-400 cursor-not-allowed'
+                          ? 'border-neutral-200 dark:border-[#41373D] bg-neutral-100 dark:bg-[#2A2428] text-neutral-400 cursor-not-allowed'
                           : isCompleted
-                          ? 'bg-[#047857] border-[#047857] text-white'
+                          ? 'bg-[#047857] dark:bg-[#91B8A0] border-[#047857] dark:border-[#91B8A0] text-white dark:text-[#171517]'
                           : isBlocked
-                          ? 'border-neutral-300 bg-neutral-100 text-neutral-400 cursor-not-allowed'
-                          : 'border-[#D5CCC0] hover:border-[#B85C3A] bg-white'
+                          ? 'border-neutral-300 dark:border-[#41373D] bg-neutral-100 dark:bg-[#2A2428] text-neutral-400 cursor-not-allowed'
+                          : 'border-subtle hover:border-[#B85C3A] bg-surface text-primary'
                       }`}
                       title={
                         isReadOnly
@@ -319,13 +319,13 @@ export const TaskManagementView: React.FC = () => {
                       <div className="flex flex-wrap items-center gap-2">
                         <span
                           className={`text-sm sm:text-base font-bold ${
-                            isCompleted ? 'line-through text-[#6E665E]' : 'text-[#26221F]'
+                            isCompleted ? 'line-through text-secondary' : 'text-primary'
                           }`}
                         >
                           {task.title}
                         </span>
 
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF8F5] text-[#5C554E] border border-[#E6DFD5]">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-secondary border border-subtle">
                           {cat?.name || task.categoryId}
                         </span>
 
@@ -414,8 +414,8 @@ export const TaskManagementView: React.FC = () => {
                   {/* Right: Due Date & Delete Action */}
                   <div className="flex items-center gap-3 shrink-0 self-end sm:self-start pt-2 sm:pt-0">
                     <div className="text-right">
-                      <span className="text-[11px] text-[#6E665E] block">Target Deadline</span>
-                      <span className="font-mono text-xs font-semibold text-[#26221F]">
+                      <span className="text-[11px] text-secondary block">Target Deadline</span>
+                      <span className="font-mono text-xs font-semibold text-primary">
                         {task.dueDate}
                       </span>
                     </div>
@@ -427,7 +427,7 @@ export const TaskManagementView: React.FC = () => {
                             deleteTask(task.id);
                           }
                         }}
-                        className="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                        className="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                         title="Delete Task"
                         aria-label={`Delete task: ${task.title}`}
                       >
@@ -451,13 +451,13 @@ export const TaskManagementView: React.FC = () => {
       >
         <div className="space-y-4 text-xs">
           {formError && (
-            <div id="new-task-form-error" role="alert" className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-900 text-xs font-medium">
+            <div id="new-task-form-error" role="alert" className="p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900/60 rounded-lg text-red-900 dark:text-red-200 text-xs font-medium">
               {formError}
             </div>
           )}
 
           <div>
-            <label htmlFor="new-task-title-input" className="block font-semibold text-[#26221F] mb-1">Task Title *</label>
+            <label htmlFor="new-task-title-input" className="block font-semibold text-primary mb-1">Task Title *</label>
             <input
               id="new-task-title-input"
               type="text"
@@ -466,30 +466,30 @@ export const TaskManagementView: React.FC = () => {
               placeholder="e.g. Schedule Mandatory Lighting Electrical Walkthrough"
               aria-invalid={!!formError && !newTitle.trim()}
               aria-describedby={formError && !newTitle.trim() ? "new-task-form-error" : undefined}
-              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
+              className="w-full text-sm px-3.5 py-2 border border-subtle rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-subtle text-primary"
             />
           </div>
 
           <div>
-            <label htmlFor="new-task-description-input" className="block font-semibold text-[#26221F] mb-1">Description (optional)</label>
+            <label htmlFor="new-task-description-input" className="block font-semibold text-primary mb-1">Description (optional)</label>
             <textarea
               id="new-task-description-input"
               rows={2}
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
               placeholder="Detailed instructions or specifications..."
-              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
+              className="w-full text-sm px-3.5 py-2 border border-subtle rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-subtle text-primary"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor="new-task-category-select" className="block font-semibold text-[#26221F] mb-1">Category</label>
+              <label htmlFor="new-task-category-select" className="block font-semibold text-primary mb-1">Category</label>
               <select
                 id="new-task-category-select"
                 value={newCategoryId}
                 onChange={(e) => setNewCategoryId(e.target.value)}
-                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
+                className="w-full text-sm px-3.5 py-2 border border-subtle rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-subtle text-primary"
               >
                 {state.categories.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
@@ -498,25 +498,25 @@ export const TaskManagementView: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="new-task-due-date-input" className="block font-semibold text-[#26221F] mb-1">Due Date *</label>
+              <label htmlFor="new-task-due-date-input" className="block font-semibold text-primary mb-1">Due Date *</label>
               <input
                 id="new-task-due-date-input"
                 type="date"
                 value={newDueDate}
                 onChange={(e) => setNewDueDate(e.target.value)}
-                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
+                className="w-full text-sm px-3.5 py-2 border border-subtle rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-subtle text-primary"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor="new-task-priority-select" className="block font-semibold text-[#26221F] mb-1">Priority Level</label>
+              <label htmlFor="new-task-priority-select" className="block font-semibold text-primary mb-1">Priority Level</label>
               <select
                 id="new-task-priority-select"
                 value={newPriority}
                 onChange={(e) => setNewPriority(e.target.value as TaskPriority)}
-                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
+                className="w-full text-sm px-3.5 py-2 border border-subtle rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-subtle text-primary"
               >
                 <option value="low">Low (Flexible timing)</option>
                 <option value="medium">Medium (Standard milestone)</option>
@@ -526,28 +526,28 @@ export const TaskManagementView: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="new-task-priority-reason-input" className="block font-semibold text-[#26221F] mb-1">Priority Justification</label>
+              <label htmlFor="new-task-priority-reason-input" className="block font-semibold text-primary mb-1">Priority Justification</label>
               <input
                 id="new-task-priority-reason-input"
                 type="text"
                 value={newPriorityReason}
                 onChange={(e) => setNewPriorityReason(e.target.value)}
                 placeholder="Why is this prioritized this way?"
-                className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
+                className="w-full text-sm px-3.5 py-2 border border-subtle rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-subtle text-primary"
               />
             </div>
           </div>
 
           {/* Dependencies / Prerequisites Multi-Select */}
           <div>
-            <label className="block font-semibold text-[#26221F] mb-1">
+            <label className="block font-semibold text-primary mb-1">
               Prerequisite Dependencies (Must be completed first)
             </label>
-            <div className="max-h-36 overflow-y-auto border border-[#D5CCC0] rounded-lg p-2.5 space-y-1 bg-[#FAF8F5]">
+            <div className="max-h-36 overflow-y-auto border border-subtle rounded-lg p-2.5 space-y-1 bg-subtle">
               {state.tasks.map((existingTask) => {
                 const isChecked = newDependencies.includes(existingTask.id);
                 return (
-                  <label key={existingTask.id} className="flex items-center gap-2 text-xs py-1 px-1.5 hover:bg-[#F4EFEA] rounded cursor-pointer">
+                  <label key={existingTask.id} className="flex items-center gap-2 text-xs py-1 px-1.5 hover:bg-muted rounded cursor-pointer text-primary">
                     <input
                       type="checkbox"
                       checked={isChecked}
@@ -558,21 +558,21 @@ export const TaskManagementView: React.FC = () => {
                           setNewDependencies(newDependencies.filter((id) => id !== existingTask.id));
                         }
                       }}
-                      className="rounded border-[#D5CCC0] text-[#B85C3A] focus:ring-[#B85C3A]"
+                      className="rounded border-subtle text-[#B85C3A] focus:ring-[#B85C3A]"
                     />
-                    <span className="text-[#26221F] font-medium">{existingTask.title}</span>
-                    <span className="text-[10px] text-[#6E665E]">({existingTask.dueDate})</span>
+                    <span className="text-primary font-medium">{existingTask.title}</span>
+                    <span className="text-[10px] text-secondary">({existingTask.dueDate})</span>
                   </label>
                 );
               })}
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#F4EFEA]">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-subtle">
             <button
               type="button"
               onClick={() => setIsAddModalOpen(false)}
-              className="px-4 py-2 rounded-lg border border-[#D5CCC0] text-[#5C554E] hover:bg-[#F4EFEA] text-xs font-semibold cursor-pointer"
+              className="px-4 py-2 rounded-lg border border-subtle text-secondary hover:bg-muted text-xs font-semibold cursor-pointer"
             >
               Cancel
             </button>

@@ -48,23 +48,23 @@ export const AssistantView: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 space-y-6">
       {/* Header & Transparency Notice */}
-      <div className="bg-white p-6 rounded-xl border border-[#E6DFD5] shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-surface p-6 rounded-xl border border-subtle shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-[#26221F] font-serif-heading">
+            <h1 className="text-2xl font-bold text-primary font-serif-heading">
               Context-Aware Planning Coordinator
             </h1>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#FAF0EB] text-[#B85C3A] font-bold border border-[#E8C8BD] uppercase">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-subtle text-[#B85C3A] dark:text-[#D48668] font-bold border border-subtle uppercase">
               Rule-Based Engine
             </span>
           </div>
-          <p className="text-xs text-[#78716C] mt-1">
+          <p className="text-xs text-secondary mt-1">
             Deterministic decision analysis powered strictly by your active event data, constraints, and priorities.
           </p>
         </div>
 
-        <div className="p-2.5 bg-[#FAF8F5] border border-[#E6DFD5] rounded-lg text-xs text-[#5C554E] max-w-sm flex items-start gap-2">
-          <Info className="w-4 h-4 text-[#B85C3A] shrink-0 mt-0.5" />
+        <div className="p-2.5 bg-subtle border border-subtle rounded-lg text-xs text-secondary max-w-sm flex items-start gap-2">
+          <Info className="w-4 h-4 text-[#B85C3A] dark:text-[#D48668] shrink-0 mt-0.5" />
           <span>
             <strong>Deterministic Guarantee:</strong> No hallucinated quotes, fake vendor reviews, or unverified claims.
           </span>
@@ -73,7 +73,7 @@ export const AssistantView: React.FC = () => {
 
       {/* Suggested Command Chips */}
       <div className="space-y-2">
-        <span className="text-xs font-semibold text-[#5C554E] block">
+        <span className="text-xs font-semibold text-secondary block">
           Documented Planning Commands:
         </span>
         <div className="flex flex-wrap gap-2">
@@ -82,7 +82,7 @@ export const AssistantView: React.FC = () => {
               key={promptText}
               type="button"
               onClick={() => handleSend(promptText)}
-              className="px-3 py-1.5 rounded-lg text-xs bg-white hover:bg-[#FAF0EB] text-[#26221F] hover:text-[#B85C3A] border border-[#E6DFD5] hover:border-[#E8C8BD] transition shadow-2xs font-medium"
+              className="px-3 py-1.5 rounded-lg text-xs bg-surface hover:bg-subtle text-primary hover:text-[#B85C3A] dark:hover:text-[#D48668] border border-subtle transition shadow-2xs font-medium cursor-pointer"
             >
               "{promptText}"
             </button>
@@ -91,7 +91,7 @@ export const AssistantView: React.FC = () => {
       </div>
 
       {/* Message Feed Container */}
-      <div className="bg-white rounded-xl border border-[#E6DFD5] shadow-xs overflow-hidden flex flex-col h-[520px]">
+      <div className="bg-surface rounded-xl border border-subtle shadow-xs overflow-hidden flex flex-col h-[520px]">
         {/* Messages Scroll Area */}
         <div
           role="log"
@@ -99,7 +99,7 @@ export const AssistantView: React.FC = () => {
           aria-atomic="false"
           aria-label="Planning assistant conversation history"
           tabIndex={0}
-          className="flex-1 p-6 overflow-y-auto space-y-5 divide-y divide-[#F4EFEA]/60 focus:outline-hidden"
+          className="flex-1 p-6 overflow-y-auto space-y-5 divide-y divide-subtle/60 focus:outline-hidden"
         >
           {state.messages.map((msg) => {
             const isUser = msg.role === 'user';
@@ -175,33 +175,33 @@ export const AssistantView: React.FC = () => {
 
                   {/* Structured Action Proposal Card */}
                   {msg.proposedAction && msg.requiresConfirmation && (
-                    <div className="p-3.5 bg-white border border-[#E6DFD5] rounded-lg space-y-2.5 mt-2 shadow-2xs">
+                    <div className="p-3.5 bg-subtle border border-subtle rounded-lg space-y-2.5 mt-2 shadow-2xs">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-[#26221F] text-xs flex items-center gap-1.5">
-                          <Bot className="w-3.5 h-3.5 text-[#B85C3A]" />
+                        <span className="font-bold text-primary text-xs flex items-center gap-1.5">
+                          <Bot className="w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]" />
                           Proposed Plan Action: {msg.proposedAction.summary}
                         </span>
                         {msg.actionStatus === 'applied' && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                             ✓ Applied
                           </span>
                         )}
                         {msg.actionStatus === 'rejected' && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-600">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-subtle text-secondary">
                             Dismissed
                           </span>
                         )}
                       </div>
 
                       {/* Financial Impact Preview */}
-                      <div className="grid grid-cols-2 gap-2 text-[11px] bg-[#FAF8F5] p-2.5 rounded border border-[#F4EFEA] font-mono">
+                      <div className="grid grid-cols-2 gap-2 text-[11px] bg-surface p-2.5 rounded border border-subtle font-mono">
                         <div>
-                          <span className="text-[#78716C] block">Net Difference</span>
+                          <span className="text-secondary block">Net Difference</span>
                           <span
                             className={`font-bold ${
                               msg.proposedAction.impact.difference > 0
-                                ? 'text-[#BE123C]'
-                                : 'text-[#047857]'
+                                ? 'text-[#BE123C] dark:text-rose-400'
+                                : 'text-[#047857] dark:text-emerald-400'
                             }`}
                           >
                             {msg.proposedAction.impact.difference >= 0 ? '+' : ''}
@@ -209,8 +209,8 @@ export const AssistantView: React.FC = () => {
                           </span>
                         </div>
                         <div>
-                          <span className="text-[#78716C] block">Revised Runway</span>
-                          <span className="font-bold text-[#26221F]">
+                          <span className="text-secondary block">Revised Runway</span>
+                          <span className="font-bold text-primary">
                             {formatCurrency(msg.proposedAction.impact.remainingBudget, state.event.currency)}
                           </span>
                         </div>
@@ -221,7 +221,7 @@ export const AssistantView: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => dismissProposedAction(msg.id)}
-                            className="px-3 py-1.5 rounded text-neutral-600 hover:text-black font-medium text-xs transition"
+                            className="px-3 py-1.5 rounded text-secondary hover:text-primary font-medium text-xs transition cursor-pointer"
                             aria-label={`Dismiss proposed action: ${msg.proposedAction.summary}`}
                           >
                             Dismiss
@@ -229,7 +229,7 @@ export const AssistantView: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => applyProposedAction(msg.id, msg.proposedAction!)}
-                            className="px-3.5 py-1.5 rounded bg-[#B85C3A] hover:bg-[#9E4B2D] text-white font-semibold text-xs shadow-xs transition flex items-center gap-1"
+                            className="px-3.5 py-1.5 rounded bg-[#B85C3A] hover:bg-[#9E4B2D] text-white font-semibold text-xs shadow-xs transition flex items-center gap-1 cursor-pointer"
                             aria-label={`Confirm and apply proposed action: ${msg.proposedAction.summary}`}
                           >
                             <Check className="w-3.5 h-3.5" />
@@ -246,7 +246,7 @@ export const AssistantView: React.FC = () => {
         </div>
 
         {/* Input Bar */}
-        <div className="p-4 border-t border-[#E6DFD5] bg-[#FAF8F5] flex items-center gap-2">
+        <div className="p-4 border-t border-subtle bg-subtle flex items-center gap-2">
           <label htmlFor="assistant-prompt-input" className="sr-only">
             Planning command input
           </label>
@@ -258,14 +258,14 @@ export const AssistantView: React.FC = () => {
             onKeyDown={handleKeyDown}
             placeholder="Type a planning command, e.g. 'Explain my current budget' or 'Change guest count to 160'..."
             aria-label="Planning command input"
-            className="flex-1 text-xs px-3.5 py-2.5 bg-white border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] text-[#26221F]"
+            className="flex-1 text-xs px-3.5 py-2.5 bg-surface border border-subtle rounded-lg focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] text-primary"
           />
           <button
             type="button"
             onClick={() => handleSend()}
             disabled={!inputPrompt.trim()}
             aria-label="Ask: Send planning command"
-            className="px-4 py-2.5 bg-[#B85C3A] hover:bg-[#9E4B2D] disabled:opacity-40 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+            className="px-4 py-2.5 bg-[#B85C3A] hover:bg-[#9E4B2D] disabled:opacity-40 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
           >
             <span>Ask</span>
             <CornerDownLeft className="w-3.5 h-3.5" />
@@ -293,7 +293,7 @@ function renderSafeInline(text: string): React.ReactNode[] {
     const token = match[0];
     if (token.startsWith('**') && token.endsWith('**')) {
       tokens.push(
-        <strong key={`b-${lastIndex}`} className="font-semibold text-[#26221F]">
+        <strong key={`b-${lastIndex}`} className="font-semibold text-primary">
           {token.slice(2, -2)}
         </strong>
       );

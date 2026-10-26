@@ -205,3 +205,36 @@ export function formatGuestsCsv(guests: GuestRecord[]): string {
 
   return [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
 }
+
+export function handleRegenerateGuestToken(state: AppState, guestId: string): AppState {
+  const existingGuests = state.guests || [];
+  const index = existingGuests.findIndex((g) => g.id === guestId);
+  if (index === -1) return state;
+
+  const target = existingGuests[index];
+  const now = new Date().toISOString();
+  const newToken = generateSecureRsvpToken();
+
+  const updatedGuest: GuestRecord = {
+    ...target,
+    invitationToken: newToken,
+    updatedAt: now,
+  };
+
+  const updatedGuests = [...existingGuests];
+  updatedGuests[index] = updatedGuest;
+
+  const changeRecord: ChangeRecord = {
+    id: `chg-gst-${Date.now()}`,
+    timestamp: now,
+    changeType: 'guest',
+    description: `Regenerated RSVP invitation token for "${target.name}".`,
+  };
+
+  return {
+    ...state,
+    guests: updatedGuests,
+    changeLog: [changeRecord, ...state.changeLog],
+  };
+}
+

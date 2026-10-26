@@ -129,7 +129,7 @@ export const DecisionSimulatorView: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleResetSandbox}
-            className="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#5C554E] hover:text-[#26221F] bg-white border border-[#D5CCC0] flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
+            className="px-3.5 py-2 rounded-lg text-xs font-semibold text-secondary hover:text-primary bg-surface border border-subtle hover:bg-subtle flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset to Baseline</span>

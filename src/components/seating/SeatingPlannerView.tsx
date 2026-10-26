@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useEvent } from '../../context/EventContext';
 import { SeatingTable, GuestRecord } from '../../types';
+import { GenerateSeatingDraftModal } from './GenerateSeatingDraftModal';
 import {
   LayoutGrid,
   Plus,
@@ -12,6 +13,7 @@ import {
   UserMinus,
   CheckCircle2,
   Clock,
+  Sparkles,
 } from 'lucide-react';
 
 export const SeatingPlannerView: React.FC = () => {
@@ -22,6 +24,7 @@ export const SeatingPlannerView: React.FC = () => {
     deleteTable,
     assignGuestToTable,
     removeGuestFromTable,
+    applySeatingDraft,
     isReadOnly,
   } = useEvent();
 
@@ -65,6 +68,7 @@ export const SeatingPlannerView: React.FC = () => {
 
   // Modals state
   const [isAddTableOpen, setIsAddTableOpen] = useState(false);
+  const [isDraftModalOpen, setIsDraftModalOpen] = useState(false);
   const [editingTable, setEditingTable] = useState<SeatingTable | null>(null);
 
   // Form state
@@ -202,8 +206,18 @@ export const SeatingPlannerView: React.FC = () => {
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => setIsDraftModalOpen(true)}
+            disabled={isReadOnly}
+            data-testid="generate-seating-draft-btn"
+            className="px-3.5 py-1.5 rounded-lg border border-border-subtle hover:bg-subtle text-secondary text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-40"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]" />
+            <span>Generate Seating Draft</span>
+          </button>
+
+          <button
             onClick={handlePrint}
-            className="px-3.5 py-1.5 rounded-lg border border-border-subtle hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] text-secondary text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+            className="px-3.5 py-1.5 rounded-lg border border-border-subtle hover:bg-subtle text-secondary text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
           >
             <Printer className="w-4 h-4" />
             <span>Print Seating Chart</span>
@@ -275,14 +289,35 @@ export const SeatingPlannerView: React.FC = () => {
 
       {/* Tables Grid */}
       {tables.length === 0 ? (
-        <div className="bg-surface border border-border-subtle rounded-xl text-center py-12 px-4 shadow-xs">
-          <LayoutGrid className="w-8 h-8 text-[#A8A29E] dark:text-[#78716C] mx-auto mb-2" />
-          <h4 className="font-serif-heading text-base font-semibold text-primary">
-            No tables created
+        <div className="bg-surface border border-border-subtle rounded-xl text-center py-12 px-6 shadow-xs max-w-2xl mx-auto my-6">
+          <div className="w-12 h-12 rounded-full bg-subtle flex items-center justify-center mx-auto mb-3">
+            <LayoutGrid className="w-6 h-6 text-[#B85C3A] dark:text-[#D48668]" />
+          </div>
+          <h4 className="font-serif-heading text-lg font-semibold text-primary">
+            No seating arrangement configured
           </h4>
-          <p className="text-xs text-tertiary max-w-sm mx-auto mt-1">
-            Click "+ Add Table" to arrange your celebration hall, set seat limits, and assign attendees.
+          <p className="text-xs text-secondary max-w-md mx-auto mt-1 mb-5 leading-relaxed">
+            Generate an intelligent seating plan based on confirmed guest counts and household groupings, or add tables manually to arrange your hall.
           </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={() => setIsDraftModalOpen(true)}
+              disabled={isReadOnly}
+              data-testid="empty-generate-seating-draft-btn"
+              className="px-4 py-2 rounded-lg bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer disabled:opacity-40"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Generate Seating Draft</span>
+            </button>
+            <button
+              onClick={handleOpenAdd}
+              disabled={isReadOnly}
+              className="px-4 py-2 rounded-lg border border-border-subtle hover:bg-subtle text-secondary text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-40"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Table Manually</span>
+            </button>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -449,7 +484,7 @@ export const SeatingPlannerView: React.FC = () => {
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
                   placeholder="e.g. Table 1 — High Table"
-                  className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                 />
               </div>
 
@@ -465,7 +500,7 @@ export const SeatingPlannerView: React.FC = () => {
                     required
                     value={formCapacity}
                     onChange={(e) => setFormCapacity(parseInt(e.target.value, 10) || 8)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 font-mono focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 font-mono focus:ring-1 focus:ring-[#B85C3A] text-primary"
                   />
                 </div>
                 <div>
@@ -475,7 +510,7 @@ export const SeatingPlannerView: React.FC = () => {
                   <select
                     value={formShape}
                     onChange={(e) => setFormShape(e.target.value as 'round' | 'rectangular' | 'oval')}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] cursor-pointer"
+                    className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] cursor-pointer text-primary"
                   >
                     <option value="round">Round</option>
                     <option value="oval">Oval</option>
@@ -493,7 +528,7 @@ export const SeatingPlannerView: React.FC = () => {
                   value={formNotes}
                   onChange={(e) => setFormNotes(e.target.value)}
                   placeholder="e.g. Near stage, reserved for immediate family"
-                  className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                 />
               </div>
 
@@ -501,7 +536,7 @@ export const SeatingPlannerView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddTableOpen(false)}
-                  className="px-3.5 py-1.5 border border-border-strong rounded-lg text-stone-600 dark:text-stone-300 hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] transition cursor-pointer"
+                  className="px-3.5 py-1.5 border border-border-strong rounded-lg text-secondary hover:bg-subtle transition cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -536,7 +571,7 @@ export const SeatingPlannerView: React.FC = () => {
                   required
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
-                  className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                 />
               </div>
 
@@ -552,7 +587,7 @@ export const SeatingPlannerView: React.FC = () => {
                     required
                     value={formCapacity}
                     onChange={(e) => setFormCapacity(parseInt(e.target.value, 10) || 8)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 font-mono focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 font-mono focus:ring-1 focus:ring-[#B85C3A] text-primary"
                   />
                 </div>
                 <div>
@@ -562,7 +597,7 @@ export const SeatingPlannerView: React.FC = () => {
                   <select
                     value={formShape}
                     onChange={(e) => setFormShape(e.target.value as 'round' | 'rectangular' | 'oval')}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] cursor-pointer"
+                    className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] cursor-pointer text-primary"
                   >
                     <option value="round">Round</option>
                     <option value="oval">Oval</option>
@@ -579,7 +614,7 @@ export const SeatingPlannerView: React.FC = () => {
                   type="text"
                   value={formNotes}
                   onChange={(e) => setFormNotes(e.target.value)}
-                  className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                 />
               </div>
 
@@ -587,7 +622,7 @@ export const SeatingPlannerView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setEditingTable(null)}
-                  className="px-3.5 py-1.5 border border-border-strong rounded-lg text-stone-600 dark:text-stone-300 hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] transition cursor-pointer"
+                  className="px-3.5 py-1.5 border border-border-strong rounded-lg text-secondary hover:bg-subtle transition cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -602,6 +637,18 @@ export const SeatingPlannerView: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Generate Seating Draft Modal */}
+      <GenerateSeatingDraftModal
+        isOpen={isDraftModalOpen}
+        onClose={() => setIsDraftModalOpen(false)}
+        currentEventId={state.event.id}
+        guests={guests}
+        existingTables={tables}
+        onApplyDraft={(newTables, updatedGuests, description) =>
+          applySeatingDraft(newTables, updatedGuests, description)
+        }
+      />
     </div>
   );
 };

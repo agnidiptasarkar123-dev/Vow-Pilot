@@ -4,6 +4,7 @@
 
 @utility bg-canvas { background-color: var(--bg-canvas); }
 @utility bg-surface { background-color: var(--bg-surface); }
+@utility bg-elevated { background-color: var(--bg-elevated); }
 @utility bg-subtle { background-color: var(--bg-subtle); }
 @utility bg-muted { background-color: var(--bg-muted); }
 @utility border-subtle { border-color: var(--border-subtle); }
@@ -20,6 +21,7 @@
   :root {
     --bg-canvas: #FAF8F5;
     --bg-surface: #FFFFFF;
+    --bg-elevated: #FFFFFF;
     --bg-subtle: #F4EFEA;
     --bg-muted: #EBE5DC;
     --border-subtle: #E6DFD5;
@@ -31,23 +33,34 @@
     --accent-hover: #9E4B2D;
     --accent-subtle: #FAF0EB;
     --accent-border: #E8C8BD;
+    --rose-accent: #C998A2;
+    --botanical-sage: #6B7F6B;
+    --status-success: #047857;
+    --status-warning: #B45309;
+    --status-danger: #BE123C;
   }
 
-  /* Real Forest-Green Dark Mode (Refined Botanical Palette) */
+  /* Premium Low-Glare Midnight Cocoa & Muted Rose Palette */
   .dark {
-    --bg-canvas: #16221A;
-    --bg-surface: #1F2D24;
-    --bg-subtle: #26362C;
-    --bg-muted: #2E4034;
-    --border-subtle: #2D3F33;
-    --border-strong: #3D5445;
-    --text-primary: #FAF8F5;
-    --text-secondary: #C5D1C8;
-    --text-tertiary: #8FA895;
-    --accent: #C66B49;
-    --accent-hover: #D97A56;
-    --accent-subtle: #2B211E;
-    --accent-border: #4D332B;
+    --bg-canvas: #171517;
+    --bg-surface: #211E21;
+    --bg-elevated: #292429;
+    --bg-subtle: #322B30;
+    --bg-muted: #3D353B;
+    --border-subtle: #41373D;
+    --border-strong: #55464D;
+    --text-primary: #F1E9E3;
+    --text-secondary: #C5B9B3;
+    --text-tertiary: #A99C96;
+    --accent: #D48668;
+    --accent-hover: #E09579;
+    --accent-subtle: #2E2222;
+    --accent-border: #5C3830;
+    --rose-accent: #C998A2;
+    --botanical-sage: #8CA394;
+    --status-success: #91B8A0;
+    --status-warning: #E5BD76;
+    --status-danger: #E58C91;
   }
 
   html {

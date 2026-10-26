@@ -3,6 +3,8 @@ import { useEvent } from '../../context/EventContext';
 import { GuestRecord, RsvpStatus } from '../../types';
 import { formatGuestsCsv } from '../../context/slices/guestSlice';
 import { PublicRsvpModal } from '../rsvp/PublicRsvpModal';
+import { GuestRsvpQrModal } from '../rsvp/GuestRsvpQrModal';
+import { BatchGuestQrModal } from '../rsvp/BatchGuestQrModal';
 import {
   Users,
   UserCheck,
@@ -17,6 +19,7 @@ import {
   CheckCircle2,
   Utensils,
   Accessibility,
+  QrCode,
 } from 'lucide-react';
 
 export const GuestManagementView: React.FC = () => {
@@ -40,6 +43,8 @@ export const GuestManagementView: React.FC = () => {
   const [editingGuest, setEditingGuest] = useState<GuestRecord | null>(null);
   const [activeRsvpToken, setActiveRsvpToken] = useState<string | null>(null);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
+  const [qrModalGuest, setQrModalGuest] = useState<GuestRecord | null>(null);
+  const [isBatchQrModalOpen, setIsBatchQrModalOpen] = useState(false);
 
   // Form state for Add/Edit
   const [formName, setFormName] = useState('');
@@ -314,9 +319,20 @@ export const GuestManagementView: React.FC = () => {
         {/* Action Buttons */}
         <div className="flex items-center gap-2">
           <button
+            onClick={() => setIsBatchQrModalOpen(true)}
+            disabled={guests.length === 0}
+            data-testid="batch-qr-btn"
+            title="Preview and print individual RSVP QR passes for all guests"
+            className="px-3 py-1.5 rounded-lg border border-border-subtle hover:bg-subtle text-secondary text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-40"
+          >
+            <QrCode className="w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]" />
+            <span>Batch QR Passes</span>
+          </button>
+
+          <button
             onClick={handleExportCsv}
             disabled={guests.length === 0}
-            className="px-3 py-1.5 rounded-lg border border-border-subtle hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] text-secondary text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-40"
+            className="px-3 py-1.5 rounded-lg border border-border-subtle hover:bg-subtle text-secondary text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-40"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Export CSV</span>
@@ -436,9 +452,19 @@ export const GuestManagementView: React.FC = () => {
                           <button
                             onClick={() => setActiveRsvpToken(guest.invitationToken)}
                             title="Preview and test public RSVP form for this guest"
-                            className="p-1 rounded text-[#B85C3A] dark:text-[#E8D7C4] hover:bg-[#FAF0EB] dark:hover:bg-[#2B211E] transition cursor-pointer"
+                            className="p-1 rounded text-[#B85C3A] dark:text-[#E8D7C4] hover:bg-[#FAF0EB] dark:hover:bg-[#2E2222] transition cursor-pointer"
                           >
                             <Share2 className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* Dedicated QR Code Modal */}
+                          <button
+                            onClick={() => setQrModalGuest(guest)}
+                            data-testid={`guest-qr-btn-${guest.id}`}
+                            title={`Generate, preview, or print RSVP QR code for ${guest.name}`}
+                            className="p-1 rounded text-[#B85C3A] dark:text-[#D48668] hover:bg-[#FAF0EB] dark:hover:bg-[#2E2222] transition cursor-pointer"
+                          >
+                            <QrCode className="w-3.5 h-3.5" />
                           </button>
 
                           {/* Copy RSVP Link */}
@@ -723,6 +749,23 @@ export const GuestManagementView: React.FC = () => {
           onClose={() => setActiveRsvpToken(null)}
         />
       )}
+
+      {/* Individual Guest QR Code Modal */}
+      <GuestRsvpQrModal
+        guest={qrModalGuest}
+        isOpen={!!qrModalGuest}
+        onClose={() => setQrModalGuest(null)}
+        onUpdateGuest={updateGuest}
+        onPreviewPublicRsvp={(token) => setActiveRsvpToken(token)}
+      />
+
+      {/* Batch Guest QR Modal */}
+      <BatchGuestQrModal
+        guests={filteredGuests}
+        eventName={state.event.name}
+        isOpen={isBatchQrModalOpen}
+        onClose={() => setIsBatchQrModalOpen(false)}
+      />
     </div>
   );
 };

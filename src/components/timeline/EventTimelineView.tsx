@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useEvent } from '../../context/EventContext';
 import { TimelineItem } from '../../types';
 import { detectTimelineConflicts } from '../../context/slices/timelineSlice';
+import { StarterRunSheetModal } from './StarterRunSheetModal';
 import {
   Clock,
   Plus,
@@ -13,6 +14,7 @@ import {
   Edit2,
   ArrowUp,
   ArrowDown,
+  Sparkles,
 } from 'lucide-react';
 
 export const EventTimelineView: React.FC = () => {
@@ -22,6 +24,7 @@ export const EventTimelineView: React.FC = () => {
     updateTimelineItem,
     deleteTimelineItem,
     reorderTimeline,
+    applyTimelinePreset,
     isReadOnly,
   } = useEvent();
 
@@ -34,6 +37,7 @@ export const EventTimelineView: React.FC = () => {
 
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isStarterModalOpen, setIsStarterModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<TimelineItem | null>(null);
 
   // Form state
@@ -164,16 +168,26 @@ export const EventTimelineView: React.FC = () => {
             <Clock className="w-5 h-5 text-[#B85C3A] dark:text-[#C66B49]" />
             Event-Day Timeline & Master Run Sheet
           </h2>
-          <p className="text-xs text-tertiary mt-0.5">
+          <p className="text-xs text-secondary mt-0.5">
             Coordinate ceremony milestones, vendor load-ins, and guest movements with minute-level precision.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => setIsStarterModalOpen(true)}
+            disabled={isReadOnly}
+            data-testid="start-from-template-btn"
+            className="px-3.5 py-1.5 rounded-lg border border-border-subtle hover:bg-subtle text-secondary text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-40"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]" />
+            <span>Start from Template</span>
+          </button>
+
+          <button
             onClick={handlePrintRunSheet}
             data-testid="print-run-sheet-btn"
-            className="px-3.5 py-1.5 rounded-lg border border-border-subtle hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] text-secondary text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+            className="px-3.5 py-1.5 rounded-lg border border-border-subtle hover:bg-subtle text-secondary text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
           >
             <Printer className="w-4 h-4" />
             <span>Print Run Sheet</span>
@@ -195,13 +209,13 @@ export const EventTimelineView: React.FC = () => {
         <div
           role="alert"
           aria-live="polite"
-          className="mb-6 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200"
+          className="mb-6 p-4 rounded-xl bg-amber-50 dark:bg-[#332A20] border border-amber-300 dark:border-[#55462D] text-xs text-amber-900 dark:text-[#E5BD76]"
         >
           <div className="flex items-center gap-2 font-bold mb-1">
-            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-[#E5BD76] shrink-0" />
             <span>Timeline Overlaps & Schedule Warnings ({conflicts.length})</span>
           </div>
-          <ul className="list-disc list-inside space-y-1 pl-1 text-[11px] text-amber-800 dark:text-amber-300">
+          <ul className="list-disc list-inside space-y-1 pl-1 text-[11px] text-amber-800 dark:text-[#C5B9B3]">
             {conflicts.map((msg, idx) => (
               <li key={idx}>{msg}</li>
             ))}
@@ -212,14 +226,39 @@ export const EventTimelineView: React.FC = () => {
       {/* Timeline Schedule Cards / Table */}
       <div className="bg-surface border border-border-subtle rounded-xl overflow-hidden shadow-xs">
         {timeline.length === 0 ? (
-          <div className="text-center py-12 px-4">
-            <Clock className="w-8 h-8 text-[#A8A29E] dark:text-[#78716C] mx-auto mb-2" />
-            <h4 className="font-serif-heading text-base font-semibold text-primary">
-              No activities in schedule
-            </h4>
-            <p className="text-xs text-tertiary max-w-sm mx-auto mt-1">
-              Click "+ Add Activity" to build an ordered run sheet for your wedding or celebration day.
-            </p>
+          <div className="text-center py-12 px-6 space-y-4 max-w-lg mx-auto">
+            <div className="w-12 h-12 rounded-2xl bg-[#FAF0EB] dark:bg-[#2E2222] text-[#B85C3A] dark:text-[#E8D7C4] flex items-center justify-center mx-auto border border-[#E8C8BD]/80 dark:border-[#5C3830] shadow-2xs">
+              <Clock className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h4 className="font-serif-heading text-base font-semibold text-primary">
+                Build Your Event Day Run Sheet
+              </h4>
+              <p className="text-xs text-secondary leading-relaxed">
+                Start from a curated template for weddings, birthdays, corporate summits, or cultural festivals, or add custom activities one by one.
+              </p>
+            </div>
+            {!isReadOnly && (
+              <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setIsStarterModalOpen(true)}
+                  data-testid="starter-run-sheet-empty-btn"
+                  className="px-4 py-2 rounded-lg bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Generate Starter Run Sheet</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleOpenAddModal}
+                  className="px-4 py-2 rounded-lg bg-subtle hover:bg-muted text-primary text-xs font-semibold border border-subtle transition cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Activity Manually</span>
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="divide-y divide-[#F4EFEA] dark:divide-[#26362C]">
@@ -567,6 +606,16 @@ export const EventTimelineView: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Starter Run Sheet Modal */}
+      <StarterRunSheetModal
+        isOpen={isStarterModalOpen}
+        onClose={() => setIsStarterModalOpen(false)}
+        currentEventId={state.event.id}
+        currentEventType={state.event.eventType}
+        hasExistingActivities={timeline.length > 0}
+        onApplyPreset={(items, strategy) => applyTimelinePreset(items, strategy)}
+      />
     </div>
   );
 };

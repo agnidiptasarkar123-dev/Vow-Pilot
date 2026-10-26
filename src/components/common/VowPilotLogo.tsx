@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '../../context/ThemeContext';
 
 export interface VowPilotLogoProps {
   variant?: 'horizontal' | 'compact' | 'mark' | 'stacked';
@@ -12,11 +13,25 @@ export interface VowPilotLogoProps {
 export const VowPilotLogo: React.FC<VowPilotLogoProps> = ({
   variant = 'horizontal',
   size = 'md',
-  theme = 'default',
+  theme: explicitTheme,
   showTagline = false,
   className = '',
   onClick,
 }) => {
+  let isDarkSystem = false;
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const themeCtx = useTheme();
+    isDarkSystem = themeCtx.isDark;
+  } catch {
+    // Outside ThemeProvider or isolated unit test
+    if (typeof document !== 'undefined' && document.documentElement.classList.contains('dark')) {
+      isDarkSystem = true;
+    }
+  }
+
+  const theme = explicitTheme ?? (isDarkSystem ? 'dark' : 'default');
+
   // Dimensions calibrated for optical balance
   const sizeMap = {
     xs: { mark: 22, text: 'text-base', spacing: 'gap-2', tagline: 'text-[9px]' },
@@ -43,14 +58,14 @@ export const VowPilotLogo: React.FC<VowPilotLogoProps> = ({
     },
     dark: {
       vPrimary: '#FAF8F5',     // Warm Cream
-      vSecondary: '#E8D7C4',   // Sand
-      leaf: '#8FA895',         // Soft Botanical Sage
-      leafDark: '#758F7B',     // Botanical Green
-      bud: '#F4D7CF',          // Blush
+      vSecondary: '#D48668',   // Terracotta accent
+      leaf: '#8CA394',         // Restrained Botanical Sage
+      leafDark: '#6B7F6B',     // Mid Sage
+      bud: '#C998A2',          // Muted Rose
       budLight: '#E8C8BD',     // Soft Sand
-      star: '#E8D7C4',         // Sand Gold
-      text: '#FAF8F5',         // Warm Cream
-      tagline: '#C5D1C8',      // Muted Sage Text
+      star: '#D48668',         // Terracotta Gold
+      text: '#F1E9E3',         // Warm Cream Text
+      tagline: '#C5B9B3',      // Muted Secondary Text
     },
     forest: {
       vPrimary: '#FAF8F5',     // Warm Cream

@@ -15,8 +15,8 @@ describe('VowPilot UI Collaboration, Auth & Runtime Indicators', () => {
 
     const badge = screen.getByTestId('collab-status-badge');
     expect(badge).toBeInTheDocument();
-    expect(badge).toHaveTextContent(/Local Mode/i);
-    expect(badge).toHaveTextContent(/Storage v1/i);
+    expect(badge).toHaveTextContent(/Local · This device/i);
+    expect(badge).not.toHaveTextContent(/Storage v1/i);
   });
 
   it('opens AuthModal from header sign-in pill and toggles between Sign In and Register', async () => {

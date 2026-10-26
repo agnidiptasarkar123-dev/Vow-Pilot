@@ -8,7 +8,8 @@ interface ModalProps {
   title: string;
   description?: string;
   children: React.ReactNode;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
+  maxWidthClass?: string;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -19,6 +20,7 @@ export const Modal: React.FC<ModalProps> = ({
   description,
   children,
   maxWidth = 'lg',
+  maxWidthClass,
 }) => {
   const instanceId = React.useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const titleId = id ? `modal-title-${id}` : 'modal-title';
@@ -91,14 +93,18 @@ export const Modal: React.FC<ModalProps> = ({
 
   if (!isOpen) return null;
 
-  const maxWidthClass = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
-    '2xl': 'max-w-2xl',
-    '3xl': 'max-w-3xl',
-  }[maxWidth];
+  const resolvedMaxWidthClass =
+    maxWidthClass ||
+    {
+      sm: 'max-w-sm',
+      md: 'max-w-md',
+      lg: 'max-w-lg',
+      xl: 'max-w-xl',
+      '2xl': 'max-w-2xl',
+      '3xl': 'max-w-3xl',
+      '4xl': 'max-w-4xl',
+    }[maxWidth] ||
+    'max-w-lg';
 
   return (
     <div
@@ -114,22 +120,22 @@ export const Modal: React.FC<ModalProps> = ({
       {/* Modal Surface */}
       <div
         ref={modalRef}
-        className={`relative w-full ${maxWidthClass} bg-white rounded-xl shadow-xl border border-[#E6DFD5] overflow-hidden z-10`}
+        className={`relative w-full ${resolvedMaxWidthClass} bg-surface rounded-xl shadow-xl border border-subtle overflow-hidden z-10 text-primary`}
       >
-        <div className="flex items-start justify-between p-5 border-b border-[#F4EFEA] bg-[#FAF8F5]">
+        <div className="flex items-start justify-between p-5 border-b border-subtle bg-subtle">
           <div>
-            <h3 id={titleId} className="text-lg font-bold text-[#1C1917] font-serif-heading">
+            <h3 id={titleId} className="text-lg font-bold text-primary font-serif-heading">
               {title}
             </h3>
             {description && (
-              <p id={descriptionId} className="text-xs text-[#5C554E] mt-0.5">
+              <p id={descriptionId} className="text-xs text-secondary mt-0.5">
                 {description}
               </p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-md text-[#5C554E] hover:text-[#1C1917] hover:bg-[#EAE4DB] transition"
+            className="p-1.5 rounded-md text-secondary hover:text-primary hover:bg-muted transition cursor-pointer"
             aria-label="Close dialog"
           >
             <X className="w-5 h-5" />

@@ -4,7 +4,8 @@ import { compareCategoryVendors, draftClarificationMessage } from '../../domain/
 import { formatCurrency, parseDisplayToMinor } from '../../domain/currency';
 import { Vendor, VendorQuote } from '../../types';
 import { Modal } from '../common/Modal';
-import { EmptyState } from '../common/EmptyState';
+import { getCategoryStarter } from './vendorCategoryStarters';
+import { CategoryStarterWorkflow } from './CategoryStarterWorkflow';
 import {
   AlertCircle,
   AlertTriangle,
@@ -254,10 +255,10 @@ export const VendorCoordinationView: React.FC = () => {
       {/* Header and Quick Actions */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#26221F] font-serif-heading">
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary font-serif-heading">
             Vendor Directory & Quotation Matrix
           </h1>
-          <p className="text-xs text-[#78716C] mt-1">
+          <p className="text-xs text-secondary mt-1">
             Compare service inclusions side-by-side, detect missing contract terms, and draft clarification requests.
           </p>
         </div>
@@ -269,21 +270,21 @@ export const VendorCoordinationView: React.FC = () => {
                 setQuoteVendorId(comparison.rows[0]?.vendor.id || state.vendors[0]?.id || '');
                 setIsAddQuoteOpen(true);
               }}
-              className="px-3.5 py-2 rounded-md bg-white border border-[#D5CCC0] text-[#26221F] hover:bg-[#FAF8F5] text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+              className="px-3.5 py-2 rounded-md bg-surface border border-subtle text-primary hover:bg-subtle text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
             >
-              <FileText className="w-3.5 h-3.5 text-[#B85C3A]" />
+              <FileText className="w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]" />
               Log Quotation
             </button>
             <button
               onClick={() => setIsAddVendorOpen(true)}
-              className="px-4 py-2 rounded-md bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+              className="px-4 py-2 rounded-md bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               Add Supplier
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-stone-100 text-stone-500 text-xs font-medium border border-stone-200">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-subtle text-secondary text-xs font-medium border border-subtle">
             <Lock className="w-3.5 h-3.5" />
             <span>Read-Only Mode</span>
           </div>
@@ -291,7 +292,7 @@ export const VendorCoordinationView: React.FC = () => {
       </div>
 
       {/* Category Tabs */}
-      <div className="flex overflow-x-auto no-scrollbar gap-2 border-b border-[#E6DFD5] pb-2">
+      <div className="flex overflow-x-auto no-scrollbar gap-2 border-b border-subtle pb-2">
         {state.categories.map((cat) => {
           const catVendorCount = state.vendors.filter((v) => v.categoryId === cat.id).length;
           const isSelected = selectedCategoryTab === cat.id;
@@ -299,16 +300,16 @@ export const VendorCoordinationView: React.FC = () => {
             <button
               key={cat.id}
               onClick={() => setSelectedCategoryTab(cat.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-2 cursor-pointer ${
                 isSelected
-                  ? 'bg-[#26221F] text-white font-bold shadow-xs'
-                  : 'bg-white text-[#5C554E] hover:text-[#26221F] border border-[#E6DFD5]'
+                  ? 'bg-[#B85C3A] text-white font-bold shadow-xs'
+                  : 'bg-surface text-secondary hover:text-primary border border-subtle'
               }`}
             >
               <span>{cat.name}</span>
               <span
                 className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                  isSelected ? 'bg-white/20 text-white' : 'bg-[#FAF8F5] text-[#78716C]'
+                  isSelected ? 'bg-white/20 text-white' : 'bg-subtle text-secondary'
                 }`}
               >
                 {catVendorCount}
@@ -320,10 +321,10 @@ export const VendorCoordinationView: React.FC = () => {
 
       {/* Quotation Matrix Cards */}
       <div className="space-y-6">
-        <div className="flex items-center justify-between text-xs text-[#78716C]">
+        <div className="flex items-center justify-between text-xs text-secondary">
           <span>
             Showing quotations for <strong>{activeCategory.name}</strong> • Category Average:{' '}
-            <span className="font-mono font-semibold text-[#26221F]">
+            <span className="font-mono font-semibold text-primary">
               {formatCurrency(comparison.averageQuotedPrice, state.event.currency)}
             </span>
           </span>
@@ -331,15 +332,17 @@ export const VendorCoordinationView: React.FC = () => {
         </div>
 
         {comparison.rows.length === 0 ? (
-          <EmptyState
-            icon={FileText}
-            title={`No vendor records registered under ${activeCategory.name}`}
-            description="Add suppliers and log quotation terms to compare pricing, inclusions, and contract coverage."
-            action={!isReadOnly ? {
-              label: `Add First Supplier in ${activeCategory.name}`,
-              icon: Plus,
-              onClick: () => setIsAddVendorOpen(true),
-            } : undefined}
+          <CategoryStarterWorkflow
+            categoryName={activeCategory.name}
+            starterInfo={getCategoryStarter(activeCategory.id, activeCategory.name)}
+            isReadOnly={isReadOnly}
+            onAddSupplier={() => setIsAddVendorOpen(true)}
+            onLogQuote={() => {
+              const vendorInThisCategory = state.vendors.find((v) => v.categoryId === activeCategory.id);
+              setQuoteVendorId(vendorInThisCategory?.id || state.vendors[0]?.id || '');
+              setIsAddQuoteOpen(true);
+            }}
+            hasVendorsInAnyCategory={state.vendors.length > 0}
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -353,12 +356,12 @@ export const VendorCoordinationView: React.FC = () => {
               return (
                 <div
                   key={vendor.id}
-                  className={`bg-white rounded-xl border p-5 flex flex-col justify-between transition shadow-xs relative ${
+                  className={`bg-surface rounded-xl border p-5 flex flex-col justify-between transition shadow-xs relative ${
                     isSelected
                       ? 'border-[#047857] ring-1 ring-[#047857]'
                       : isExpired
-                      ? 'border-amber-300'
-                      : 'border-[#E6DFD5]'
+                      ? 'border-amber-400 dark:border-amber-600'
+                      : 'border-subtle'
                   }`}
                 >
                   <div className="space-y-3">
@@ -366,12 +369,12 @@ export const VendorCoordinationView: React.FC = () => {
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <h3 className="font-bold text-base text-[#26221F] font-serif-heading">
+                          <h3 className="font-bold text-base text-primary font-serif-heading">
                             {vendor.name}
                           </h3>
                         </div>
                         {vendor.isSample && (
-                          <span className="inline-block mt-0.5 px-1.5 py-0.2 rounded text-[9px] font-bold uppercase bg-amber-50 text-amber-800 border border-amber-200">
+                          <span className="inline-block mt-0.5 px-1.5 py-0.2 rounded text-[9px] font-bold uppercase bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
                             Fictional Demonstration Record
                           </span>
                         )}
@@ -380,7 +383,7 @@ export const VendorCoordinationView: React.FC = () => {
                       {!isReadOnly && (
                         <button
                           onClick={() => handleDeleteVendorWithConfirm(vendor.id, vendor.name)}
-                          className="p-1 rounded text-neutral-400 hover:text-red-600 transition"
+                          className="p-1 rounded text-secondary hover:text-red-500 transition cursor-pointer"
                           title="Delete Vendor"
                           aria-label={`Delete vendor: ${vendor.name}`}
                         >
@@ -390,10 +393,10 @@ export const VendorCoordinationView: React.FC = () => {
                     </div>
 
                     {/* Contact & Rating info */}
-                    <div className="text-xs text-[#78716C] space-y-1">
+                    <div className="text-xs text-secondary space-y-1">
                       {vendor.contactName && (
                         <p className="flex items-center gap-1.5">
-                          <span className="font-semibold text-[#26221F]">Contact:</span> {vendor.contactName}
+                          <span className="font-semibold text-primary">Contact:</span> {vendor.contactName}
                         </p>
                       )}
                       {vendor.email && (
@@ -409,28 +412,28 @@ export const VendorCoordinationView: React.FC = () => {
                         </p>
                       )}
                       {vendor.rating && (
-                        <p className="flex items-center gap-1 text-amber-700">
+                        <p className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
                           <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
                           <span className="font-bold">{vendor.rating}</span>
-                          <span className="text-[10px] text-[#78716C]">({vendor.ratingSource})</span>
+                          <span className="text-[10px] text-muted">({vendor.ratingSource})</span>
                         </p>
                       )}
                     </div>
 
                     {/* Quotation Pricing Strip */}
-                    <div className="p-3 bg-[#FAF8F5] rounded-lg border border-[#E6DFD5] space-y-1">
+                    <div className="p-3 bg-subtle rounded-lg border border-subtle space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-[11px] text-[#78716C] font-semibold">
+                        <span className="text-[11px] text-secondary font-semibold">
                           Quoted Price
                         </span>
                         {quote && (
                           <span
                             className={`text-[10px] font-bold px-1.5 py-0.2 rounded ${
                               isSelected
-                                ? 'bg-emerald-100 text-[#047857]'
+                                ? 'bg-emerald-100 dark:bg-emerald-950/60 text-[#047857] dark:text-emerald-400'
                                 : quote.status === 'expired'
-                                ? 'bg-red-100 text-red-700'
-                                : 'bg-neutral-100 text-neutral-700'
+                                ? 'bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300'
+                                : 'bg-subtle text-secondary'
                             }`}
                           >
                             {quote.status.toUpperCase()}
@@ -438,14 +441,14 @@ export const VendorCoordinationView: React.FC = () => {
                         )}
                       </div>
 
-                      <div className="text-xl font-bold font-mono text-[#26221F]">
+                      <div className="text-xl font-bold font-mono text-primary">
                         {quote ? formatCurrency(quote.quotedAmount, quote.currency) : 'No formal quote'}
                       </div>
 
                       {quote && comparison.averageQuotedPrice > 0 && (
                         <span
                           className={`text-[11px] font-mono block ${
-                            row.priceDeltaFromAverage > 0 ? 'text-[#BE123C]' : 'text-[#047857]'
+                            row.priceDeltaFromAverage > 0 ? 'text-[#BE123C] dark:text-rose-400' : 'text-[#047857] dark:text-emerald-400'
                           }`}
                         >
                           {row.priceDeltaFromAverage >= 0 ? '+' : ''}
@@ -456,7 +459,7 @@ export const VendorCoordinationView: React.FC = () => {
 
                     {/* Expiration or Missing Details Alert */}
                     {quote && isExpired && (
-                      <div className="p-2.5 bg-red-50 border border-red-200 rounded-lg text-xs text-red-900 flex items-start gap-1.5">
+                      <div className="p-2.5 bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-900 rounded-lg text-xs text-red-900 dark:text-red-200 flex items-start gap-1.5">
                         <AlertCircle className="w-3.5 h-3.5 text-[#BE123C] shrink-0 mt-0.5" />
                         <div>
                           <span className="font-bold">Quotation Expired:</span> Validity expired on {quote.validityDate}. Rate must be re-confirmed with supplier.
@@ -465,9 +468,9 @@ export const VendorCoordinationView: React.FC = () => {
                     )}
 
                     {quote && hasMissingDetails && (
-                      <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 space-y-1">
+                      <div className="p-2.5 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-900 rounded-lg text-xs text-amber-900 dark:text-amber-200 space-y-1">
                         <div className="flex items-center gap-1 font-bold">
-                          <AlertTriangle className="w-3.5 h-3.5 text-[#B45309]" />
+                          <AlertTriangle className="w-3.5 h-3.5 text-[#B45309] dark:text-amber-400" />
                           <span>Missing Quotation Details:</span>
                         </div>
                         <ul className="list-disc list-inside text-[11px] space-y-0.5">
@@ -482,17 +485,17 @@ export const VendorCoordinationView: React.FC = () => {
                     {quote && (
                       <div className="space-y-2 text-xs pt-1">
                         <div>
-                          <span className="font-semibold text-[#26221F] block mb-1">
+                          <span className="font-semibold text-primary block mb-1">
                             Included Services ({quote.includedServices.length}):
                           </span>
-                          <ul className="space-y-0.5 text-[11px] text-[#5C554E]">
+                          <ul className="space-y-0.5 text-[11px] text-secondary">
                             {quote.includedServices.slice(0, 3).map((inc, i) => (
                               <li key={i} className="flex items-start gap-1">
-                                <span className="text-[#047857] font-bold">✓</span> {inc}
+                                <span className="text-[#047857] dark:text-emerald-400 font-bold">✓</span> {inc}
                               </li>
                             ))}
                             {quote.includedServices.length > 3 && (
-                              <li className="text-[10px] text-[#78716C] pl-3">
+                              <li className="text-[10px] text-muted pl-3">
                                 +{quote.includedServices.length - 3} more itemized items
                               </li>
                             )}
@@ -501,13 +504,13 @@ export const VendorCoordinationView: React.FC = () => {
 
                         {quote.exclusions.length > 0 && (
                           <div>
-                            <span className="font-semibold text-[#BE123C] block mb-1">
+                            <span className="font-semibold text-[#BE123C] dark:text-rose-400 block mb-1">
                               Explicit Exclusions ({quote.exclusions.length}):
                             </span>
-                            <ul className="space-y-0.5 text-[11px] text-[#78716C]">
+                            <ul className="space-y-0.5 text-[11px] text-muted">
                               {quote.exclusions.map((exc, i) => (
                                 <li key={i} className="flex items-start gap-1">
-                                  <span className="text-[#BE123C]">✕</span> {exc}
+                                  <span className="text-[#BE123C] dark:text-rose-400">✕</span> {exc}
                                 </li>
                               ))}
                             </ul>
@@ -518,13 +521,13 @@ export const VendorCoordinationView: React.FC = () => {
                   </div>
 
                   {/* Bottom Action Strip */}
-                    <div className="pt-4 border-t border-[#F4EFEA] flex items-center justify-between gap-2 mt-4">
+                    <div className="pt-4 border-t border-subtle flex items-center justify-between gap-2 mt-4">
                       {quote ? (
                         <>
                           <button
                             data-testid="draft-clarification-btn"
                             onClick={() => handleOpenClarification(vendor, quote)}
-                            className="px-2.5 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#EAE4DB] text-[#26221F] text-[11px] font-semibold border border-[#D5CCC0] transition"
+                            className="px-2.5 py-1.5 rounded bg-subtle hover:bg-surface text-primary text-[11px] font-semibold border border-subtle transition cursor-pointer"
                             aria-label={`Draft clarification message for ${vendor.name}`}
                           >
                             Draft Clarification
@@ -534,16 +537,16 @@ export const VendorCoordinationView: React.FC = () => {
                             <button
                               onClick={() => selectQuote(quote.id)}
                               aria-label={isSelected ? `Proposal currently selected for ${vendor.name}` : `Select proposal from ${vendor.name}`}
-                              className={`px-3 py-1.5 rounded text-[11px] font-semibold transition ${
+                              className={`px-3 py-1.5 rounded text-[11px] font-semibold transition cursor-pointer ${
                                 isSelected
                                   ? 'bg-[#047857] text-white'
-                                  : 'bg-[#26221F] hover:bg-[#33302B] text-white shadow-xs'
+                                  : 'bg-[#B85C3A] hover:bg-[#9E4B2D] text-white shadow-xs'
                               }`}
                             >
                               {isSelected ? '✓ Selected' : 'Select Proposal'}
                             </button>
                           ) : (
-                            <span className={`px-2.5 py-1 rounded text-[11px] font-semibold ${isSelected ? 'text-[#047857] font-bold' : 'text-[#78716C]'}`}>
+                            <span className={`px-2.5 py-1 rounded text-[11px] font-semibold ${isSelected ? 'text-[#047857] font-bold' : 'text-secondary'}`}>
                               {isSelected ? '✓ Selected' : 'Proposal Logged'}
                             </span>
                           )}
@@ -555,12 +558,12 @@ export const VendorCoordinationView: React.FC = () => {
                             setIsAddQuoteOpen(true);
                           }}
                           aria-label={`Submit quotation for ${vendor.name}`}
-                          className="w-full py-1.5 rounded bg-[#FAF8F5] hover:bg-[#EAE4DB] text-[#26221F] text-xs font-semibold border border-[#D5CCC0] transition"
+                          className="w-full py-1.5 rounded bg-subtle hover:bg-surface text-primary text-xs font-semibold border border-subtle transition cursor-pointer"
                         >
                           + Submit Quotation
                         </button>
                       ) : (
-                        <span className="w-full text-center py-1 text-xs text-[#A8A29E] italic">
+                        <span className="w-full text-center py-1 text-xs text-muted italic">
                           No quotation submitted
                         </span>
                       )}
@@ -788,71 +791,71 @@ export const VendorCoordinationView: React.FC = () => {
       >
         <div className="space-y-4 text-xs">
           <div>
-            <label className="block font-semibold text-[#26221F] mb-1">Company / Vendor Name *</label>
+            <label className="block font-semibold text-primary mb-1">Company / Vendor Name *</label>
             <input
               type="text"
               value={vendorName}
               onChange={(e) => setVendorName(e.target.value)}
               placeholder="e.g. Royal Rajputana Sound & Lights"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold text-[#26221F] mb-1">Contact Person</label>
+              <label className="block font-semibold text-primary mb-1">Contact Person</label>
               <input
                 type="text"
                 value={vendorContact}
                 onChange={(e) => setVendorContact(e.target.value)}
                 placeholder="e.g. Vikramaditya Rathore"
-                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
               />
             </div>
             <div>
-              <label className="block font-semibold text-[#26221F] mb-1">Phone Number</label>
+              <label className="block font-semibold text-primary mb-1">Phone Number</label>
               <input
                 type="text"
                 value={vendorPhone}
                 onChange={(e) => setVendorPhone(e.target.value)}
                 placeholder="+91 98XXX XXXXX"
-                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block font-semibold text-[#26221F] mb-1">Email Address</label>
+            <label className="block font-semibold text-primary mb-1">Email Address</label>
             <input
               type="email"
               value={vendorEmail}
               onChange={(e) => setVendorEmail(e.target.value)}
               placeholder="contact@supplier.example"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#26221F] mb-1">Notes (optional)</label>
+            <label className="block font-semibold text-primary mb-1">Notes (optional)</label>
             <textarea
               rows={2}
               value={vendorNotes}
               onChange={(e) => setVendorNotes(e.target.value)}
               placeholder="Referred by family, specializes in heritage acoustics..."
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div className="flex justify-end gap-2 pt-3">
             <button
               onClick={() => setIsAddVendorOpen(false)}
-              className="px-4 py-2 border border-[#D5CCC0] rounded-md text-[#5C554E] hover:bg-neutral-50"
+              className="px-4 py-2 border border-subtle rounded-md text-secondary hover:bg-subtle cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleCreateVendor}
-              className="px-4 py-2 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white font-semibold rounded-md shadow-xs"
+              className="px-4 py-2 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white font-semibold rounded-md shadow-xs cursor-pointer"
             >
               Register Supplier
             </button>
@@ -869,11 +872,11 @@ export const VendorCoordinationView: React.FC = () => {
       >
         <div className="space-y-4 text-xs">
           <div>
-            <label className="block font-semibold text-[#26221F] mb-1">Select Supplier *</label>
+            <label className="block font-semibold text-primary mb-1">Select Supplier *</label>
             <select
               value={quoteVendorId}
               onChange={(e) => setQuoteVendorId(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             >
               <option value="">Select a vendor...</option>
               {state.vendors.map((v) => (
@@ -886,7 +889,7 @@ export const VendorCoordinationView: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold text-[#26221F] mb-1">
+              <label className="block font-semibold text-primary mb-1">
                 Quoted Amount ({state.event.currency}) *
               </label>
               <input
@@ -894,33 +897,33 @@ export const VendorCoordinationView: React.FC = () => {
                 value={quoteAmountDisplay}
                 onChange={(e) => setQuoteAmountDisplay(e.target.value)}
                 placeholder="e.g. 350000"
-                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-[#26221F] mb-1">Quote Validity Date</label>
+              <label className="block font-semibold text-primary mb-1">Quote Validity Date</label>
               <input
                 type="date"
                 value={quoteValidity}
                 onChange={(e) => setQuoteValidity(e.target.value)}
-                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block font-semibold text-[#26221F] mb-1">Quote Received Date</label>
+            <label className="block font-semibold text-primary mb-1">Quote Received Date</label>
             <input
               type="date"
               value={quoteDate}
               onChange={(e) => setQuoteDate(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#26221F] mb-1">
+            <label className="block font-semibold text-primary mb-1">
               Included Services (One per line)
             </label>
             <textarea
@@ -928,12 +931,12 @@ export const VendorCoordinationView: React.FC = () => {
               value={quoteInclusions}
               onChange={(e) => setQuoteInclusions(e.target.value)}
               placeholder="Courtyard sound equipment&#10;Wireless microphones&#10;On-site technician"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#26221F] mb-1">
+            <label className="block font-semibold text-primary mb-1">
               Explicit Exclusions (One per line)
             </label>
             <textarea
@@ -941,31 +944,31 @@ export const VendorCoordinationView: React.FC = () => {
               value={quoteExclusions}
               onChange={(e) => setQuoteExclusions(e.target.value)}
               placeholder="Overtime beyond 10 PM&#10;Power generator fuel"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[#26221F] mb-1">Payment Terms</label>
+            <label className="block font-semibold text-primary mb-1">Payment Terms</label>
             <input
               type="text"
               value={quotePaymentTerms}
               onChange={(e) => setQuotePaymentTerms(e.target.value)}
               placeholder="e.g. 50% advance on booking, 50% on event date"
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div className="flex justify-end gap-2 pt-3">
             <button
               onClick={() => setIsAddQuoteOpen(false)}
-              className="px-4 py-2 border border-[#D5CCC0] rounded-md text-[#5C554E] hover:bg-neutral-50"
+              className="px-4 py-2 border border-subtle rounded-md text-secondary hover:bg-subtle cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleCreateQuote}
-              className="px-4 py-2 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white font-semibold rounded-md shadow-xs"
+              className="px-4 py-2 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white font-semibold rounded-md shadow-xs cursor-pointer"
             >
               Record Proposal
             </button>

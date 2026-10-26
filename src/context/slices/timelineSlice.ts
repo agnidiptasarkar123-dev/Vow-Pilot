@@ -180,3 +180,50 @@ export function detectTimelineConflicts(timeline: TimelineItem[]): string[] {
 
   return conflicts;
 }
+
+export function handleApplyTimelinePreset(
+  state: AppState,
+  newItems: Array<Omit<TimelineItem, 'id'>>,
+  strategy: 'replace' | 'append'
+): AppState {
+  const existingTimeline = state.timeline || [];
+  const now = new Date().toISOString();
+
+  let finalItems: TimelineItem[] = [];
+
+  if (strategy === 'append') {
+    const existingMapped = [...existingTimeline];
+    const startingIndex = existingMapped.length + 1;
+    const mappedNew: TimelineItem[] = newItems.map((item, idx) => ({
+      ...item,
+      id: `tml-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}-${idx}`,
+      orderIndex: startingIndex + idx,
+    }));
+    finalItems = [...existingMapped, ...mappedNew].sort((a, b) => a.time.localeCompare(b.time));
+  } else {
+    // Replace strategy
+    finalItems = newItems
+      .map((item, idx) => ({
+        ...item,
+        id: `tml-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}-${idx}`,
+        orderIndex: idx + 1,
+      }))
+      .sort((a, b) => a.time.localeCompare(b.time));
+  }
+
+  const reIndexed = finalItems.map((item, idx) => ({ ...item, orderIndex: idx + 1 }));
+
+  const changeRecord: ChangeRecord = {
+    id: `chg-tml-${Date.now()}`,
+    timestamp: now,
+    changeType: 'timeline',
+    description: `Applied starter run sheet template (${strategy === 'append' ? 'Appended' : 'Replaced'}, ${newItems.length} activities).`,
+  };
+
+  return {
+    ...state,
+    timeline: reIndexed,
+    changeLog: [changeRecord, ...state.changeLog],
+  };
+}
+

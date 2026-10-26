@@ -37,23 +37,23 @@ export const DashboardView: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
       {/* Top Welcome & Mission Header */}
-      <Card padding="md" className="bg-white border-[#E6DFD5]">
+      <Card padding="md">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#1C1917] font-serif-heading tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold text-primary font-serif-heading tracking-tight">
                 {state.event.name}
               </h1>
               <Badge variant="accent" size="sm" className="uppercase font-semibold">
                 {state.event.eventType}
               </Badge>
             </div>
-            <div className="text-xs text-[#5C554E] flex flex-wrap items-center gap-3 pt-1">
-              <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-[#B85C3A]" /> {state.event.location}</span>
-              <span className="text-[#D5CCC0]">•</span>
-              <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-[#B85C3A]" /> {state.event.date}</span>
-              <span className="text-[#D5CCC0]">•</span>
-              <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-[#B85C3A]" /> {state.event.guestCount} Confirmed Guests</span>
+            <div className="text-xs text-secondary flex flex-wrap items-center gap-3 pt-1">
+              <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]" /> {state.event.location}</span>
+              <span className="text-tertiary">•</span>
+              <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]" /> {state.event.date}</span>
+              <span className="text-tertiary">•</span>
+              <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]" /> {state.event.guestCount} Confirmed Guests</span>
             </div>
           </div>
 
@@ -127,25 +127,25 @@ export const DashboardView: React.FC = () => {
       )}
 
       {/* Event Launchpad & Next Logical Steps (Information Architecture) */}
-      <div className="bg-[#FAF8F5] border border-[#E6DFD5] rounded-xl p-5 sm:p-6 space-y-4">
+      <div className="bg-subtle border border-subtle rounded-xl p-5 sm:p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <GitBranch className="w-4 h-4 text-[#B85C3A]" />
-            <h2 className="text-sm sm:text-base font-bold text-[#1C1917] font-serif-heading">
+            <GitBranch className="w-4 h-4 text-[#B85C3A] dark:text-[#D48668]" />
+            <h2 className="text-sm sm:text-base font-bold text-primary font-serif-heading">
               Planning Progression & Next Logical Actions
             </h2>
           </div>
-          <span className="text-xs text-[#6E665E] hidden sm:inline">
+          <span className="text-xs text-secondary hidden sm:inline">
             Actionable workflow guide
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Step 1: Budget Cap */}
-          <div className="bg-white p-3.5 rounded-lg border border-[#E6DFD5] flex flex-col justify-between space-y-2.5 shadow-2xs">
+          <div className="bg-surface p-3.5 rounded-lg border border-subtle flex flex-col justify-between space-y-2.5 shadow-2xs">
             <div className="space-y-1">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-[#1C1917]">1. Budget Strategy</span>
+                <span className="font-semibold text-primary">1. Budget Strategy</span>
                 <Badge
                   variant={overview.isOverrun ? 'error' : 'success'}
                   size="sm"
@@ -154,7 +154,7 @@ export const DashboardView: React.FC = () => {
                   {overview.isOverrun ? 'Overrun' : 'On Track'}
                 </Badge>
               </div>
-              <p className="text-[11px] text-[#6E665E] leading-relaxed">
+              <p className="text-[11px] text-secondary leading-relaxed">
                 {overview.isOverrun
                   ? `Deficit of ${formatCurrency(overview.overrunAmount, state.event.currency)}`
                   : `${formatCurrency(overview.remainingBudget, state.event.currency)} runway uncommitted`}
@@ -162,17 +162,17 @@ export const DashboardView: React.FC = () => {
             </div>
             <button
               onClick={() => setActiveTab('budget')}
-              className="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              className="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Review Budget <ArrowRight className="w-3 h-3" />
             </button>
           </div>
 
           {/* Step 2: Milestone Schedule */}
-          <div className="bg-white p-3.5 rounded-lg border border-[#E6DFD5] flex flex-col justify-between space-y-2.5 shadow-2xs">
+          <div className="bg-surface p-3.5 rounded-lg border border-subtle flex flex-col justify-between space-y-2.5 shadow-2xs">
             <div className="space-y-1">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-[#1C1917]">2. Critical Path</span>
+                <span className="font-semibold text-primary">2. Critical Path</span>
                 <Badge
                   variant={overdueTasks.length > 0 ? 'warning' : 'neutral'}
                   size="sm"
@@ -181,7 +181,7 @@ export const DashboardView: React.FC = () => {
                   {overdueTasks.length > 0 ? `${overdueTasks.length} Overdue` : `${completedTasks.length}/${state.tasks.length} Done`}
                 </Badge>
               </div>
-              <p className="text-[11px] text-[#6E665E] leading-relaxed">
+              <p className="text-[11px] text-secondary leading-relaxed">
                 {blockedTasks.length > 0
                   ? `${blockedTasks.length} tasks blocked by prerequisites`
                   : 'All prerequisite relationships satisfied'}
@@ -189,17 +189,17 @@ export const DashboardView: React.FC = () => {
             </div>
             <button
               onClick={() => setActiveTab('tasks')}
-              className="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              className="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Inspect Tasks <ArrowRight className="w-3 h-3" />
             </button>
           </div>
 
           {/* Step 3: Supplier Proposals */}
-          <div className="bg-white p-3.5 rounded-lg border border-[#E6DFD5] flex flex-col justify-between space-y-2.5 shadow-2xs">
+          <div className="bg-surface p-3.5 rounded-lg border border-subtle flex flex-col justify-between space-y-2.5 shadow-2xs">
             <div className="space-y-1">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-[#1C1917]">3. Vendor Quotes</span>
+                <span className="font-semibold text-primary">3. Vendor Quotes</span>
                 <Badge
                   variant={selectedQuotes.length >= 3 ? 'success' : 'accent'}
                   size="sm"
@@ -208,23 +208,23 @@ export const DashboardView: React.FC = () => {
                   {selectedQuotes.length} Selected
                 </Badge>
               </div>
-              <p className="text-[11px] text-[#6E665E] leading-relaxed">
+              <p className="text-[11px] text-secondary leading-relaxed">
                 {pendingQuotes.length} proposal inquiries pending evaluation
               </p>
             </div>
             <button
               onClick={() => setActiveTab('vendors')}
-              className="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              className="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Compare Quotes <ArrowRight className="w-3 h-3" />
             </button>
           </div>
 
           {/* Step 4: Co-Planner Sync */}
-          <div className="bg-white p-3.5 rounded-lg border border-[#E6DFD5] flex flex-col justify-between space-y-2.5 shadow-2xs">
+          <div className="bg-surface p-3.5 rounded-lg border border-subtle flex flex-col justify-between space-y-2.5 shadow-2xs">
             <div className="space-y-1">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-[#1C1917]">4. Collaboration</span>
+                <span className="font-semibold text-primary">4. Collaboration</span>
                 <Badge
                   variant={collabState.members.length > 0 ? 'success' : 'neutral'}
                   size="sm"
@@ -233,7 +233,7 @@ export const DashboardView: React.FC = () => {
                   {collabState.members.length > 0 ? 'Live Multi-User' : 'Local Mode'}
                 </Badge>
               </div>
-              <p className="text-[11px] text-[#6E665E] leading-relaxed">
+              <p className="text-[11px] text-secondary leading-relaxed">
                 {collabState.members.length > 0
                   ? `${collabState.members.length} collaborators sharing event state`
                   : 'Invite planners, partners, and coordinators'}
@@ -241,7 +241,7 @@ export const DashboardView: React.FC = () => {
             </div>
             <button
               onClick={() => setCollabModalOpen(true)}
-              className="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 self-start cursor-pointer"
+              className="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 self-start cursor-pointer"
             >
               Manage Sharing <ArrowRight className="w-3 h-3" />
             </button>

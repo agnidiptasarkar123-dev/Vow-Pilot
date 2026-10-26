@@ -209,7 +209,7 @@ const AppContent: React.FC = () => {
       )}
 
       {/* Subtle Footer */}
-      <footer className="no-print border-t border-[#E6DFD5] dark:border-[#2D3F33] bg-[#FFFFFF] dark:bg-[#1F2D24] py-4 text-center text-xs text-[#5C554E] dark:text-[#C5D1C8] transition-colors duration-200">
+      <footer className="no-print border-t border-subtle bg-surface py-4 text-center text-xs text-secondary transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <VowPilotLogo variant="compact" size="xs" />

@@ -108,60 +108,60 @@ export const SettingsView: React.FC = () => {
     <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#26221F] font-serif-heading">
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary font-serif-heading">
           Event Settings & Local Data Management
         </h1>
-        <p className="text-xs text-[#78716C] mt-1">
+        <p className="text-xs text-secondary mt-1">
           Adjust core constraints, create JSON backups, or audit client-side browser storage health.
         </p>
       </div>
 
       {saveSuccessNotice && (
-        <div role="status" aria-live="polite" className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-900 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#047857]" />
+        <div role="status" aria-live="polite" className="p-4 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-900 rounded-lg text-xs text-emerald-900 dark:text-emerald-200 flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#047857] dark:text-emerald-400" />
           <span>Event preferences and budget constraints successfully saved!</span>
         </div>
       )}
 
       {importSuccess && (
-        <div role="status" aria-live="polite" className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-900 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#047857]" />
+        <div role="status" aria-live="polite" className="p-4 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-900 rounded-lg text-xs text-emerald-900 dark:text-emerald-200 flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#047857] dark:text-emerald-400" />
           <span>JSON event state imported and validated successfully!</span>
         </div>
       )}
 
       {importError && (
-        <div role="alert" aria-live="assertive" className="p-4 bg-red-50 border border-red-200 rounded-lg text-xs text-red-900 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-[#BE123C]" />
+        <div role="alert" aria-live="assertive" className="p-4 bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-900 rounded-lg text-xs text-red-900 dark:text-red-200 flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-[#BE123C] dark:text-rose-400" />
           <span>{importError}</span>
         </div>
       )}
 
       {/* Form: Core Event Details */}
-      <div className="bg-white p-6 rounded-xl border border-[#E6DFD5] shadow-xs space-y-5">
-        <h3 className="text-base font-bold text-[#26221F] font-serif-heading">
+      <div className="bg-surface p-6 rounded-xl border border-subtle shadow-xs space-y-5">
+        <h3 className="text-base font-bold text-primary font-serif-heading">
           Edit Event Constraints
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div>
-            <label htmlFor="settings-event-name" className="block font-semibold text-[#26221F] mb-1">Event Title</label>
+            <label htmlFor="settings-event-name" className="block font-semibold text-primary mb-1">Event Title</label>
             <input
               id="settings-event-name"
               type="text"
               value={eventName}
               onChange={(e) => setEventName(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div>
-            <label htmlFor="settings-event-type" className="block font-semibold text-[#26221F] mb-1">Event Type</label>
+            <label htmlFor="settings-event-type" className="block font-semibold text-primary mb-1">Event Type</label>
             <select
               id="settings-event-type"
               value={eventType}
               onChange={(e) => setEventType(e.target.value as EventType)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             >
               <option value="wedding">Wedding</option>
               <option value="anniversary">Anniversary</option>
@@ -172,47 +172,47 @@ export const SettingsView: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="settings-event-date" className="block font-semibold text-[#26221F] mb-1">Date</label>
+            <label htmlFor="settings-event-date" className="block font-semibold text-primary mb-1">Date</label>
             <input
               id="settings-event-date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div>
-            <label htmlFor="settings-event-location" className="block font-semibold text-[#26221F] mb-1">City / Venue Location</label>
+            <label htmlFor="settings-event-location" className="block font-semibold text-primary mb-1">City / Venue Location</label>
             <input
               id="settings-event-location"
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div>
-            <label htmlFor="settings-event-guests" className="block font-semibold text-[#26221F] mb-1">Confirmed Guest Count</label>
+            <label htmlFor="settings-event-guests" className="block font-semibold text-primary mb-1">Confirmed Guest Count</label>
             <input
               id="settings-event-guests"
               type="number"
               min="1"
               value={guestCount}
               onChange={(e) => setGuestCount(parseInt(e.target.value, 10) || 0)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div>
-            <label htmlFor="settings-event-budget" className="block font-semibold text-[#26221F] mb-1">Total Target Budget</label>
+            <label htmlFor="settings-event-budget" className="block font-semibold text-primary mb-1">Total Target Budget</label>
             <div className="flex gap-2">
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
                 aria-label="Event Currency"
-                className="w-24 text-xs px-2 py-2 border border-[#D5CCC0] rounded-md bg-[#FAF8F5]"
+                className="w-24 text-xs px-2 py-2 border border-subtle rounded-md bg-subtle text-primary"
               >
                 <option value="INR">INR (₹)</option>
                 <option value="USD">USD ($)</option>
@@ -224,41 +224,41 @@ export const SettingsView: React.FC = () => {
                 type="text"
                 value={budgetDisplay}
                 onChange={(e) => setBudgetDisplay(e.target.value)}
-                className="flex-1 text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                className="flex-1 text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
               />
             </div>
           </div>
 
           <div className="col-span-1 sm:col-span-2">
-            <label htmlFor="settings-event-style" className="block font-semibold text-[#26221F] mb-1">Event Style & Tone</label>
+            <label htmlFor="settings-event-style" className="block font-semibold text-primary mb-1">Event Style & Tone</label>
             <input
               id="settings-event-style"
               type="text"
               value={style}
               onChange={(e) => setStyle(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div className="col-span-1 sm:col-span-2">
-            <label htmlFor="settings-event-catering" className="block font-semibold text-[#26221F] mb-1">Catering Format</label>
+            <label htmlFor="settings-event-catering" className="block font-semibold text-primary mb-1">Catering Format</label>
             <input
               id="settings-event-catering"
               type="text"
               value={cateringType}
               onChange={(e) => setCateringType(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
 
           <div className="col-span-1 sm:col-span-2">
-            <label htmlFor="settings-event-notes" className="block font-semibold text-[#26221F] mb-1">Optional Notes</label>
+            <label htmlFor="settings-event-notes" className="block font-semibold text-primary mb-1">Optional Notes</label>
             <textarea
               id="settings-event-notes"
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+              className="w-full text-sm px-3 py-2 border border-subtle bg-surface text-primary rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
             />
           </div>
         </div>
@@ -266,7 +266,7 @@ export const SettingsView: React.FC = () => {
         <div className="flex justify-end pt-2">
           <button
             onClick={handleSavePreferences}
-            className="px-5 py-2 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold rounded-md shadow-xs transition"
+            className="px-5 py-2 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-semibold rounded-md shadow-xs transition cursor-pointer"
           >
             Save Constraint Changes
           </button>
@@ -274,12 +274,12 @@ export const SettingsView: React.FC = () => {
       </div>
 
       {/* JSON Import & Export Tools */}
-      <div className="bg-white p-6 rounded-xl border border-[#E6DFD5] shadow-xs space-y-4">
+      <div className="bg-surface p-6 rounded-xl border border-subtle shadow-xs space-y-4">
         <div>
-          <h3 className="text-base font-bold text-[#26221F] font-serif-heading">
+          <h3 className="text-base font-bold text-primary font-serif-heading">
             Data Portability & Backup
           </h3>
-          <p className="text-xs text-[#78716C]">
+          <p className="text-xs text-secondary">
             Export complete plans as portable JSON files or restore from an existing backup.
           </p>
         </div>
@@ -287,7 +287,7 @@ export const SettingsView: React.FC = () => {
         <div className="flex flex-wrap items-center gap-3 pt-2">
           <button
             onClick={handleExport}
-            className="px-4 py-2.5 rounded-md bg-[#26221F] hover:bg-[#33302B] text-white text-xs font-semibold flex items-center gap-2 transition shadow-xs"
+            className="px-4 py-2.5 rounded-md bg-primary text-surface hover:opacity-90 text-xs font-semibold flex items-center gap-2 transition shadow-xs cursor-pointer"
           >
             <Download className="w-4 h-4" />
             Export Event JSON Backup
@@ -295,9 +295,9 @@ export const SettingsView: React.FC = () => {
 
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-4 py-2.5 rounded-md bg-white border border-[#D5CCC0] text-[#26221F] hover:bg-[#FAF8F5] text-xs font-semibold flex items-center gap-2 transition shadow-xs"
+            className="px-4 py-2.5 rounded-md bg-surface border border-subtle text-primary hover:bg-subtle text-xs font-semibold flex items-center gap-2 transition shadow-xs cursor-pointer"
           >
-            <Upload className="w-4 h-4 text-[#B85C3A]" />
+            <Upload className="w-4 h-4 text-[#B85C3A] dark:text-[#D48668]" />
             Import JSON Backup
           </button>
           <input
@@ -311,44 +311,44 @@ export const SettingsView: React.FC = () => {
       </div>
 
       {/* Storage Health & Privacy Audit */}
-      <div className="bg-[#FAF8F5] p-6 rounded-xl border border-[#E6DFD5] shadow-xs space-y-4">
-        <div className="flex items-center gap-2 text-[#26221F]">
-          <ShieldCheck className="w-5 h-5 text-[#047857]" />
+      <div className="bg-surface p-6 rounded-xl border border-subtle shadow-xs space-y-4">
+        <div className="flex items-center gap-2 text-primary">
+          <ShieldCheck className="w-5 h-5 text-[#047857] dark:text-emerald-400" />
           <h3 className="text-base font-bold font-serif-heading">
             Privacy & Client-Side Storage Audit
           </h3>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-          <div className="p-3 bg-white rounded-lg border border-[#E6DFD5] space-y-0.5">
-            <span className="text-[#78716C] font-semibold">Local Storage</span>
-            <p className="font-mono text-sm font-bold text-[#26221F]">Browser LocalStorage</p>
-            <span className="text-[10px] text-[#78716C]">Client-side zero-latency cache</span>
+          <div className="p-3 bg-subtle rounded-lg border border-subtle space-y-0.5">
+            <span className="text-secondary font-semibold">Local Storage</span>
+            <p className="font-mono text-sm font-bold text-primary">Browser LocalStorage</p>
+            <span className="text-[10px] text-muted">Client-side zero-latency cache</span>
           </div>
 
-          <div className="p-3 bg-white rounded-lg border border-[#E6DFD5] space-y-0.5">
-            <span className="text-[#78716C] font-semibold">Schema Version</span>
-            <p className="font-mono text-sm font-bold text-[#26221F]">Version {CURRENT_SCHEMA_VERSION}</p>
-            <span className="text-[10px] text-[#78716C]">Validated schema structure</span>
+          <div className="p-3 bg-subtle rounded-lg border border-subtle space-y-0.5">
+            <span className="text-secondary font-semibold">Storage Schema</span>
+            <p className="font-mono text-sm font-bold text-primary">Version {CURRENT_SCHEMA_VERSION} (Active)</p>
+            <span className="text-[10px] text-muted">Validated schema structure</span>
           </div>
 
-          <div className="p-3 bg-white rounded-lg border border-[#E6DFD5] space-y-0.5">
-            <span className="text-[#78716C] font-semibold">Local Footprint</span>
-            <p className="font-mono text-sm font-bold text-[#26221F]">{storageKb} KB</p>
-            <span className="text-[10px] text-[#78716C]">Below 5MB browser quota</span>
+          <div className="p-3 bg-subtle rounded-lg border border-subtle space-y-0.5">
+            <span className="text-secondary font-semibold">Local Footprint</span>
+            <p className="font-mono text-sm font-bold text-primary">{storageKb} KB</p>
+            <span className="text-[10px] text-muted">Below 5MB browser quota</span>
           </div>
 
-          <div className="p-3 bg-white rounded-lg border border-[#E6DFD5] space-y-0.5">
-            <span className="text-[#78716C] font-semibold">Cloud Sync & Auth</span>
-            <p className="font-mono text-sm font-bold text-[#26221F]">
+          <div className="p-3 bg-subtle rounded-lg border border-subtle space-y-0.5">
+            <span className="text-secondary font-semibold">Cloud Sync & Auth</span>
+            <p className="font-mono text-sm font-bold text-primary">
               {currentUser ? ((collabState.status === 'synced' || collabState.status === 'syncing') ? `Live (Rev #${collabState.serverVersion})` : 'Cloud Ready') : 'Local Mode'}
             </p>
-            <span className="text-[10px] text-[#78716C]">
+            <span className="text-[10px] text-muted">
               {currentUser ? `User: ${currentUser.name}` : (
                 <button
                   type="button"
                   onClick={() => setAuthModalOpen(true)}
-                  className="text-[#B85C3A] underline hover:font-bold"
+                  className="text-[#B85C3A] dark:text-[#D48668] underline hover:font-bold cursor-pointer"
                 >
                   Sign in to sync
                 </button>
@@ -357,15 +357,15 @@ export const SettingsView: React.FC = () => {
           </div>
         </div>
 
-        <p className="text-xs text-[#5C554E] leading-relaxed">
+        <p className="text-xs text-secondary leading-relaxed">
           <strong>Offline-First Architecture:</strong> VowPilot functions reliably offline using client-side Browser LocalStorage. When signed in to your account, events can be synchronized to the backend cloud database for multi-user collaboration and role-based permissions. No third-party ad networks or trackers are loaded.
         </p>
 
         {/* Danger Zone Actions */}
-        <div className="pt-3 border-t border-[#EAE4DB] flex flex-wrap items-center justify-between gap-3">
+        <div className="pt-3 border-t border-subtle flex flex-wrap items-center justify-between gap-3">
           <button
             onClick={handleResetWithConfirm}
-            className="px-3.5 py-2 rounded-md bg-white border border-amber-300 text-amber-900 hover:bg-amber-50 text-xs font-semibold flex items-center gap-1.5 transition"
+            className="px-3.5 py-2 rounded-md bg-surface border border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-200 hover:bg-subtle text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Reset to Clean Jaipur Demo Dataset
@@ -373,7 +373,7 @@ export const SettingsView: React.FC = () => {
 
           <button
             onClick={handleClearWithConfirm}
-            className="px-3.5 py-2 rounded-md bg-white border border-red-300 text-red-700 hover:bg-red-50 text-xs font-semibold flex items-center gap-1.5 transition"
+            className="px-3.5 py-2 rounded-md bg-surface border border-red-300 dark:border-red-800 text-red-700 dark:text-rose-300 hover:bg-subtle text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
           >
             <Trash2 className="w-3.5 h-3.5" />
             Wipe Local Application Storage
