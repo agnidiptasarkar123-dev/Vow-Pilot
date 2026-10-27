@@ -1,8 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useEvent } from '../../context/EventContext';
 import { exportEventData, validateImportedJson } from '../../persistence/importExport';
 import { CURRENT_SCHEMA_VERSION, STORAGE_KEY } from '../../persistence/storage';
-import { parseDisplayToMinor } from '../../domain/currency';
+import { parseDisplayToMinor, formatCurrency } from '../../domain/currency';
 import { CurrencyCode, EventType } from '../../types';
 import {
   AlertTriangle,
@@ -15,7 +15,18 @@ import {
 } from 'lucide-react';
 
 export const SettingsView: React.FC = () => {
-  const { state, updateEvent, resetToDemo, importState, clearAllData, currentUser, collabState, setAuthModalOpen } = useEvent();
+  const {
+    state,
+    updateEvent,
+    resetToDemo,
+    importState,
+    clearAllData,
+    currentUser,
+    collabState,
+    setAuthModalOpen,
+    allEvents,
+    switchEvent,
+  } = useEvent();
 
   // Form State
   const [eventName, setEventName] = useState(state.event.name);
@@ -28,6 +39,20 @@ export const SettingsView: React.FC = () => {
   const [style, setStyle] = useState(state.event.preferences.style);
   const [cateringType, setCateringType] = useState(state.event.preferences.cateringType);
   const [notes, setNotes] = useState(state.event.preferences.optionalNotes);
+
+  // Sync state when active event is switched
+  useEffect(() => {
+    setEventName(state.event.name);
+    setEventType(state.event.eventType);
+    setDate(state.event.date);
+    setLocation(state.event.location);
+    setGuestCount(state.event.guestCount);
+    setBudgetDisplay((state.event.totalBudget / 100).toString());
+    setCurrency(state.event.currency);
+    setStyle(state.event.preferences.style);
+    setCateringType(state.event.preferences.cateringType);
+    setNotes(state.event.preferences.optionalNotes);
+  }, [state.event.id, state.event.updatedAt]);
 
   const [saveSuccessNotice, setSaveSuccessNotice] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
@@ -134,6 +159,61 @@ export const SettingsView: React.FC = () => {
         <div role="alert" aria-live="assertive" className="p-4 bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-900 rounded-lg text-xs text-red-900 dark:text-red-200 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-[#BE123C] dark:text-rose-400" />
           <span>{importError}</span>
+        </div>
+      )}
+
+      {/* Multi-Event Workspace Roster */}
+      {allEvents && allEvents.length > 1 && (
+        <div className="bg-surface p-6 rounded-xl border border-subtle shadow-xs space-y-4">
+          <div>
+            <h3 className="text-base font-bold text-primary font-serif-heading">
+              Events in Workspace
+            </h3>
+            <p className="text-xs text-secondary mt-0.5">
+              Switch active planning context between configured events. Each event maintains strictly isolated budgets, categories, and financial data.
+            </p>
+          </div>
+
+          <div className="space-y-2.5">
+            {allEvents.map((evt) => {
+              const isActive = evt.id === state.event.id;
+              return (
+                <div
+                  key={evt.id}
+                  className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 rounded-lg border gap-3 transition ${
+                    isActive
+                      ? 'bg-accent-subtle/50 border-accent/40 text-primary'
+                      : 'bg-subtle border-subtle text-secondary'
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-primary text-sm">{evt.name}</span>
+                      {isActive && (
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-accent text-white">
+                          Active
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-secondary mt-1">
+                      {evt.date} • Budget: <span className="font-mono font-semibold text-primary">{formatCurrency(evt.totalBudget, evt.currency)}</span> • {evt.guestCount} Guests
+                    </p>
+                  </div>
+
+                  {!isActive && (
+                    <button
+                      type="button"
+                      onClick={() => switchEvent(evt.id)}
+                      data-testid={`switch-event-btn-${evt.id}`}
+                      className="px-3 py-1.5 rounded-md bg-surface border border-subtle hover:bg-muted text-primary text-xs font-semibold cursor-pointer shadow-2xs transition"
+                    >
+                      Switch to Event
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 

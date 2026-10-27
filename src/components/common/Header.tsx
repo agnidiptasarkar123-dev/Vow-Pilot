@@ -42,6 +42,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
     currentUser,
     setAuthModalOpen,
     logoutUser,
+    allEvents,
+    switchEvent,
   } = useEvent();
   const { isDark, toggleTheme } = useTheme();
 
@@ -174,9 +176,31 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
         {/* Event Quick Info */}
         <div className="flex items-center space-x-3 sm:space-x-5 text-sm">
           <div className="hidden md:flex flex-col text-right">
-            <span className="font-semibold text-primary truncate max-w-[240px]">
-              {state.event.name}
-            </span>
+            {allEvents && allEvents.length > 1 ? (
+              <div className="flex items-center gap-1.5 justify-end">
+                <label htmlFor="header-event-switcher" className="sr-only">
+                  Select Active Event
+                </label>
+                <select
+                  id="header-event-switcher"
+                  data-testid="event-switcher-select"
+                  aria-label="Select Active Event"
+                  value={state.event.id}
+                  onChange={(e) => switchEvent(e.target.value)}
+                  className="text-xs font-semibold text-primary bg-subtle border border-subtle rounded-md px-2 py-0.5 max-w-[240px] truncate cursor-pointer hover:border-accent-subtle transition"
+                >
+                  {allEvents.map((evt) => (
+                    <option key={evt.id} value={evt.id}>
+                      {evt.name} ({formatCurrency(evt.totalBudget, evt.currency)})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : (
+              <span className="font-semibold text-primary truncate max-w-[240px]">
+                {state.event.name}
+              </span>
+            )}
             <span className="text-xs text-secondary flex items-center justify-end gap-1">
               <Calendar className="w-3 h-3" />
               {state.event.date} • {state.event.guestCount} Guests

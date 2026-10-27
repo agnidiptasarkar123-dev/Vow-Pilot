@@ -28,6 +28,10 @@ export const PlanningBriefView: React.FC = () => {
     state.event.preferences.optionalNotes || ''
   );
 
+  React.useEffect(() => {
+    setCoordinatorNotes(state.event.preferences.optionalNotes || '');
+  }, [state.event.id]);
+
   const overview = calculateBudgetOverview(state.event.totalBudget, state.categories, state.expenses);
 
   // Guest attendance summary

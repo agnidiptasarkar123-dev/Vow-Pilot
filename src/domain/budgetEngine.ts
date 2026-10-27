@@ -389,3 +389,81 @@ export function evaluateScenario(
     categoryComparisons,
   };
 }
+
+/**
+ * Standard category templates with balanced default proportional weights.
+ * Proportions match the canonical domain architecture (sum = 1.0 = 100%).
+ */
+export const STANDARD_CATEGORY_TEMPLATES: Array<{
+  id: string;
+  name: string;
+  defaultRatio: number;
+  priorityRank: number;
+  userDefined: boolean;
+  notes?: string;
+}> = [
+  { id: 'venue', name: 'Venue & Lawns', defaultRatio: 0.30, priorityRank: 1, userDefined: true, notes: 'Includes main heritage courtyard and banquet hall.' },
+  { id: 'catering', name: 'Catering & Beverages', defaultRatio: 0.24, priorityRank: 2, userDefined: true, notes: 'Multi-course menu with mocktail bar and dessert station.' },
+  { id: 'decor', name: 'Decor & Production', defaultRatio: 0.16, priorityRank: 3, userDefined: true, notes: 'Mandap floral setup, walkway lights, dining table centerpieces.' },
+  { id: 'photography', name: 'Photography & Cinema', defaultRatio: 0.14, priorityRank: 4, userDefined: true, notes: 'Lead photographers, cinematographers, drone operator, same-day teaser edit.' },
+  { id: 'entertainment', name: 'Music & Entertainment', defaultRatio: 0.072, priorityRank: 5, userDefined: true, notes: 'Folk musicians for welcome, DJ and sound system for evening.' },
+  { id: 'logistics', name: 'Guest Logistics & Transport', defaultRatio: 0.048, priorityRank: 6, userDefined: false, notes: 'Airport shuttles and local vans for relatives.' },
+  { id: 'contingency', name: 'Buffer & Contingency', defaultRatio: 0.04, priorityRank: 7, userDefined: false, notes: 'Unforeseen weather contingencies and generator backup fuel.' },
+];
+
+/**
+ * Dynamically initializes balanced, non-negative category allocations for any event budget.
+ * Distributes the total budget exactly without penny rounding loss.
+ */
+export function initializeCategoriesForBudget(
+  totalBudget: number,
+  planningPriorities?: string[],
+  baseCategories?: BudgetCategory[]
+): BudgetCategory[] {
+  const safeBudget = Math.max(0, Number.isFinite(totalBudget) ? totalBudget : 0);
+
+  if (baseCategories && baseCategories.length > 0) {
+    const totalCurrentAllocated = baseCategories.reduce(
+      (sum, c) => sum + Math.max(0, Number.isFinite(c.allocatedAmount) ? c.allocatedAmount : 0),
+      0
+    );
+    if (totalCurrentAllocated === safeBudget) {
+      return baseCategories.map((c) => ({ ...c }));
+    }
+    let allocatedSoFar = 0;
+    return baseCategories.map((cat, idx) => {
+      const isLast = idx === baseCategories.length - 1;
+      const ratio = totalCurrentAllocated > 0 ? cat.allocatedAmount / totalCurrentAllocated : 1 / baseCategories.length;
+      const allocated = isLast ? Math.max(0, safeBudget - allocatedSoFar) : Math.round(safeBudget * ratio);
+      allocatedSoFar += allocated;
+      return {
+        ...cat,
+        allocatedAmount: allocated,
+      };
+    });
+  }
+
+  let allocatedSoFar = 0;
+  return STANDARD_CATEGORY_TEMPLATES.map((tmpl, idx) => {
+    const isLast = idx === STANDARD_CATEGORY_TEMPLATES.length - 1;
+    const allocated = isLast ? Math.max(0, safeBudget - allocatedSoFar) : Math.round(safeBudget * tmpl.defaultRatio);
+    allocatedSoFar += allocated;
+
+    let priorityRank = tmpl.priorityRank;
+    if (planningPriorities && planningPriorities.length > 0) {
+      const pIdx = planningPriorities.indexOf(tmpl.id);
+      if (pIdx !== -1) {
+        priorityRank = pIdx + 1;
+      }
+    }
+
+    return {
+      id: tmpl.id,
+      name: tmpl.name,
+      allocatedAmount: allocated,
+      userDefined: tmpl.userDefined,
+      priorityRank,
+      notes: tmpl.notes,
+    };
+  });
+}

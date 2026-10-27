@@ -13,8 +13,10 @@ import {
 import {
   clearAllPersistedData,
   loadPersistedState,
+  loadAllEventsFromStorage,
+  saveAllEventsToStorage,
+  createInitialEventState,
   resetToDemoState,
-  savePersistedState,
 } from '../persistence/storage';
 import {
   handleUpdateEvent,
@@ -93,6 +95,12 @@ export interface EventContextType {
   state: AppState;
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  // Multi-Event Isolation & Switching
+  allEvents: EventDetails[];
+  activeEventId: string;
+  createEvent: (event: EventDetails, initialCategories?: BudgetCategory[]) => void;
+  switchEvent: (eventId: string) => Promise<void>;
+  deleteEvent: (eventId: string) => void;
   // Event
   updateEvent: (event: EventDetails) => void;
   // Categories
@@ -174,9 +182,39 @@ export interface EventContextType {
 const EventContext = createContext<EventContextType | undefined>(undefined);
 
 export const EventProvider: React.FC<{ children: React.ReactNode; initialState?: AppState }> = ({ children, initialState }) => {
-  const [state, setState] = useState<AppState>(() => {
-    return initialState || loadPersistedState().state;
+  const [eventsMap, setEventsMap] = useState<Record<string, AppState>>(() => {
+    if (initialState) {
+      return { [initialState.event.id]: initialState };
+    }
+    const store = loadAllEventsFromStorage();
+    return store.events;
   });
+
+  const [activeEventId, setActiveEventId] = useState<string>(() => {
+    if (initialState) {
+      return initialState.event.id;
+    }
+    const store = loadAllEventsFromStorage();
+    return store.activeEventId;
+  });
+
+  const [state, setInternalState] = useState<AppState>(() => {
+    if (initialState) return initialState;
+    const store = loadAllEventsFromStorage();
+    return store.events[store.activeEventId] || loadPersistedState().state;
+  });
+
+  const setState = (nextOrUpdater: AppState | ((prev: AppState) => AppState)) => {
+    setInternalState((current) => {
+      const next = typeof nextOrUpdater === 'function' ? nextOrUpdater(current) : nextOrUpdater;
+      setEventsMap((prev) => {
+        const updated = { ...prev, [next.event.id]: next };
+        saveAllEventsToStorage(updated, next.event.id);
+        return updated;
+      });
+      return next;
+    });
+  };
 
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [collabState, setCollabState] = useState<CollaborationState>(() => collaborationClient.getState());
@@ -185,10 +223,10 @@ export const EventProvider: React.FC<{ children: React.ReactNode; initialState?:
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; email?: string } | null>(null);
   const [syncError, setSyncError] = useState<string | null>(null);
 
-  // Sync to localStorage on state changes
+  // Sync active state and all events to localStorage on changes
   useEffect(() => {
-    savePersistedState(state);
-  }, [state]);
+    saveAllEventsToStorage(eventsMap, activeEventId);
+  }, [eventsMap, activeEventId]);
 
   // Subscribe to collaboration state updates
   useEffect(() => {
@@ -616,26 +654,99 @@ export const EventProvider: React.FC<{ children: React.ReactNode; initialState?:
     pushUpdateIfConnected(next);
   };
 
+  // Multi-Event Management Handlers
+  const createEvent = (newEvent: EventDetails, initialCategories?: BudgetCategory[]) => {
+    const newState = createInitialEventState(newEvent, initialCategories);
+    const newId = newEvent.id;
+
+    setEventsMap((prev) => {
+      const updated = { ...prev, [newId]: newState };
+      saveAllEventsToStorage(updated, newId);
+      return updated;
+    });
+    setActiveEventId(newId);
+    setInternalState(newState);
+
+    if (currentUser) {
+      collaborationClient.createEventOnServer(newState).then((res) => {
+        if (!res.success && res.error) {
+          setSyncError(res.error);
+        }
+      });
+    }
+  };
+
+  const switchEvent = async (targetEventId: string) => {
+    if (!targetEventId || targetEventId === activeEventId) return;
+    const targetState = eventsMap[targetEventId];
+    if (!targetState) {
+      console.warn(`Event ${targetEventId} not found in workspace.`);
+      return;
+    }
+    setActiveEventId(targetEventId);
+    setInternalState(targetState);
+    saveAllEventsToStorage(eventsMap, targetEventId);
+
+    if (currentUser && collabState.status !== 'local_only') {
+      await connectToCollabEvent(targetEventId);
+    }
+  };
+
+  const deleteEvent = (eventId: string) => {
+    if (Object.keys(eventsMap).length <= 1) {
+      return;
+    }
+    setEventsMap((prev) => {
+      const updated = { ...prev };
+      delete updated[eventId];
+      let nextActiveId = activeEventId;
+      if (activeEventId === eventId) {
+        nextActiveId = Object.keys(updated)[0];
+      }
+      setActiveEventId(nextActiveId);
+      if (updated[nextActiveId]) {
+        setInternalState(updated[nextActiveId]);
+      }
+      saveAllEventsToStorage(updated, nextActiveId);
+      return updated;
+    });
+  };
+
+  const allEvents = useMemo(() => {
+    return Object.values(eventsMap).map((s) => s.event);
+  }, [eventsMap]);
+
   // Data & Reset Handlers
   const resetToDemo = () => {
     if (isReadOnly) return;
-    const demo = resetToDemoState();
-    setState(demo);
-    pushUpdateIfConnected(demo);
+    const cleanState = resetToDemoState();
+    setEventsMap({ [cleanState.event.id]: cleanState });
+    setActiveEventId(cleanState.event.id);
+    setInternalState(cleanState);
+    pushUpdateIfConnected(cleanState);
   };
 
-  const importState = (newState: AppState) => {
+  const importState = (imported: AppState) => {
     if (isReadOnly) return;
-    savePersistedState(newState);
-    setState(newState);
-    pushUpdateIfConnected(newState);
+    const id = imported.event.id || `evt-${Date.now()}`;
+    const safeState = { ...imported, event: { ...imported.event, id } };
+    setEventsMap((prev) => {
+      const updated = { ...prev, [id]: safeState };
+      saveAllEventsToStorage(updated, id);
+      return updated;
+    });
+    setActiveEventId(id);
+    setInternalState(safeState);
+    pushUpdateIfConnected(safeState);
   };
 
   const clearAllData = () => {
     if (isReadOnly) return;
     clearAllPersistedData();
     const cleanState = resetToDemoState();
-    setState(cleanState);
+    setEventsMap({ [cleanState.event.id]: cleanState });
+    setActiveEventId(cleanState.event.id);
+    setInternalState(cleanState);
     pushUpdateIfConnected(cleanState);
   };
 
@@ -644,6 +755,11 @@ export const EventProvider: React.FC<{ children: React.ReactNode; initialState?:
       state,
       activeTab,
       setActiveTab,
+      allEvents,
+      activeEventId,
+      createEvent,
+      switchEvent,
+      deleteEvent,
       updateEvent,
       updateCategory,
       addCategory,
@@ -710,6 +826,8 @@ export const EventProvider: React.FC<{ children: React.ReactNode; initialState?:
     [
       state,
       activeTab,
+      allEvents,
+      activeEventId,
       collabState,
       isReadOnly,
       userRole,

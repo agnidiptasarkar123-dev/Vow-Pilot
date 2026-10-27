@@ -39,6 +39,16 @@ export const DecisionSimulatorView: React.FC = () => {
     return map;
   });
 
+  // Re-sync sandbox whenever active event changes
+  React.useEffect(() => {
+    setSandboxGuestCount(state.event.guestCount);
+    const map: Record<string, number> = {};
+    for (const c of state.categories) {
+      map[c.id] = c.allocatedAmount;
+    }
+    setSandboxAllocations(map);
+  }, [state.event.id]);
+
   const [scenarioNameInput, setScenarioNameInput] = useState('');
   const [scenarioDescriptionInput, setScenarioDescriptionInput] = useState('');
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);

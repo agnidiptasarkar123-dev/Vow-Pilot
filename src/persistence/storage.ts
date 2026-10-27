@@ -1,8 +1,12 @@
-import { AppState } from '../types';
+import { AppState, BudgetCategory, EventDetails } from '../types';
 import { DEMO_STATE } from './demoData';
+import { initializeCategoriesForBudget } from '../domain/budgetEngine';
 
 export const CURRENT_SCHEMA_VERSION = 1;
 export const STORAGE_KEY = 'vowpilot_state_v1';
+export const EVENTS_STORE_KEY = 'vowpilot_events_store_v1';
+export const ACTIVE_EVENT_KEY = 'vowpilot_active_event_id_v1';
+
 
 export interface StorageResult {
   state: AppState;
@@ -292,12 +296,179 @@ export function loadPersistedState(): StorageResult {
 }
 
 /**
- * Saves state to localStorage safely.
+ * Creates an isolated initial AppState for a brand new event.
+ * Guarantees event isolation: allocates fresh categories matching the event budget,
+ * initializes empty expenses/tasks/vendors/etc., and gives the event a stable unique ID.
+ */
+export function createInitialEventState(
+  event: EventDetails,
+  initialCategories?: BudgetCategory[]
+): AppState {
+  const safeBudget = Math.max(0, Number.isFinite(event.totalBudget) ? event.totalBudget : 0);
+  const location = (typeof event.location === 'string' && event.location.trim())
+    ? event.location.trim()
+    : ((event as any).city && typeof (event as any).city === 'string' && (event as any).city.trim())
+      ? (event as any).city.trim()
+      : 'Kolkata, West Bengal';
+
+  const defaultPreferences = {
+    style: 'Classic',
+    cateringType: 'Multi-Cuisine Buffet',
+    dietaryRequirements: [],
+    photographyTier: 'Standard',
+    venuePreference: 'Banquet Hall',
+    decorationPreference: 'Floral & Ambient',
+    accessibilityNeeds: [],
+    planningPriorities: (event as any).planningPriorities || ['venue', 'catering'],
+    specialConstraints: [],
+    optionalNotes: '',
+  };
+
+  const safeEvent: EventDetails = {
+    ...event,
+    id: event.id || `evt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    eventType: (event.eventType && VALID_EVENT_TYPES.has(event.eventType)) ? event.eventType : 'wedding',
+    currency: (event.currency && VALID_CURRENCIES.has(event.currency)) ? event.currency : 'INR',
+    date: (typeof event.date === 'string' && event.date.trim()) ? event.date.trim() : '2027-12-15',
+    location,
+    status: event.status || 'planning',
+    preferences: event.preferences && typeof event.preferences === 'object' && !Array.isArray(event.preferences)
+      ? event.preferences
+      : defaultPreferences,
+    totalBudget: safeBudget,
+    guestCount: Math.max(0, Number.isFinite(event.guestCount) ? event.guestCount : 0),
+    createdAt: event.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  const categories = initialCategories && initialCategories.length > 0
+    ? initialCategories
+    : initializeCategoriesForBudget(safeBudget, event.preferences?.planningPriorities);
+
+  return {
+    schemaVersion: CURRENT_SCHEMA_VERSION,
+    event: safeEvent,
+    categories,
+    expenses: [],
+    scenarios: [],
+    tasks: [],
+    vendors: [],
+    quotes: [],
+    messages: [],
+    changeLog: [
+      {
+        id: `chg-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        timestamp: new Date().toISOString(),
+        changeType: 'setup',
+        description: `Created new event "${safeEvent.name}" with budget of ${safeBudget}`,
+      },
+    ],
+    invitations: [],
+    guests: [],
+    timeline: [],
+    tables: [],
+  };
+}
+
+export interface MultiEventStore {
+  events: Record<string, AppState>;
+  activeEventId: string;
+}
+
+/**
+ * Loads all persisted events from the multi-event store.
+ * Backwards compatible with single STORAGE_KEY states.
+ */
+export function loadAllEventsFromStorage(): MultiEventStore {
+  const eventsMap: Record<string, AppState> = {};
+
+  try {
+    const rawMulti = localStorage.getItem(EVENTS_STORE_KEY);
+    if (rawMulti) {
+      const parsedMulti = JSON.parse(rawMulti);
+      if (parsedMulti && typeof parsedMulti === 'object' && !Array.isArray(parsedMulti)) {
+        for (const [id, evtState] of Object.entries(parsedMulti)) {
+          if (validateStateSchema(evtState)) {
+            eventsMap[id] = evtState;
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error('VowPilot: Error reading multi-event store:', err);
+  }
+
+  // Also check single STORAGE_KEY for backwards compatibility or single-event edits
+  const singleResult = loadPersistedState();
+  if (singleResult.loadedFromStorage && singleResult.state?.event?.id) {
+    const singleId = singleResult.state.event.id;
+    if (!eventsMap[singleId]) {
+      eventsMap[singleId] = singleResult.state;
+    }
+  }
+
+  // Fallback to DEMO_STATE if empty
+  if (Object.keys(eventsMap).length === 0) {
+    eventsMap[DEMO_STATE.event.id] = DEMO_STATE;
+  }
+
+  // Determine active event ID
+  let activeId = localStorage.getItem(ACTIVE_EVENT_KEY);
+  if (!activeId || !eventsMap[activeId]) {
+    if (singleResult.state?.event?.id && eventsMap[singleResult.state.event.id]) {
+      activeId = singleResult.state.event.id;
+    } else {
+      activeId = Object.keys(eventsMap)[0];
+    }
+  }
+
+  return {
+    events: eventsMap,
+    activeEventId: activeId,
+  };
+}
+
+/**
+ * Persists the entire events dictionary and active event identifier.
+ */
+export function saveAllEventsToStorage(
+  events: Record<string, AppState>,
+  activeEventId: string
+): boolean {
+  try {
+    localStorage.setItem(EVENTS_STORE_KEY, JSON.stringify(events));
+    localStorage.setItem(ACTIVE_EVENT_KEY, activeEventId);
+    if (events[activeEventId]) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(events[activeEventId]));
+    }
+    return true;
+  } catch (error) {
+    console.error('VowPilot: Failed to save multi-event store to localStorage:', error);
+    return false;
+  }
+}
+
+/**
+ * Saves state to localStorage safely. Synchronizes with multi-event store.
  */
 export function savePersistedState(state: AppState): boolean {
   try {
     const serialized = JSON.stringify(state);
     localStorage.setItem(STORAGE_KEY, serialized);
+
+    // Also update multi-event store seamlessly
+    try {
+      const rawMulti = localStorage.getItem(EVENTS_STORE_KEY);
+      const multi = rawMulti ? JSON.parse(rawMulti) : {};
+      if (typeof multi === 'object' && multi !== null) {
+        multi[state.event.id] = state;
+        localStorage.setItem(EVENTS_STORE_KEY, JSON.stringify(multi));
+        localStorage.setItem(ACTIVE_EVENT_KEY, state.event.id);
+      }
+    } catch {
+      // Ignore background multi-store sync failure
+    }
+
     return true;
   } catch (error) {
     console.error('VowPilot: Failed to serialize and save state to localStorage:', error);
@@ -309,6 +480,12 @@ export function savePersistedState(state: AppState): boolean {
  * Resets state to default demo dataset.
  */
 export function resetToDemoState(): AppState {
+  try {
+    localStorage.removeItem(EVENTS_STORE_KEY);
+    localStorage.removeItem(ACTIVE_EVENT_KEY);
+  } catch {
+    // Ignore error
+  }
   savePersistedState(DEMO_STATE);
   return DEMO_STATE;
 }
@@ -319,6 +496,8 @@ export function resetToDemoState(): AppState {
 export function clearAllPersistedData(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(EVENTS_STORE_KEY);
+    localStorage.removeItem(ACTIVE_EVENT_KEY);
   } catch (error) {
     console.error('VowPilot: Error clearing localStorage:', error);
   }
