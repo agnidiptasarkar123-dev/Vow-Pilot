@@ -1,5 +1,23 @@
 import { test, expect } from '@playwright/test';
 
+declare global {
+  interface Window {
+    collaborationClient?: {
+      state: {
+        role?: string;
+        status?: string;
+        lastConflict?: {
+          expectedVersion: number;
+          currentVersion: number;
+          lastModifiedBy: string;
+          serverState: unknown;
+        };
+      };
+      notify: () => void;
+    };
+  }
+}
+
 test.describe('VowPilot Multi-User Collaboration & Browser-Level Verification', () => {
   test('E2E Collaboration Flow 1: Header Collaboration Pill & Modal Controls', async ({ page }) => {
     await page.goto('/');
@@ -72,14 +90,11 @@ test.describe('VowPilot Multi-User Collaboration & Browser-Level Verification', 
 
     // Set viewer role directly on collaboration client in the browser runtime
     await page.evaluate(() => {
-      // @ts-ignore
-      if (window.collaborationClient) {
-        // @ts-ignore
-        window.collaborationClient.state.role = 'viewer';
-        // @ts-ignore
-        window.collaborationClient.state.status = 'synced';
-        // @ts-ignore
-        window.collaborationClient.notify();
+      const client = window.collaborationClient;
+      if (client) {
+        client.state.role = 'viewer';
+        client.state.status = 'synced';
+        client.notify();
       }
     });
 
@@ -106,26 +121,30 @@ test.describe('VowPilot Multi-User Collaboration & Browser-Level Verification', 
 
     // Inject simulated conflict state to verify UI rendering of ConflictModal
     await page.evaluate(() => {
-      // @ts-ignore
-      const sampleState = JSON.parse(localStorage.getItem('vowpilot_jaipur_wedding_v1') || '{}').state || {
+      const defaultSampleState = {
         event: { name: 'Jaipur Palace Wedding', guestCount: 350 },
         expenses: [],
         tasks: [],
       };
+      let sampleState: unknown = defaultSampleState;
+      try {
+        const stored = localStorage.getItem('vowpilot_jaipur_wedding_v1');
+        const parsed = JSON.parse(stored || '{}') as { state?: unknown };
+        sampleState = parsed?.state || defaultSampleState;
+      } catch {
+        sampleState = defaultSampleState;
+      }
 
-      // @ts-ignore
-      if (window.collaborationClient) {
-        // @ts-ignore
-        window.collaborationClient.state.status = 'conflict';
-        // @ts-ignore
-        window.collaborationClient.state.lastConflict = {
+      const client = window.collaborationClient;
+      if (client) {
+        client.state.status = 'conflict';
+        client.state.lastConflict = {
           expectedVersion: 1,
           currentVersion: 2,
           lastModifiedBy: 'Senior Coordinator Meera',
           serverState: sampleState,
         };
-        // @ts-ignore
-        window.collaborationClient.notify();
+        client.notify();
       }
     });
 

@@ -100,6 +100,7 @@ export function validateImportedJson(jsonString: string): {
     }
 
     // Comprehensive text sanitization across all models
+    const rawConstraints: unknown = (parsed.event.preferences as { specialConstraints?: unknown } | undefined)?.specialConstraints;
     const sanitized: AppState = {
       ...parsed,
       event: {
@@ -113,10 +114,10 @@ export function validateImportedJson(jsonString: string): {
           venuePreference: sanitizeText(parsed.event.preferences?.venuePreference || ''),
           decorationPreference: sanitizeText(parsed.event.preferences?.decorationPreference || ''),
           photographyTier: sanitizeText(parsed.event.preferences?.photographyTier || ''),
-          specialConstraints: Array.isArray(parsed.event.preferences?.specialConstraints)
-            ? parsed.event.preferences.specialConstraints.map(sanitizeText)
-            : typeof (parsed.event.preferences as unknown as { specialConstraints?: string })?.specialConstraints === 'string'
-            ? [sanitizeText((parsed.event.preferences as unknown as { specialConstraints: string }).specialConstraints)]
+          specialConstraints: Array.isArray(rawConstraints)
+            ? rawConstraints.map((item) => sanitizeText(item as string))
+            : typeof rawConstraints === 'string'
+            ? [sanitizeText(rawConstraints)]
             : [],
           optionalNotes: sanitizeText(parsed.event.preferences?.optionalNotes || ''),
           dietaryRequirements: (parsed.event.preferences?.dietaryRequirements || []).map(sanitizeText),

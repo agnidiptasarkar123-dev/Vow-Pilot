@@ -2,6 +2,23 @@ import { test, expect, Page } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
+interface AxeViolation {
+  id: string;
+  impact: 'critical' | 'serious' | 'moderate' | 'minor';
+  description: string;
+  nodes: Array<{ html: string; target: string[] }>;
+}
+
+declare global {
+  interface Window {
+    axe?: {
+      run: (options?: unknown) => Promise<{
+        violations: AxeViolation[];
+      }>;
+    };
+  }
+}
+
 // Read axe-core bundle for injecting into the real browser
 const axeCorePath = path.resolve(process.cwd(), 'node_modules/axe-core/axe.min.js');
 const axeSource = fs.readFileSync(axeCorePath, 'utf8');
@@ -12,7 +29,9 @@ async function runAxeScan(page: Page, screenName: string) {
 
   // Run axe WCAG 2.2 AA scan
   const results = await page.evaluate(async () => {
-    // @ts-ignore
+    if (!window.axe) {
+      throw new Error('axe-core was not properly injected into window');
+    }
     return await window.axe.run({
       runOnly: {
         type: 'tag',
@@ -21,10 +40,10 @@ async function runAxeScan(page: Page, screenName: string) {
     });
   });
 
-  const critical = results.violations.filter((v: any) => v.impact === 'critical');
-  const serious = results.violations.filter((v: any) => v.impact === 'serious');
-  const moderate = results.violations.filter((v: any) => v.impact === 'moderate');
-  const minor = results.violations.filter((v: any) => v.impact === 'minor');
+  const critical = results.violations.filter((v: AxeViolation) => v.impact === 'critical');
+  const serious = results.violations.filter((v: AxeViolation) => v.impact === 'serious');
+  const moderate = results.violations.filter((v: AxeViolation) => v.impact === 'moderate');
+  const minor = results.violations.filter((v: AxeViolation) => v.impact === 'minor');
 
   if (results.violations.length > 0) {
     console.error(`Axe violations in ${screenName}:`, {

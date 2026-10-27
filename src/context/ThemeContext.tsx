@@ -72,3 +72,7 @@ export const useTheme = (): ThemeContextType => {
   }
   return context;
 };
+
+export const useThemeSafe = (): ThemeContextType | undefined => {
+  return useContext(ThemeContext);
+};

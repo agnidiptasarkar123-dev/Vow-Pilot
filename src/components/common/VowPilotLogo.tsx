@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '../../context/ThemeContext';
+import { useThemeSafe } from '../../context/ThemeContext';
 
 export interface VowPilotLogoProps {
   variant?: 'horizontal' | 'compact' | 'mark' | 'stacked';
@@ -18,17 +18,9 @@ export const VowPilotLogo: React.FC<VowPilotLogoProps> = ({
   className = '',
   onClick,
 }) => {
-  let isDarkSystem = false;
-  try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const themeCtx = useTheme();
-    isDarkSystem = themeCtx.isDark;
-  } catch {
-    // Outside ThemeProvider or isolated unit test
-    if (typeof document !== 'undefined' && document.documentElement.classList.contains('dark')) {
-      isDarkSystem = true;
-    }
-  }
+  const themeCtx = useThemeSafe();
+  const isDarkFromDoc = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+  const isDarkSystem = themeCtx?.isDark ?? isDarkFromDoc;
 
   const theme = explicitTheme ?? (isDarkSystem ? 'dark' : 'default');
 

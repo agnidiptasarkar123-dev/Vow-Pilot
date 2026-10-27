@@ -16,6 +16,16 @@ export interface StructuredLogEntry {
   metadata?: Record<string, unknown>;
 }
 
+export interface RouteLatencyMetric {
+  count: number;
+  p50Ms: number;
+  p95Ms: number;
+  p99Ms: number;
+  avgMs: number;
+  minMs: number;
+  maxMs: number;
+}
+
 // Sensitive fields to redact from logs and metric payloads
 const SENSITIVE_KEYS = new Set([
   'password',
@@ -225,18 +235,7 @@ export class MetricsRegistry {
       latencyP95Ms: number;
       latencyP99Ms: number;
     };
-    routeMetrics: Record<
-      string,
-      {
-        count: number;
-        p50Ms: number;
-        p95Ms: number;
-        p99Ms: number;
-        avgMs: number;
-        minMs: number;
-        maxMs: number;
-      }
-    >;
+    routeMetrics: Record<string, RouteLatencyMetric>;
     email: {
       totalDispatched: number;
       errors: number;
@@ -259,7 +258,7 @@ export class MetricsRegistry {
     const errorRatePercent =
       this.totalRequests > 0 ? Math.round((errorCount / this.totalRequests) * 10000) / 100 : 0;
 
-    const routeMetrics: Record<string, any> = {};
+    const routeMetrics: Record<string, RouteLatencyMetric> = {};
     for (const [route, samples] of this.routeLatencies.entries()) {
       if (samples.length === 0) continue;
       const sorted = [...samples].sort((a, b) => a - b);

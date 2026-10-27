@@ -240,20 +240,20 @@ export function migrateState(rawState: Record<string, unknown> | AppState): AppS
   const s = rawState as Record<string, unknown>;
 
   return {
-    ...(rawState as unknown as AppState),
+    ...(rawState as AppState),
     schemaVersion: CURRENT_SCHEMA_VERSION,
-    categories: Array.isArray(s.categories) ? (s.categories as unknown as BudgetCategory[]) : [],
-    tasks: Array.isArray(s.tasks) ? (s.tasks as unknown as Task[]) : [],
-    expenses: Array.isArray(s.expenses) ? (s.expenses as unknown as Expense[]) : [],
-    vendors: Array.isArray(s.vendors) ? (s.vendors as unknown as Vendor[]) : [],
-    quotes: Array.isArray(s.quotes) ? (s.quotes as unknown as VendorQuote[]) : [],
-    scenarios: Array.isArray(s.scenarios) ? (s.scenarios as unknown as BudgetScenario[]) : [],
-    messages: Array.isArray(s.messages) ? (s.messages as unknown as PlanningMessage[]) : [],
-    changeLog: Array.isArray(s.changeLog) ? (s.changeLog as unknown as ChangeRecord[]) : [],
-    invitations: Array.isArray(s.invitations) ? (s.invitations as unknown as InvitationDesign[]) : [],
-    guests: Array.isArray(s.guests) ? (s.guests as unknown as GuestRecord[]) : [],
-    timeline: Array.isArray(s.timeline) ? (s.timeline as unknown as TimelineItem[]) : [],
-    tables: Array.isArray(s.tables) ? (s.tables as unknown as SeatingTable[]) : [],
+    categories: Array.isArray(s.categories) ? (s.categories as BudgetCategory[]) : [],
+    tasks: Array.isArray(s.tasks) ? (s.tasks as Task[]) : [],
+    expenses: Array.isArray(s.expenses) ? (s.expenses as Expense[]) : [],
+    vendors: Array.isArray(s.vendors) ? (s.vendors as Vendor[]) : [],
+    quotes: Array.isArray(s.quotes) ? (s.quotes as VendorQuote[]) : [],
+    scenarios: Array.isArray(s.scenarios) ? (s.scenarios as BudgetScenario[]) : [],
+    messages: Array.isArray(s.messages) ? (s.messages as PlanningMessage[]) : [],
+    changeLog: Array.isArray(s.changeLog) ? (s.changeLog as ChangeRecord[]) : [],
+    invitations: Array.isArray(s.invitations) ? (s.invitations as InvitationDesign[]) : [],
+    guests: Array.isArray(s.guests) ? (s.guests as GuestRecord[]) : [],
+    timeline: Array.isArray(s.timeline) ? (s.timeline as TimelineItem[]) : [],
+    tables: Array.isArray(s.tables) ? (s.tables as SeatingTable[]) : [],
   };
 }
 

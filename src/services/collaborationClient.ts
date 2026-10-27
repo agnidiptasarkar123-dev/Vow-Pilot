@@ -882,5 +882,5 @@ export class CollaborationClient {
 
 export const collaborationClient = new CollaborationClient();
 if (typeof window !== 'undefined') {
-  (window as unknown as { collaborationClient: unknown }).collaborationClient = collaborationClient;
+  window.collaborationClient = collaborationClient;
 }

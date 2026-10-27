@@ -403,6 +403,17 @@ describe('VowPilot Targeted Coverage Gap Remediation Suite', () => {
       expect(res.state?.event.preferences?.specialConstraints).toEqual([]);
     });
 
+    it('preserves array mapping through sanitizeText for mixed array elements without dropping items', () => {
+      const payload: AppState = JSON.parse(JSON.stringify(DEMO_STATE));
+      (payload.event as any).preferences = {
+        ...payload.event.preferences,
+        specialConstraints: ['vegan', 123 as any, null as any, '<b>organic</b>'],
+      };
+      const res = validateImportedJson(JSON.stringify(payload));
+      expect(res.success).toBe(true);
+      expect(res.state?.event.preferences?.specialConstraints).toEqual(['vegan', '', '', 'organic']);
+    });
+
     it('exercises falsy optional string fields and undefined notes in validateImportedJson', () => {
       const payload: AppState = JSON.parse(JSON.stringify(DEMO_STATE));
       payload.expenses[0].notes = undefined;

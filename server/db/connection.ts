@@ -73,8 +73,8 @@ export class VowPilotDatabase {
     return this;
   }
 
-  public transaction<F extends (...args: any[]) => any>(fn: F): F {
-    return (this.db.transaction(fn) as unknown) as F;
+  public transaction<Args extends unknown[], R>(fn: (...args: Args) => R): Database.Transaction<(...args: Args) => R> {
+    return this.db.transaction(fn);
   }
 
   /**
