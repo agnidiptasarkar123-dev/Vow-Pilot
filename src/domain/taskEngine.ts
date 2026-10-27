@@ -80,7 +80,7 @@ export function detectDependencyCycles(tasks: Task[]): CycleDetectionResult {
   const recStack = new Set<string>();
   const parentMap = new Map<string, string>();
 
-  let cycleFound: string[] | null = null;
+  let cycleFound: string[] = [];
 
   function dfs(current: string): boolean {
     visited.add(current);
@@ -113,7 +113,7 @@ export function detectDependencyCycles(tasks: Task[]): CycleDetectionResult {
       if (dfs(t.id)) {
         return {
           hasCycle: true,
-          cyclePath: cycleFound || [],
+          cyclePath: cycleFound,
         };
       }
     }
@@ -305,14 +305,12 @@ export function computeTopologicalOrder(tasks: Task[]): Task[] {
   let head = 0;
   while (head < queue.length) {
     const currId = queue[head++];
-    const task = taskMap.get(currId);
-    if (task) {
-      result.push(task);
-    }
+    const task = taskMap.get(currId)!;
+    result.push(task);
 
-    const dependents = adjList.get(currId) || [];
+    const dependents = adjList.get(currId)!;
     for (const dep of dependents) {
-      const newDeg = (inDegree.get(dep) || 1) - 1;
+      const newDeg = inDegree.get(dep)! - 1;
       inDegree.set(dep, newDeg);
       if (newDeg === 0) {
         queue.push(dep);

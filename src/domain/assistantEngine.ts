@@ -71,7 +71,7 @@ export function detectInputLanguage(raw: string): 'en' | 'bn' | 'benglish' {
  * - Collapses consecutive whitespace
  */
 export function normalizeAssistantInput(raw: string): string {
-  if (!raw) return '';
+  if (!raw || typeof raw !== 'string') return '';
   let str = convertBengaliDigitsToAscii(raw).trim().toLowerCase();
   if (str.includes("'") || /[\u2018\u2019`]/.test(str)) {
     str = str
@@ -115,7 +115,7 @@ export function parseUserIntent(input: string): IntentParseResult {
   if (typeof input === 'string') {
     if (INTENT_CACHE.size >= MAX_INTENT_CACHE_SIZE) {
       const firstKey = INTENT_CACHE.keys().next().value;
-      if (firstKey !== undefined) INTENT_CACHE.delete(firstKey);
+      INTENT_CACHE.delete(firstKey!);
     }
     INTENT_CACHE.set(input, result);
   }
@@ -167,7 +167,7 @@ function computeUserIntent(input: string): IntentParseResult {
     else if (isLivePayment) reason = 'Direct live financial transactions or card processing are not supported';
     else if (isWebScraping) reason = 'External web scraping and internet searching are not supported';
     else if (isTelephony) reason = 'Automated telephony and mass SMS broadcasting are not supported';
-    else if (isGenerativeArt) reason = 'Generative image creation is outside planning scope';
+    else reason = 'Generative image creation is outside planning scope';
 
     return {
       intent: 'unsupported',
@@ -493,13 +493,18 @@ function computeUserIntent(input: string): IntentParseResult {
  * based on live application state.
  */
 export function generateAssistantResponse(
-  input: string,
-  state: AppState
+  input: string | IntentParseResult,
+  state: AppState,
+  fallbackPrompt?: string
 ): PlanningMessage {
-  const parse = parseUserIntent(input);
+  const parse: IntentParseResult =
+    typeof input === 'object' && input !== null && 'intent' in input
+      ? input
+      : parseUserIntent(typeof input === 'string' ? input : '');
+  const textPrompt = typeof input === 'string' ? input : (fallbackPrompt || '');
   const now = new Date().toISOString();
   const currency = state.event.currency;
-  const lang = detectInputLanguage(input);
+  const lang = detectInputLanguage(textPrompt);
   const isBengali = lang === 'bn' || lang === 'benglish';
 
   switch (parse.intent) {
@@ -661,17 +666,21 @@ export function generateAssistantResponse(
     }
 
     case 'query_category_budget': {
-      const keyword = parse.extractedParameters?.categoryKeyword || '';
-      const cat = state.categories.find(
-        (c) => c.name.toLowerCase().includes(keyword) || c.id.toLowerCase().includes(keyword)
-      );
+      const keyword = parse.extractedParameters?.categoryKeyword?.trim() || '';
+      const cat = keyword
+        ? state.categories.find(
+            (c) => c.name.toLowerCase().includes(keyword.toLowerCase()) || c.id.toLowerCase().includes(keyword.toLowerCase())
+          )
+        : undefined;
 
       if (!cat) {
         return {
           id: `msg-${Date.now()}`,
           timestamp: now,
           role: 'assistant',
-          content: `No budget category matching "${keyword}" was found in your plan. You can view all configured categories in the **Budget Planner**.`,
+          content: keyword
+            ? `No budget category matching "${keyword}" was found in your plan. You can view all configured categories in the **Budget Planner**.`
+            : `No budget category matching was found in your plan. You can view all configured categories in the **Budget Planner**.`,
           intent: 'query_category_budget',
           requiresConfirmation: false,
           dataGrounding: 'missing_information',
@@ -908,7 +917,9 @@ export function generateAssistantResponse(
           id: `msg-${Date.now()}`,
           timestamp: now,
           role: 'assistant',
-          content: `All category allocations (${formatCurrency(overview.totalAllocated, currency)}) are already committed to confirmed vendor expenses or deposits (${formatCurrency(overview.committedTotal, currency)}). There is no flexible, uncommitted headroom available to trim without renegotiating confirmed vendor contracts or canceling bookings.`,
+          content: overview.isOverrun
+            ? `Your budget has an overrun of ${formatCurrency(overview.overrunAmount, currency)}, but all category allocations are already tied to confirmed vendor commitments. You may need to renegotiate quotes or increase the total budget.`
+            : `All category allocations (${formatCurrency(overview.totalAllocated, currency)}) are already committed to confirmed vendor expenses or deposits (${formatCurrency(overview.committedTotal, currency)}). There is no flexible, uncommitted headroom available to trim without renegotiating confirmed vendor contracts or canceling bookings.`,
           intent: parse.intent === 'reduce_budget' ? 'reduce_budget' : 'suggest_expense_reductions',
           requiresConfirmation: false,
           dataGrounding: 'verified_application_data',
@@ -928,9 +939,7 @@ export function generateAssistantResponse(
           id: `msg-${Date.now()}`,
           timestamp: now,
           role: 'assistant',
-          content: overview.isOverrun
-            ? `Your budget has an overrun of ${formatCurrency(overview.overrunAmount, currency)}, but all category allocations are already tied to confirmed vendor commitments. You may need to renegotiate quotes or increase the total budget.`
-            : `Your budget is currently within the total limit of ${formatCurrency(state.event.totalBudget, currency)}, and existing category headroom is already optimized. To explore deeper custom cuts, open the **Decision Simulator**.`,
+          content: `Your budget is currently within the total limit of ${formatCurrency(state.event.totalBudget, currency)}, and existing category headroom is already optimized. To explore deeper custom cuts, open the **Decision Simulator**.`,
           intent: parse.intent === 'reduce_budget' ? 'reduce_budget' : 'suggest_expense_reductions',
           requiresConfirmation: false,
           dataGrounding: 'verified_application_data',

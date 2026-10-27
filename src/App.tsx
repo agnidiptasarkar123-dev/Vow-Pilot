@@ -7,7 +7,9 @@ import { DashboardView } from './components/dashboard/DashboardView';
 import { Modal } from './components/common/Modal';
 import { ViewLoadingFallback } from './components/common/ViewLoadingFallback';
 import { VowPilotLogo } from './components/common/VowPilotLogo';
-import { PublicRsvpModal } from './components/rsvp/PublicRsvpModal';
+const PublicRsvpModal = lazy(() =>
+  import('./components/rsvp/PublicRsvpModal').then((m) => ({ default: m.PublicRsvpModal }))
+);
 
 // Route-level code splitting: dynamic imports for views
 const BudgetPlannerView = lazy(() =>
@@ -124,11 +126,13 @@ const AppContent: React.FC = () => {
 
       {/* Direct Public RSVP Modal (Triggered via ?rsvpToken=... URL) */}
       {directRsvpToken && (
-        <PublicRsvpModal
-          isOpen={!!directRsvpToken}
-          token={directRsvpToken}
-          onClose={() => setDirectRsvpToken(null)}
-        />
+        <Suspense fallback={null}>
+          <PublicRsvpModal
+            isOpen={!!directRsvpToken}
+            token={directRsvpToken}
+            onClose={() => setDirectRsvpToken(null)}
+          />
+        </Suspense>
       )}
 
       {/* Needs Assessment Wizard Modal */}

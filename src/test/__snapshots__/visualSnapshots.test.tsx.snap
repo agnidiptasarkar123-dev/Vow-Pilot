@@ -4562,6 +4562,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
         >
           <button
             class="px-3.5 py-2 rounded-lg text-xs font-semibold text-secondary hover:text-primary bg-surface border border-subtle hover:bg-subtle flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
+            data-testid="reset-sandbox-btn"
           >
             <svg
               aria-hidden="true"
@@ -4589,6 +4590,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
           </button>
           <button
             class="px-4 py-2 rounded-lg text-xs font-semibold bg-[#B85C3A] hover:bg-[#9E4B2D] text-white flex items-center gap-1.5 transition shadow-xs cursor-pointer active:scale-[0.98]"
+            data-testid="save-scenario-btn"
           >
             <svg
               aria-hidden="true"
@@ -4677,6 +4679,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
               >
                 <span
                   class="text-xs font-bold font-mono px-2.5 py-1 rounded-lg bg-subtle text-secondary border border-subtle"
+                  data-testid="simulated-guest-difference"
                 >
                   +0 guests
                 </span>
@@ -4689,6 +4692,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
               aria-valuenow="150"
               aria-valuetext="150 guests"
               class="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+              data-testid="guest-count-slider"
               max="250"
               min="20"
               type="range"
@@ -4734,6 +4738,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-venue"
                     >
                       ₹7,50,000
                     </span>
@@ -4746,6 +4751,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   aria-valuenow="75000000"
                   aria-valuetext="₹7,50,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-venue"
                   max="150000000"
                   min="0"
                   step="1000000"
@@ -4776,6 +4782,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-catering"
                     >
                       ₹6,00,000
                     </span>
@@ -4788,6 +4795,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   aria-valuenow="60000000"
                   aria-valuetext="₹6,00,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-catering"
                   max="120000000"
                   min="0"
                   step="1000000"
@@ -4818,6 +4826,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-photography"
                     >
                       ₹3,50,000
                     </span>
@@ -4830,6 +4839,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   aria-valuenow="35000000"
                   aria-valuetext="₹3,50,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-photography"
                   max="70000000"
                   min="0"
                   step="1000000"
@@ -4860,6 +4870,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-decor"
                     >
                       ₹4,00,000
                     </span>
@@ -4872,6 +4883,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   aria-valuenow="40000000"
                   aria-valuetext="₹4,00,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-decor"
                   max="80000000"
                   min="0"
                   step="1000000"
@@ -4902,6 +4914,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-entertainment"
                     >
                       ₹1,80,000
                     </span>
@@ -4914,6 +4927,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   aria-valuenow="18000000"
                   aria-valuetext="₹1,80,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-entertainment"
                   max="36000000"
                   min="0"
                   step="1000000"
@@ -4944,6 +4958,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-logistics"
                     >
                       ₹1,20,000
                     </span>
@@ -4956,6 +4971,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   aria-valuenow="12000000"
                   aria-valuetext="₹1,20,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-logistics"
                   max="24000000"
                   min="0"
                   step="1000000"
@@ -4986,6 +5002,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-contingency"
                     >
                       ₹1,00,000
                     </span>
@@ -4998,6 +5015,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   aria-valuenow="10000000"
                   aria-valuetext="₹1,00,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-contingency"
                   max="20000000"
                   min="0"
                   step="1000000"
@@ -5039,6 +5057,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </span>
                 <span
                   class="font-mono font-semibold text-primary"
+                  data-testid="baseline-spend"
                 >
                   ₹23,75,000
                 </span>
@@ -5053,6 +5072,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </span>
                 <span
                   class="font-mono font-bold text-sm text-primary"
+                  data-testid="simulated-total"
                 >
                   ₹25,00,000
                 </span>
@@ -5067,6 +5087,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </span>
                 <span
                   class="font-mono font-bold text-sm text-[#BE123C] dark:text-[#E58C91]"
+                  data-testid="net-difference"
                 >
                   +₹1,25,000
                 </span>
@@ -5081,6 +5102,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 </span>
                 <span
                   class="font-mono font-bold text-sm text-[#047857] dark:text-[#91B8A0]"
+                  data-testid="remaining-runway"
                 >
                   ₹0
                 </span>
@@ -5283,7 +5305,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 <td
                   class="py-3.5 px-4 text-right font-mono font-bold text-primary"
                 >
-                  ₹27,05,000
+                  ₹26,00,000
                 </td>
                 <td
                   class="py-3.5 px-4 text-right font-mono font-semibold"
@@ -5291,7 +5313,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   <span
                     class="text-[#BE123C] dark:text-[#E58C91]"
                   >
-                    +₹3,30,000
+                    +₹2,25,000
                   </span>
                 </td>
                 <td
@@ -5300,7 +5322,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                   <span
                     class="text-[#BE123C] dark:text-[#E58C91]"
                   >
-                    -₹2,05,000
+                    -₹1,00,000
                   </span>
                 </td>
                 <td
@@ -5462,7 +5484,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 <span
                   class="font-bold text-primary"
                 >
-                  ₹27,05,000
+                  ₹26,00,000
                 </span>
               </div>
               <div>
@@ -5474,7 +5496,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Desktop Viewport (1
                 <span
                   class="text-[#BE123C] dark:text-[#E58C91]"
                 >
-                  +₹3,30,000
+                  +₹2,25,000
                 </span>
               </div>
             </div>
@@ -12266,6 +12288,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
         >
           <button
             class="px-3.5 py-2 rounded-lg text-xs font-semibold text-secondary hover:text-primary bg-surface border border-subtle hover:bg-subtle flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
+            data-testid="reset-sandbox-btn"
           >
             <svg
               aria-hidden="true"
@@ -12293,6 +12316,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
           </button>
           <button
             class="px-4 py-2 rounded-lg text-xs font-semibold bg-[#B85C3A] hover:bg-[#9E4B2D] text-white flex items-center gap-1.5 transition shadow-xs cursor-pointer active:scale-[0.98]"
+            data-testid="save-scenario-btn"
           >
             <svg
               aria-hidden="true"
@@ -12381,6 +12405,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
               >
                 <span
                   class="text-xs font-bold font-mono px-2.5 py-1 rounded-lg bg-subtle text-secondary border border-subtle"
+                  data-testid="simulated-guest-difference"
                 >
                   +0 guests
                 </span>
@@ -12393,6 +12418,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
               aria-valuenow="150"
               aria-valuetext="150 guests"
               class="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+              data-testid="guest-count-slider"
               max="250"
               min="20"
               type="range"
@@ -12438,6 +12464,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-venue"
                     >
                       ₹7,50,000
                     </span>
@@ -12450,6 +12477,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   aria-valuenow="75000000"
                   aria-valuetext="₹7,50,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-venue"
                   max="150000000"
                   min="0"
                   step="1000000"
@@ -12480,6 +12508,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-catering"
                     >
                       ₹6,00,000
                     </span>
@@ -12492,6 +12521,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   aria-valuenow="60000000"
                   aria-valuetext="₹6,00,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-catering"
                   max="120000000"
                   min="0"
                   step="1000000"
@@ -12522,6 +12552,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-photography"
                     >
                       ₹3,50,000
                     </span>
@@ -12534,6 +12565,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   aria-valuenow="35000000"
                   aria-valuetext="₹3,50,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-photography"
                   max="70000000"
                   min="0"
                   step="1000000"
@@ -12564,6 +12596,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-decor"
                     >
                       ₹4,00,000
                     </span>
@@ -12576,6 +12609,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   aria-valuenow="40000000"
                   aria-valuetext="₹4,00,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-decor"
                   max="80000000"
                   min="0"
                   step="1000000"
@@ -12606,6 +12640,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-entertainment"
                     >
                       ₹1,80,000
                     </span>
@@ -12618,6 +12653,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   aria-valuenow="18000000"
                   aria-valuetext="₹1,80,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-entertainment"
                   max="36000000"
                   min="0"
                   step="1000000"
@@ -12648,6 +12684,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-logistics"
                     >
                       ₹1,20,000
                     </span>
@@ -12660,6 +12697,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   aria-valuenow="12000000"
                   aria-valuetext="₹1,20,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-logistics"
                   max="24000000"
                   min="0"
                   step="1000000"
@@ -12690,6 +12728,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   >
                     <span
                       class="font-mono font-bold text-sm text-primary"
+                      data-testid="category-amount-contingency"
                     >
                       ₹1,00,000
                     </span>
@@ -12702,6 +12741,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   aria-valuenow="10000000"
                   aria-valuetext="₹1,00,000"
                   class="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
+                  data-testid="category-slider-contingency"
                   max="20000000"
                   min="0"
                   step="1000000"
@@ -12743,6 +12783,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </span>
                 <span
                   class="font-mono font-semibold text-primary"
+                  data-testid="baseline-spend"
                 >
                   ₹23,75,000
                 </span>
@@ -12757,6 +12798,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </span>
                 <span
                   class="font-mono font-bold text-sm text-primary"
+                  data-testid="simulated-total"
                 >
                   ₹25,00,000
                 </span>
@@ -12771,6 +12813,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </span>
                 <span
                   class="font-mono font-bold text-sm text-[#BE123C] dark:text-[#E58C91]"
+                  data-testid="net-difference"
                 >
                   +₹1,25,000
                 </span>
@@ -12785,6 +12828,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 </span>
                 <span
                   class="font-mono font-bold text-sm text-[#047857] dark:text-[#91B8A0]"
+                  data-testid="remaining-runway"
                 >
                   ₹0
                 </span>
@@ -12987,7 +13031,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 <td
                   class="py-3.5 px-4 text-right font-mono font-bold text-primary"
                 >
-                  ₹27,05,000
+                  ₹26,00,000
                 </td>
                 <td
                   class="py-3.5 px-4 text-right font-mono font-semibold"
@@ -12995,7 +13039,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   <span
                     class="text-[#BE123C] dark:text-[#E58C91]"
                   >
-                    +₹3,30,000
+                    +₹2,25,000
                   </span>
                 </td>
                 <td
@@ -13004,7 +13048,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                   <span
                     class="text-[#BE123C] dark:text-[#E58C91]"
                   >
-                    -₹2,05,000
+                    -₹1,00,000
                   </span>
                 </td>
                 <td
@@ -13166,7 +13210,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 <span
                   class="font-bold text-primary"
                 >
-                  ₹27,05,000
+                  ₹26,00,000
                 </span>
               </div>
               <div>
@@ -13178,7 +13222,7 @@ exports[`Visual Layout & Structural Regression (Finding C) > Mobile Viewport (37
                 <span
                   class="text-[#BE123C] dark:text-[#E58C91]"
                 >
-                  +₹3,30,000
+                  +₹2,25,000
                 </span>
               </div>
             </div>

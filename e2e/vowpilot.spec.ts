@@ -112,6 +112,37 @@ test.describe('VowPilot End-to-End Real Browser & Accessibility Verification', (
     // Verify simulator UI header
     await expect(page.locator('text=Decision Impact Simulator').first()).toBeVisible({ timeout: 5000 });
 
+    // Verify initial baseline state
+    const guestSlider = page.locator('[data-testid="guest-count-slider"]');
+    await expect(guestSlider).toBeVisible();
+    await expect(page.locator('[data-testid="baseline-spend"]')).toContainText('₹23,75,000');
+    await expect(page.locator('[data-testid="simulated-total"]')).toContainText('₹25,00,000');
+    await expect(page.locator('[data-testid="net-difference"]')).toContainText('+₹1,25,000');
+    await expect(page.locator('[data-testid="category-amount-catering"]')).toContainText('₹6,00,000');
+
+    // Simulate guest count increase to 193 (+43 guests)
+    await guestSlider.fill('193');
+    await guestSlider.dispatchEvent('input');
+    await guestSlider.dispatchEvent('change');
+
+    // Assert reactive recalculations of difference, category estimates, total and runway
+    // 43 additional guests * ₹3,500 per guest = +₹1,50,500 catering adjustment
+    await expect(page.locator('[data-testid="simulated-guest-difference"]')).toContainText('+43 guests');
+    await expect(page.locator('[data-testid="category-amount-catering"]')).toContainText('₹7,50,500');
+    await expect(page.locator('[data-testid="category-delta-catering"]')).toContainText('+₹1,50,500');
+    await expect(page.locator('[data-testid="simulated-total"]')).toContainText('₹26,50,500');
+    await expect(page.locator('[data-testid="net-difference"]')).toContainText('+₹2,75,500');
+    await expect(page.locator('[data-testid="remaining-runway"]')).toContainText('-₹1,50,500');
+
+    // Test Reset to Baseline button
+    const resetBtn = page.locator('[data-testid="reset-sandbox-btn"]');
+    await resetBtn.click();
+
+    await expect(page.locator('[data-testid="simulated-guest-difference"]')).toContainText('0 guests');
+    await expect(page.locator('[data-testid="category-amount-catering"]')).toContainText('₹6,00,000');
+    await expect(page.locator('[data-testid="simulated-total"]')).toContainText('₹25,00,000');
+    await expect(page.locator('[data-testid="net-difference"]')).toContainText('+₹1,25,000');
+
     // Run accessibility scan
     await runAxeScan(page, 'Decision Simulator View');
   });

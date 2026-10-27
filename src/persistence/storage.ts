@@ -36,7 +36,7 @@ function hasDangerousKey(obj: unknown): boolean {
     return true;
   }
   for (const val of Object.values(obj)) {
-    if (val && typeof val === 'object' && hasDangerousKey(val)) {
+    if (hasDangerousKey(val)) {
       return true;
     }
   }
@@ -446,6 +446,21 @@ export function saveAllEventsToStorage(
     console.error('VowPilot: Failed to save multi-event store to localStorage:', error);
     return false;
   }
+}
+
+export const loadMultiEventStore = loadAllEventsFromStorage;
+
+export function saveMultiEventStore(
+  activeState: AppState,
+  allStates: AppState[]
+): boolean {
+  const eventsMap: Record<string, AppState> = {};
+  for (const s of allStates) {
+    if (s?.event?.id) {
+      eventsMap[s.event.id] = s;
+    }
+  }
+  return saveAllEventsToStorage(eventsMap, activeState.event.id);
 }
 
 /**

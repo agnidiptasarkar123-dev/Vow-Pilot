@@ -31,22 +31,12 @@ export const DecisionSimulatorView: React.FC = () => {
 
   // Active sandbox state (does not mutate state.event until explicitly committed!)
   const [sandboxGuestCount, setSandboxGuestCount] = useState<number>(state.event.guestCount);
-  const [sandboxAllocations, setSandboxAllocations] = useState<Record<string, number>>(() => {
-    const map: Record<string, number> = {};
-    for (const c of state.categories) {
-      map[c.id] = c.allocatedAmount;
-    }
-    return map;
-  });
+  const [sandboxAllocations, setSandboxAllocations] = useState<Record<string, number>>({});
 
   // Re-sync sandbox whenever active event changes
   React.useEffect(() => {
     setSandboxGuestCount(state.event.guestCount);
-    const map: Record<string, number> = {};
-    for (const c of state.categories) {
-      map[c.id] = c.allocatedAmount;
-    }
-    setSandboxAllocations(map);
+    setSandboxAllocations({});
   }, [state.event.id]);
 
   const [scenarioNameInput, setScenarioNameInput] = useState('');
@@ -83,20 +73,20 @@ export const DecisionSimulatorView: React.FC = () => {
 
   const handleResetSandbox = () => {
     setSandboxGuestCount(state.event.guestCount);
-    const map: Record<string, number> = {};
-    for (const c of state.categories) {
-      map[c.id] = c.allocatedAmount;
-    }
-    setSandboxAllocations(map);
+    setSandboxAllocations({});
   };
 
   const handleSaveAsScenario = () => {
     if (!scenarioNameInput.trim()) return;
+    const finalAllocations: Record<string, number> = {};
+    for (const comp of evaluation.categoryComparisons) {
+      finalAllocations[comp.categoryId] = comp.scenarioAllocated;
+    }
     createScenario({
       name: scenarioNameInput.trim(),
       description: scenarioDescriptionInput.trim() || 'Custom simulation scenario',
       modifiedGuestCount: sandboxGuestCount,
-      categoryAllocations: sandboxAllocations,
+      categoryAllocations: finalAllocations,
       notes: `Modeled with ${sandboxGuestCount} guests against ${state.event.guestCount} baseline.`,
       isBaseline: false,
     });
@@ -107,13 +97,7 @@ export const DecisionSimulatorView: React.FC = () => {
 
   const handleLoadScenarioIntoSandbox = (scen: BudgetScenario) => {
     setSandboxGuestCount(scen.modifiedGuestCount);
-    const map: Record<string, number> = {};
-    for (const c of state.categories) {
-      map[c.id] = scen.categoryAllocations[c.id] !== undefined
-        ? scen.categoryAllocations[c.id]
-        : c.allocatedAmount;
-    }
-    setSandboxAllocations(map);
+    setSandboxAllocations({ ...scen.categoryAllocations });
   };
 
   const handleExecuteApply = () => {
@@ -139,6 +123,7 @@ export const DecisionSimulatorView: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleResetSandbox}
+            data-testid="reset-sandbox-btn"
             className="px-3.5 py-2 rounded-lg text-xs font-semibold text-secondary hover:text-primary bg-surface border border-subtle hover:bg-subtle flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -146,6 +131,7 @@ export const DecisionSimulatorView: React.FC = () => {
           </button>
           <button
             onClick={() => setIsSaveModalOpen(true)}
+            data-testid="save-scenario-btn"
             className="px-4 py-2 rounded-lg text-xs font-semibold bg-[#B85C3A] hover:bg-[#9E4B2D] text-white flex items-center gap-1.5 transition shadow-xs cursor-pointer active:scale-[0.98]"
           >
             <Plus className="w-4 h-4" />
@@ -173,6 +159,7 @@ export const DecisionSimulatorView: React.FC = () => {
 
               <div className="text-right">
                 <span
+                  data-testid="simulated-guest-difference"
                   className={`text-xs font-bold font-mono px-2.5 py-1 rounded-lg ${
                     sandboxGuestCount > state.event.guestCount
                       ? 'bg-amber-50 dark:bg-[#332A20] text-amber-800 dark:text-[#E5BD76] border border-amber-200 dark:border-[#55462D]'
@@ -198,6 +185,7 @@ export const DecisionSimulatorView: React.FC = () => {
               aria-valuemin={20}
               aria-valuemax={capacityLimit ? capacityLimit + 50 : 300}
               aria-valuetext={`${sandboxGuestCount} guests`}
+              data-testid="guest-count-slider"
               className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
             />
 
@@ -225,9 +213,10 @@ export const DecisionSimulatorView: React.FC = () => {
 
             <div className="space-y-4 divide-y divide-subtle">
               {state.categories.map((cat) => {
-                const currentMinor = sandboxAllocations[cat.id] ?? cat.allocatedAmount;
+                const comp = evaluation.categoryComparisons.find((c) => c.categoryId === cat.id);
+                const currentMinor = comp ? comp.scenarioAllocated : (sandboxAllocations[cat.id] ?? cat.allocatedAmount);
                 const baselineMinor = cat.allocatedAmount;
-                const deltaMinor = currentMinor - baselineMinor;
+                const deltaMinor = comp ? comp.delta : (currentMinor - baselineMinor);
                 const maxRange = Math.max(baselineMinor * 2, 20000000);
 
                 return (
@@ -239,16 +228,23 @@ export const DecisionSimulatorView: React.FC = () => {
                         </span>
                         <span className="text-[11px] text-secondary">
                           Baseline: {formatCurrency(baselineMinor, state.event.currency)}
-                          {cat.perGuestCost && ` • Scaling: ${formatCurrency(cat.perGuestCost, state.event.currency)}/guest`}
+                          {((comp?.costType === 'variable' && comp.perGuestRate > 0) || cat.perGuestCost) &&
+                            ` • Scaling: ${formatCurrency(comp?.perGuestRate || cat.perGuestCost || 0, state.event.currency)}/guest`}
+                          {comp?.costType === 'capacity_tier' && comp.isCapacityExceeded &&
+                            ` • Capacity surcharge: +${formatCurrency(comp.capacityTierDelta || 0, state.event.currency)}`}
                         </span>
                       </div>
 
                       <div className="text-right">
-                        <span className="font-mono font-bold text-sm text-primary">
+                        <span
+                          data-testid={`category-amount-${cat.id}`}
+                          className="font-mono font-bold text-sm text-primary"
+                        >
                           {formatCurrency(currentMinor, state.event.currency)}
                         </span>
                         {deltaMinor !== 0 && (
                           <span
+                            data-testid={`category-delta-${cat.id}`}
                             className={`text-[10px] font-mono font-semibold block ${
                               deltaMinor > 0 ? 'text-[#BE123C] dark:text-[#E58C91]' : 'text-[#047857] dark:text-[#91B8A0]'
                             }`}
@@ -274,6 +270,7 @@ export const DecisionSimulatorView: React.FC = () => {
                       aria-valuemin={0}
                       aria-valuemax={maxRange}
                       aria-valuetext={formatCurrency(currentMinor, state.event.currency)}
+                      data-testid={`category-slider-${cat.id}`}
                       className="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
                     />
                   </div>
@@ -298,14 +295,14 @@ export const DecisionSimulatorView: React.FC = () => {
             <div className="space-y-3 divide-y divide-subtle text-xs">
               <div className="flex justify-between items-center pt-2">
                 <span className="text-secondary">Baseline Spend</span>
-                <span className="font-mono font-semibold text-primary">
+                <span data-testid="baseline-spend" className="font-mono font-semibold text-primary">
                   {formatCurrency(baselineOverview.effectiveProjectedTotal, state.event.currency)}
                 </span>
               </div>
 
               <div className="flex justify-between items-center pt-2">
                 <span className="text-secondary">Simulated Total</span>
-                <span className="font-mono font-bold text-sm text-primary">
+                <span data-testid="simulated-total" className="font-mono font-bold text-sm text-primary">
                   {formatCurrency(evaluation.scenarioTotal, state.event.currency)}
                 </span>
               </div>
@@ -313,6 +310,7 @@ export const DecisionSimulatorView: React.FC = () => {
               <div className="flex justify-between items-center pt-2">
                 <span className="font-semibold text-primary">Net Difference</span>
                 <span
+                  data-testid="net-difference"
                   className={`font-mono font-bold text-sm ${
                     evaluation.deltaFromBaseline > 0 ? 'text-[#BE123C] dark:text-[#E58C91]' : 'text-[#047857] dark:text-[#91B8A0]'
                   }`}
@@ -325,6 +323,7 @@ export const DecisionSimulatorView: React.FC = () => {
               <div className="flex justify-between items-center pt-2">
                 <span className="text-secondary">Projected Remaining Runway</span>
                 <span
+                  data-testid="remaining-runway"
                   className={`font-mono font-bold text-sm ${
                     evaluation.remainingBudget < 0 ? 'text-[#BE123C] dark:text-[#E58C91]' : 'text-[#047857] dark:text-[#91B8A0]'
                   }`}

@@ -94,7 +94,7 @@ export function calculateBudgetOverview(
   let effectiveProjectedTotal = 0;
 
   const categorySummaries: CategorySummary[] = categories.map((cat) => {
-    const totals = categoryMap.get(cat.id) || { estimated: 0, quoted: 0, confirmed: 0, actual: 0 };
+    const totals = categoryMap.get(cat.id)!;
     const safeAllocated = Math.max(0, Number.isFinite(cat.allocatedAmount) ? cat.allocatedAmount : 0);
     totalAllocated += safeAllocated;
 
@@ -151,6 +151,135 @@ export function calculateBudgetOverview(
   };
 }
 
+export type CostCategoryType = 'variable' | 'fixed' | 'capacity_tier';
+
+export interface CategoryGuestAdjustment {
+  categoryId: string;
+  categoryName: string;
+  costType: CostCategoryType;
+  baselineAllocated: number;
+  perGuestRate: number;
+  variableDelta: number;
+  capacityTierDelta: number;
+  totalGuestAdjustment: number;
+  projectedAmount: number;
+  isCapacityExceeded: boolean;
+  capacityLimit?: number;
+}
+
+/**
+ * Classifies a budget category into 'variable', 'capacity_tier', or 'fixed'
+ * according to explicit cost properties or known domain service semantics.
+ */
+export function classifyCategoryCostType(category: BudgetCategory): CostCategoryType {
+  const catWithMeta = category as BudgetCategory & { costType?: CostCategoryType };
+  if (catWithMeta.costType) {
+    return catWithMeta.costType;
+  }
+  const idLower = category.id.toLowerCase();
+  const nameLower = category.name.toLowerCase();
+
+  // If explicit perGuestCost is provided and positive, it scales directly with guests
+  if (category.perGuestCost !== undefined && category.perGuestCost > 0) {
+    return 'variable';
+  }
+
+  // Capacity tier: venue, lawns, ballrooms or any category with defined maxCapacity
+  if (
+    category.maxCapacity !== undefined ||
+    idLower === 'venue' ||
+    nameLower.includes('venue') ||
+    nameLower.includes('lawn') ||
+    nameLower.includes('hall') ||
+    nameLower.includes('ballroom')
+  ) {
+    return 'capacity_tier';
+  }
+
+  // Per-guest variable services (catering, bar, dining, favors, invitations, gifts)
+  if (
+    idLower === 'catering' ||
+    nameLower.includes('catering') ||
+    nameLower.includes('beverage') ||
+    nameLower.includes('food') ||
+    nameLower.includes('favor') ||
+    nameLower.includes('invitation') ||
+    nameLower.includes('gift')
+  ) {
+    return 'variable';
+  }
+
+  // Fixed by default: photography, entertainment, decor, contingency
+  return 'fixed';
+}
+
+/**
+ * Deterministically evaluates per-category guest sensitivity across variable, fixed,
+ * and capacity-tier cost rules without hardcoded budget assumptions.
+ */
+export function calculateCategoryGuestAdjustments(
+  categories: BudgetCategory[],
+  baselineGuestCount: number,
+  simulatedGuestCount: number
+): CategoryGuestAdjustment[] {
+  const safeBaselineGuests = Math.max(0, Number.isFinite(baselineGuestCount) ? Math.floor(baselineGuestCount) : 0);
+  const safeSimulatedGuests = Math.max(0, Number.isFinite(simulatedGuestCount) ? Math.floor(simulatedGuestCount) : 0);
+  const deltaGuests = safeSimulatedGuests - safeBaselineGuests;
+
+  return categories.map((cat) => {
+    const costType = classifyCategoryCostType(cat);
+    const baseAlloc = Math.max(0, Number.isFinite(cat.allocatedAmount) ? cat.allocatedAmount : 0);
+    let perGuestRate = 0;
+    let variableDelta = 0;
+    let capacityTierDelta = 0;
+    let isCapacityExceeded = false;
+    const capacityLimit = cat.maxCapacity ?? (costType === 'capacity_tier' ? 200 : undefined);
+
+    if (costType === 'variable') {
+      if (cat.perGuestCost !== undefined && cat.perGuestCost > 0) {
+        perGuestRate = cat.perGuestCost;
+      } else if (safeBaselineGuests > 0 && baseAlloc > 0) {
+        // Derive implied baseline rate from actual event baseline allocation
+        perGuestRate = Math.round(baseAlloc / safeBaselineGuests);
+      } else {
+        perGuestRate = 0;
+      }
+
+      if (safeSimulatedGuests === 0) {
+        variableDelta = -baseAlloc;
+      } else {
+        variableDelta = deltaGuests * perGuestRate;
+      }
+    } else if (costType === 'capacity_tier') {
+      if (capacityLimit !== undefined && safeSimulatedGuests > capacityLimit) {
+        isCapacityExceeded = true;
+        const overflow = safeSimulatedGuests - capacityLimit;
+        const tierBlocks = Math.ceil(overflow / 50);
+        // Capacity tier surcharge: 20% of baseline allocation per 50-guest overflow block
+        const blockCost = Math.round(baseAlloc * 0.20);
+        capacityTierDelta = tierBlocks * blockCost;
+      }
+    }
+
+    const totalGuestAdjustment = variableDelta + capacityTierDelta;
+    const projectedAmount = Math.max(0, baseAlloc + totalGuestAdjustment);
+
+    return {
+      categoryId: cat.id,
+      categoryName: cat.name,
+      costType,
+      baselineAllocated: baseAlloc,
+      perGuestRate,
+      variableDelta,
+      capacityTierDelta,
+      totalGuestAdjustment,
+      projectedAmount,
+      isCapacityExceeded,
+      capacityLimit,
+    };
+  });
+}
+
 /**
  * Calculates the exact financial impact of changing guest count.
  * Uses explicit per-guest rules for categories that scale (e.g. catering, favors).
@@ -169,7 +298,7 @@ export function calculateGuestCountImpact(
 
   if (!Number.isFinite(safeGuestCount) || safeGuestCount < 0) {
     missingDataWarnings.push(`Invalid guest count (${newGuestCount}) provided. Must be a non-negative number.`);
-    safeGuestCount = Math.max(0, Math.floor(Number.isFinite(safeGuestCount) ? safeGuestCount : 0));
+    safeGuestCount = 0;
   } else {
     safeGuestCount = Math.floor(safeGuestCount);
   }
@@ -198,7 +327,19 @@ export function calculateGuestCountImpact(
       totalDelta += catDelta;
       affectedCategories.push(cat.name);
     } else if (cat.id === 'catering' && (cat.perGuestCost === undefined || cat.perGuestCost === 0)) {
-      missingDataWarnings.push(`Catering does not have a configured per-guest cost. Cannot compute guest scaling for ${cat.name}.`);
+      const impliedRate = currentGuestCount > 0 ? Math.round(cat.allocatedAmount / currentGuestCount) : 0;
+      if (impliedRate > 0) {
+        const catDelta = deltaGuests * impliedRate;
+        totalDelta += catDelta;
+        affectedCategories.push(cat.name);
+        missingDataWarnings.push(
+          `Catering does not have a configured per-guest cost. Using implied baseline rate of ${impliedRate} minor units/guest for ${cat.name}.`
+        );
+      } else {
+        missingDataWarnings.push(
+          `Catering does not have a configured per-guest cost. Cannot compute guest scaling for ${cat.name}.`
+        );
+      }
     }
   }
 
@@ -292,26 +433,23 @@ export function generatePriorityAwareRecommendations(
     const flexibleBudget = catSummary.allocatedAmount - catSummary.committedTotal;
     if (flexibleBudget <= 0) continue;
 
-    // Limit cut to at most 40% of flexible allocation to preserve viability, or whatever needed
+    // Limit cut to at most 45% of flexible allocation to preserve viability, or whatever needed
     const maxReduction = Math.min(flexibleBudget, Math.ceil(flexibleBudget * 0.45));
     const cut = Math.min(remainingToReduce, maxReduction);
+    remainingToReduce -= cut;
+    const rank = priorityIndexMap.has(catSummary.category.id)
+      ? priorityIndexMap.get(catSummary.category.id)! + 1
+      : 999;
 
-    if (cut > 0) {
-      remainingToReduce -= cut;
-      const rank = priorityIndexMap.has(catSummary.category.id)
-        ? priorityIndexMap.get(catSummary.category.id)! + 1
-        : 999;
-
-      recommendations.push({
-        categoryId: catSummary.category.id,
-        categoryName: catSummary.category.name,
-        priorityRank: rank,
-        currentAllocated: catSummary.allocatedAmount,
-        suggestedReduction: cut,
-        newAllocated: catSummary.allocatedAmount - cut,
-        rationale: `Ranked #${rank} in priority. Flexible headroom available without impacting ${catSummary.committedTotal > 0 ? 'confirmed vendors' : 'commitments'}.`,
-      });
-    }
+    recommendations.push({
+      categoryId: catSummary.category.id,
+      categoryName: catSummary.category.name,
+      priorityRank: rank,
+      currentAllocated: catSummary.allocatedAmount,
+      suggestedReduction: cut,
+      newAllocated: catSummary.allocatedAmount - cut,
+      rationale: `Ranked #${rank} in priority. Flexible headroom available without impacting ${catSummary.committedTotal > 0 ? 'confirmed vendors' : 'commitments'}.`,
+    });
   }
 
   return {
@@ -337,6 +475,11 @@ export function evaluateScenario(
     baselineAllocated: number;
     scenarioAllocated: number;
     delta: number;
+    costType: CostCategoryType;
+    perGuestRate: number;
+    guestAdjustment: number;
+    isCapacityExceeded?: boolean;
+    capacityTierDelta?: number;
   }>;
 } {
   const baselineOverview = calculateBudgetOverview(
@@ -345,6 +488,13 @@ export function evaluateScenario(
     baselineState.expenses
   );
 
+  const adjustments = calculateCategoryGuestAdjustments(
+    baselineState.categories,
+    baselineState.event.guestCount,
+    scenario.modifiedGuestCount
+  );
+  const adjustmentMap = new Map(adjustments.map((a) => [a.categoryId, a]));
+
   let scenarioTotal = 0;
   const categoryComparisons: Array<{
     categoryId: string;
@@ -352,20 +502,29 @@ export function evaluateScenario(
     baselineAllocated: number;
     scenarioAllocated: number;
     delta: number;
+    costType: CostCategoryType;
+    perGuestRate: number;
+    guestAdjustment: number;
+    isCapacityExceeded?: boolean;
+    capacityTierDelta?: number;
   }> = [];
 
   for (const cat of baselineState.categories) {
-    const scenarioAllocated = scenario.categoryAllocations[cat.id] !== undefined
-      ? scenario.categoryAllocations[cat.id]
-      : cat.allocatedAmount;
+    const hasManualOverride =
+      scenario.categoryAllocations !== undefined &&
+      scenario.categoryAllocations[cat.id] !== undefined;
 
-    // Check if guest count scaling applies
-    let guestAdjustment = 0;
-    if (scenario.modifiedGuestCount !== baselineState.event.guestCount && cat.perGuestCost) {
-      guestAdjustment = (scenario.modifiedGuestCount - baselineState.event.guestCount) * cat.perGuestCost;
+    const adj = adjustmentMap.get(cat.id)!;
+    const guestAdjustment = adj.totalGuestAdjustment;
+
+    let effectiveScenarioAmount: number;
+    if (hasManualOverride) {
+      const manualVal = scenario.categoryAllocations[cat.id];
+      effectiveScenarioAmount = Math.max(0, Number.isFinite(manualVal) ? manualVal : cat.allocatedAmount);
+    } else {
+      effectiveScenarioAmount = Math.max(0, cat.allocatedAmount + guestAdjustment);
     }
 
-    const effectiveScenarioAmount = scenarioAllocated + guestAdjustment;
     scenarioTotal += effectiveScenarioAmount;
 
     categoryComparisons.push({
@@ -374,6 +533,11 @@ export function evaluateScenario(
       baselineAllocated: cat.allocatedAmount,
       scenarioAllocated: effectiveScenarioAmount,
       delta: effectiveScenarioAmount - cat.allocatedAmount,
+      costType: adj.costType,
+      perGuestRate: adj.perGuestRate,
+      guestAdjustment,
+      isCapacityExceeded: adj.isCapacityExceeded,
+      capacityTierDelta: adj.capacityTierDelta,
     });
   }
 
@@ -400,9 +564,10 @@ export const STANDARD_CATEGORY_TEMPLATES: Array<{
   defaultRatio: number;
   priorityRank: number;
   userDefined: boolean;
+  maxCapacity?: number;
   notes?: string;
 }> = [
-  { id: 'venue', name: 'Venue & Lawns', defaultRatio: 0.30, priorityRank: 1, userDefined: true, notes: 'Includes main heritage courtyard and banquet hall.' },
+  { id: 'venue', name: 'Venue & Lawns', defaultRatio: 0.30, priorityRank: 1, userDefined: true, maxCapacity: 200, notes: 'Includes main heritage courtyard and banquet hall. Maximum capacity 200 guests.' },
   { id: 'catering', name: 'Catering & Beverages', defaultRatio: 0.24, priorityRank: 2, userDefined: true, notes: 'Multi-course menu with mocktail bar and dessert station.' },
   { id: 'decor', name: 'Decor & Production', defaultRatio: 0.16, priorityRank: 3, userDefined: true, notes: 'Mandap floral setup, walkway lights, dining table centerpieces.' },
   { id: 'photography', name: 'Photography & Cinema', defaultRatio: 0.14, priorityRank: 4, userDefined: true, notes: 'Lead photographers, cinematographers, drone operator, same-day teaser edit.' },
@@ -463,6 +628,7 @@ export function initializeCategoriesForBudget(
       allocatedAmount: allocated,
       userDefined: tmpl.userDefined,
       priorityRank,
+      maxCapacity: tmpl.maxCapacity,
       notes: tmpl.notes,
     };
   });

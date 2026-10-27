@@ -5,7 +5,11 @@ import {
   loadPersistedState,
   clearAllPersistedData,
   STORAGE_KEY,
+  EVENTS_STORE_KEY,
   CURRENT_SCHEMA_VERSION,
+  createInitialEventState,
+  loadMultiEventStore,
+  saveMultiEventStore,
 } from '../persistence/storage';
 import {
   validateImportedJson,
@@ -19,6 +23,9 @@ import {
   calculateGuestCountImpact,
   generatePriorityAwareRecommendations,
   evaluateScenario,
+  initializeCategoriesForBudget,
+  classifyCategoryCostType,
+  calculateCategoryGuestAdjustments,
 } from '../domain/budgetEngine';
 import {
   canCompleteTask,
@@ -1442,6 +1449,283 @@ describe('VowPilot Targeted Coverage Gap Remediation Suite', () => {
       };
       const res = generateAssistantResponse('compare vendor quotes', unlistedVendorState);
       expect(res.content).toContain('No vendor quotes recorded for any category.');
+    });
+
+    it('handles refuse_unsupported_request intent in English and Bengali (lines 507-522)', () => {
+      const resEn = generateAssistantResponse(
+        {
+          intent: 'refuse_unsupported_request',
+          extractedParameters: { unsupportedReason: 'External payment gateway is disabled' },
+        } as any,
+        DEMO_STATE,
+        'pay with card'
+      );
+      expect(resEn.content).toContain('Platform Boundary & Unsupported Capability Notice');
+      expect(resEn.content).toContain('External payment gateway is disabled');
+
+      const resBn = generateAssistantResponse(
+        {
+          intent: 'refuse_unsupported_request',
+          extractedParameters: { unsupportedReason: 'বহিরাগত পেমেন্ট গেটওয়ে সংযোগ নিষ্ক্রিয়' },
+        } as any,
+        DEMO_STATE,
+        'বুক করে দাও'
+      );
+      expect(resBn.content).toContain('সীমাবদ্ধতা বিজ্ঞপ্তি (Platform Boundary Notice)');
+      expect(resBn.content).toContain('বহিরাগত পেমেন্ট গেটওয়ে সংযোগ নিষ্ক্রিয়');
+    });
+
+    it('exercises Bengali protect priority keywords in parseUserIntent (line 313)', () => {
+      const parseBn1 = parseUserIntent('শীর্ষ ক্যাটাগরি রক্ষা করো');
+      expect(parseBn1.intent).toBe('protect_priority');
+
+      const parseBn2 = parseUserIntent('অগ্রাধিকার ক্যাটাগরি বাঁচাও');
+      expect(parseBn2.intent).toBe('protect_priority');
+    });
+
+    it('falls back to empty keyword in query_category_budget when categoryKeyword parameter is omitted (line 664)', () => {
+      const res = generateAssistantResponse({ intent: 'query_category_budget' } as any, DEMO_STATE);
+      expect(res.content).toContain('No budget category matching');
+    });
+
+    it('exercises overrun branches with zero recommendations in reduce_budget and suggest_expense_reductions (lines 932-934)', () => {
+      const overrunFullyCommitted: AppState = {
+        ...DEMO_STATE,
+        event: { ...DEMO_STATE.event, totalBudget: 50000 },
+        categories: [{ id: 'locked', name: 'Locked Cat', allocatedAmount: 100000, userDefined: false, priorityRank: 1 }],
+        expenses: [
+          {
+            id: 'e-locked',
+            categoryId: 'locked',
+            title: 'Committed Exp',
+            amount: 100000,
+            status: 'confirmed',
+            paidAmount: 100000,
+            createdAt: '2026-10-01',
+          },
+        ],
+      };
+
+      const resReduce = generateAssistantResponse({ intent: 'reduce_budget' } as any, overrunFullyCommitted);
+      expect(resReduce.content).toContain('all category allocations are already tied to confirmed vendor commitments');
+      expect(resReduce.intent).toBe('reduce_budget');
+
+      const resSuggest = generateAssistantResponse({ intent: 'suggest_expense_reductions' } as any, overrunFullyCommitted);
+      expect(resSuggest.content).toContain('all category allocations are already tied to confirmed vendor commitments');
+      expect(resSuggest.intent).toBe('suggest_expense_reductions');
+    });
+
+    it('covers storage.ts createInitialEventState fallbacks and multi-event validation (lines 30, 307-312, 329-344, 391)', () => {
+      // 1. Non-finite budget, empty location, city fallback
+      const cityEvent: any = {
+        name: 'City Fallback Event',
+        city: 'Jaipur, Rajasthan',
+        totalBudget: NaN,
+        guestCount: NaN,
+        planningPriorities: ['catering', 'venue'],
+      };
+      const stateWithCity = createInitialEventState(cityEvent);
+      expect(stateWithCity.event.location).toBe('Jaipur, Rajasthan');
+      expect(stateWithCity.event.totalBudget).toBe(0);
+      expect(stateWithCity.event.guestCount).toBe(0);
+      expect(stateWithCity.event.status).toBe('planning');
+      expect(stateWithCity.event.currency).toBe('INR');
+      expect(stateWithCity.event.eventType).toBe('wedding');
+
+      // 2. Default location fallback when city is also absent
+      const minimalEvent: any = {
+        name: 'Minimal Event',
+        totalBudget: 1000000,
+        guestCount: 50,
+      };
+      const stateMinimal = createInitialEventState(minimalEvent);
+      expect(stateMinimal.event.location).toBe('Kolkata, West Bengal');
+
+      // 3. Custom initialCategories
+      const customCats = [
+        { id: 'custom-cat', name: 'Custom Cat', allocatedAmount: 50000, userDefined: true, priorityRank: 1 },
+      ];
+      const stateCustom = createInitialEventState({ ...DEMO_STATE.event }, customCats);
+      expect(stateCustom.categories).toEqual(customCats);
+
+      // 4. Multi-event store invalid state rejection (line 391)
+      const fakeStore = {
+        'evt-good': DEMO_STATE,
+        'evt-corrupt': { badData: true },
+      };
+      localStorage.setItem(EVENTS_STORE_KEY, JSON.stringify(fakeStore));
+      const loadedStore = loadMultiEventStore();
+      expect(loadedStore.events['evt-good']).toBeDefined();
+      expect(loadedStore.events['evt-corrupt']).toBeUndefined();
+    });
+
+    it('exercises budgetEngine.ts NaN safeguards and zero-allocation missing data warnings (lines 97, 339, 423, 427)', () => {
+      // 1. Line 339: zero catering allocation with missing perGuestCost
+      const zeroCatState: AppState = {
+        ...DEMO_STATE,
+        categories: DEMO_STATE.categories.map((c) =>
+          c.id === 'catering' ? { ...c, allocatedAmount: 0, perGuestCost: 0 } : c
+        ),
+      };
+      const resZeroCat = calculateGuestCountImpact(zeroCatState, 200);
+      expect(resZeroCat.missingDataWarnings.some((w) => w.includes('Cannot compute guest scaling'))).toBe(true);
+
+      // 2. Line 423: NaN totalBudget in initializeCategoriesForBudget
+      const catsNaN = initializeCategoriesForBudget(NaN);
+      expect(catsNaN.length).toBeGreaterThan(0);
+      expect(catsNaN[0].allocatedAmount).toBe(0);
+
+      // 3. Line 427: NaN category allocation in baseCategories
+      const catsBaseNaN = initializeCategoriesForBudget(10000000, undefined, [
+        { id: 'cat-nan', name: 'NaN Cat', allocatedAmount: NaN, userDefined: true, priorityRank: 1 },
+      ]);
+      expect(catsBaseNaN[0].allocatedAmount).toBe(10000000);
+
+      // 4. Base categories exact budget match (line 593)
+      const exactBaseCats = [
+        { id: 'cat-1', name: 'Cat 1', allocatedAmount: 500000, userDefined: true, priorityRank: 1 },
+        { id: 'cat-2', name: 'Cat 2', allocatedAmount: 500000, userDefined: true, priorityRank: 2 },
+      ];
+      const catsExact = initializeCategoriesForBudget(1000000, undefined, exactBaseCats);
+      expect(catsExact[0].allocatedAmount).toBe(500000);
+      expect(catsExact[1].allocatedAmount).toBe(500000);
+
+      // 5. classifyCategoryCostType with explicit costType metadata (line 177)
+      expect(classifyCategoryCostType({ id: 'c1', name: 'Custom', allocatedAmount: 100, userDefined: true, priorityRank: 1, costType: 'variable' } as any)).toBe('variable');
+      expect(classifyCategoryCostType({ id: 'c2', name: 'Custom Fixed', allocatedAmount: 100, userDefined: true, priorityRank: 1, costType: 'fixed' } as any)).toBe('fixed');
+      expect(classifyCategoryCostType({ id: 'c3', name: 'Custom Tier', allocatedAmount: 100, userDefined: true, priorityRank: 1, costType: 'capacity_tier' } as any)).toBe('capacity_tier');
+
+      // 6. calculateCategoryGuestAdjustments with NaN guests, NaN allocations, and zero rates (lines 225, 231, 236, 245)
+      const adjNaN = calculateCategoryGuestAdjustments(
+        [
+          { id: 'catering', name: 'Catering', allocatedAmount: NaN, userDefined: true, priorityRank: 1 },
+          { id: 'venue', name: 'Venue', allocatedAmount: 100000, userDefined: true, priorityRank: 2, maxCapacity: 250 },
+          { id: 'decor', name: 'Decor', allocatedAmount: 0, userDefined: true, priorityRank: 3 },
+          { id: 'custom-var', name: 'Custom Food Bar', allocatedAmount: 0, userDefined: true, priorityRank: 4 },
+        ],
+        NaN,
+        NaN
+      );
+      expect(adjNaN.length).toBe(4);
+      expect(adjNaN[0].perGuestRate).toBe(0);
+      expect(adjNaN[1].capacityLimit).toBe(250);
+
+      // 7. evaluateScenario with NaN manual override (line 522)
+      const evalNaNManual = evaluateScenario(DEMO_STATE, {
+        id: 'scen-nan',
+        name: 'NaN Manual',
+        description: '',
+        createdAt: '2026-10-01',
+        modifiedGuestCount: 150,
+        categoryAllocations: { catering: NaN },
+        notes: '',
+        isBaseline: false,
+      });
+      expect(evalNaNManual.categoryComparisons.find((c) => c.categoryId === 'catering')!.scenarioAllocated).toBe(
+        DEMO_STATE.categories.find((c) => c.id === 'catering')!.allocatedAmount
+      );
+
+      // 8. assistantEngine fallback reason in refuse_unsupported_request (line 512)
+      const fallbackRefuse = generateAssistantResponse({ intent: 'refuse_unsupported_request' } as any, DEMO_STATE);
+      expect(fallbackRefuse.content).toContain('The requested action is not supported');
+
+      // 9. budgetEngine line 330: calculateGuestCountImpact with zero current guests and unconfigured catering
+      const stateZeroGuests: AppState = {
+        ...DEMO_STATE,
+        event: { ...DEMO_STATE.event, guestCount: 0 },
+        categories: [
+          { id: 'catering', name: 'Catering Service', allocatedAmount: 150000, userDefined: true, priorityRank: 1 },
+        ],
+      };
+      const impactZeroGuests = calculateGuestCountImpact(stateZeroGuests, 150);
+      expect(impactZeroGuests.missingDataWarnings.length).toBeGreaterThan(0);
+      expect(impactZeroGuests.missingDataWarnings[0]).toContain('Cannot compute guest scaling');
+
+      // 10. budgetEngine line 236: explicit maxCapacity on capacity_tier vs fixed category
+      const adjExplicitCap = calculateCategoryGuestAdjustments(
+        [
+          { id: 'venue', name: 'Grand Venue', allocatedAmount: 200000, userDefined: true, priorityRank: 1, maxCapacity: 180 },
+          { id: 'venue-def', name: 'Banquet Hall', allocatedAmount: 200000, userDefined: true, priorityRank: 1 },
+          { id: 'photo', name: 'Photography', allocatedAmount: 50000, userDefined: true, priorityRank: 2, maxCapacity: 250 },
+          { id: 'music', name: 'Music DJ', allocatedAmount: 30000, userDefined: true, priorityRank: 3 },
+        ],
+        150,
+        210
+      );
+      expect(adjExplicitCap[0].capacityLimit).toBe(180);
+      expect(adjExplicitCap[0].isCapacityExceeded).toBe(true);
+      expect(adjExplicitCap[1].capacityLimit).toBe(200);
+      expect(adjExplicitCap[1].isCapacityExceeded).toBe(true);
+      expect(adjExplicitCap[2].capacityLimit).toBe(250);
+      expect(adjExplicitCap[2].isCapacityExceeded).toBe(false);
+      expect(adjExplicitCap[3].capacityLimit).toBeUndefined();
+
+      // 11. assistantEngine line 404: query with increase word but NOT budget words
+      const intentNonBudgetIncrease = parseUserIntent('Please increase the volume of the speakers');
+      expect(intentNonBudgetIncrease.intent).not.toBe('refuse_unsupported_request');
+
+      // 12. assistantEngine line 503: non-string non-object input
+      const invalidInputRes = generateAssistantResponse(42 as any, DEMO_STATE);
+      expect(invalidInputRes).toBeDefined();
+      expect(invalidInputRes.role).toBe('assistant');
+
+      // 13. assistantEngine lines 942-945: zero recommendations with overrun and without overrun
+      const fullyCommittedOverrunState: AppState = {
+        ...DEMO_STATE,
+        event: { ...DEMO_STATE.event, totalBudget: 100000 },
+        categories: [
+          { id: 'cat1', name: 'Cat1', allocatedAmount: 200000, userDefined: true, priorityRank: 1 }
+        ],
+        expenses: [
+          { id: 'exp1', categoryId: 'cat1', title: 'Committed Exp', amount: 200000, status: 'confirmed', paidAmount: 200000, createdAt: '2026-10-01T00:00:00.000Z' }
+        ]
+      };
+      const overrunResReduce = generateAssistantResponse({ intent: 'reduce_budget' } as any, fullyCommittedOverrunState);
+      expect(overrunResReduce.content).toContain('all category allocations are already tied to confirmed vendor commitments');
+      expect(overrunResReduce.intent).toBe('reduce_budget');
+
+      const overrunResSuggest = generateAssistantResponse({ intent: 'suggest_expense_reductions' } as any, fullyCommittedOverrunState);
+      expect(overrunResSuggest.content).toContain('all category allocations are already tied to confirmed vendor commitments');
+      expect(overrunResSuggest.intent).toBe('suggest_expense_reductions');
+
+      const fullyCommittedUnderLimitState: AppState = {
+        ...DEMO_STATE,
+        event: { ...DEMO_STATE.event, totalBudget: 300000 },
+        categories: [
+          { id: 'cat1', name: 'Cat1', allocatedAmount: 200000, userDefined: true, priorityRank: 1 }
+        ],
+        expenses: [
+          { id: 'exp1', categoryId: 'cat1', title: 'Committed Exp', amount: 200000, status: 'confirmed', paidAmount: 200000, createdAt: '2026-10-01T00:00:00.000Z' }
+        ]
+      };
+      const underLimitResReduce = generateAssistantResponse({ intent: 'reduce_budget' } as any, fullyCommittedUnderLimitState);
+      expect(underLimitResReduce.content).toContain('There is no flexible, uncommitted headroom available');
+      expect(underLimitResReduce.intent).toBe('reduce_budget');
+
+      const tinyBudgetState: AppState = {
+        ...DEMO_STATE,
+        event: { ...DEMO_STATE.event, totalBudget: 2 },
+        categories: [
+          { id: 'cat1', name: 'Cat1', allocatedAmount: 1, userDefined: true, priorityRank: 1 }
+        ],
+        expenses: []
+      };
+      const zeroBudgetRes = generateAssistantResponse({ intent: 'reduce_budget' } as any, tinyBudgetState);
+      expect(zeroBudgetRes.content).toContain('existing category headroom is already optimized');
+      expect(zeroBudgetRes.intent).toBe('reduce_budget');
+
+      const zeroBudgetResSuggest = generateAssistantResponse({ intent: 'suggest_expense_reductions' } as any, tinyBudgetState);
+      expect(zeroBudgetResSuggest.content).toContain('existing category headroom is already optimized');
+      expect(zeroBudgetResSuggest.intent).toBe('suggest_expense_reductions');
+
+      // 14. storage.ts line 459: saveMultiEventStore with invalid or missing event elements
+      const multiEventSaveRes = saveMultiEventStore(DEMO_STATE, [
+        DEMO_STATE,
+        null as any,
+        { event: null } as any,
+        { event: { id: '' } } as any,
+      ]);
+      expect(multiEventSaveRes).toBe(true);
     });
   });
 });
