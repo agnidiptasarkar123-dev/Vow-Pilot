@@ -50,11 +50,13 @@ jobs:
       - name: 4. Static Type Checking
         run: npx tsc --noEmit
 
-      - name: 5. Full Unit & Domain Mathematics Test Suite (1,862 Tests)
-        run: npm test -- --run
-
-      - name: 6. Production Optimized Bundle Build (Vite)
+      - name: 5. Production Optimized Bundle Build (Vite)
         run: npm run build
+
+      - name: 6. Full Unit & Domain Mathematics Test Suite (1,862 Tests)
+        env:
+          TZ: Asia/Kolkata
+        run: npm test -- --run
 
       - name: 7. Performance Budget & Bundle Chunk Regression Gate
         run: npx vitest run src/test/performanceBudget.test.ts
