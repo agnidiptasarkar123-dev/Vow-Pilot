@@ -54,7 +54,7 @@ export const AssistantView: React.FC = () => {
             <h1 className="text-2xl font-bold text-primary font-serif-heading">
               Context-Aware Planning Coordinator
             </h1>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-subtle text-[#B85C3A] dark:text-[#D48668] font-bold border border-subtle uppercase">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-subtle text-accent dark:text-[#D48668] font-bold border border-subtle uppercase">
               Rule-Based Engine
             </span>
           </div>
@@ -64,7 +64,7 @@ export const AssistantView: React.FC = () => {
         </div>
 
         <div className="p-2.5 bg-subtle border border-subtle rounded-lg text-xs text-secondary max-w-sm flex items-start gap-2">
-          <Info className="w-4 h-4 text-[#B85C3A] dark:text-[#D48668] shrink-0 mt-0.5" />
+          <Info className="w-4 h-4 text-accent dark:text-[#D48668] shrink-0 mt-0.5" />
           <span>
             <strong>Deterministic Guarantee:</strong> No hallucinated quotes, fake vendor reviews, or unverified claims.
           </span>

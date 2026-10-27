@@ -20,12 +20,13 @@ export const tokens = {
 
     // Content & Typography
     textPrimary: '#26221F',    // 15.6:1 on canvas
-    textSecondary: '#5C554E',  // 7.07:1 on canvas
+    textSecondary: '#524C46',  // 7.79:1 on canvas
     textTertiary: '#6E665E',   // 5.38:1 on canvas (WCAG AA compliant)
     textMuted: '#8A8177',
 
     // Brand Accent (Terracotta & Blush)
     accent: '#B85C3A',
+    accentText: '#964222',     // 6.04:1+ on accentSubtle & surface (WCAG AA compliant)
     accentHover: '#9E4B2D',
     accentSubtle: '#FAF0EB',
     accentBorder: '#E8C8BD',

@@ -45,7 +45,14 @@ export function validateStateSchema(data: unknown): data is AppState {
 
   const s = data as Record<string, unknown>;
 
-  if (typeof s.schemaVersion !== 'number' || s.schemaVersion < 1) return false;
+  if (
+    typeof s.schemaVersion !== 'number' ||
+    !Number.isInteger(s.schemaVersion) ||
+    s.schemaVersion < 0 ||
+    s.schemaVersion > CURRENT_SCHEMA_VERSION
+  ) {
+    return false;
+  }
   if (!s.event || typeof s.event !== 'object' || Array.isArray(s.event)) return false;
   const evt = s.event as Record<string, unknown>;
 

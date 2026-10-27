@@ -525,6 +525,6 @@ describe('VowPilot Email Delivery & Vendor Communication Workflow', () => {
       expect(typeof deliveryResult.providerMessageId).toBe('string');
       expect(deliveryResult.previewUrl).toBeDefined();
       expect(deliveryResult.previewUrl).toContain('https://ethereal.email/message/');
-    }, 20000); // 20s timeout for live TLS handshake
+    }, 45000); // 45s timeout for live TLS handshake under coverage instrumentation
   });
 });

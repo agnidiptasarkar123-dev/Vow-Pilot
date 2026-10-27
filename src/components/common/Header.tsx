@@ -166,7 +166,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
             onClick={() => setActiveTab('dashboard')}
             className="cursor-pointer"
           />
-          <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#FAF0EB] dark:bg-[#2E2222] text-[#B85C3A] dark:text-[#E8D7C4] font-semibold border border-[#E8C8BD] dark:border-[#5C3830] tracking-tight">
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-accent-subtle text-accent dark:text-[#E8D7C4] font-semibold border border-accent-subtle tracking-tight">
             V2 Studio
           </span>
         </div>
@@ -239,12 +239,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
               data-testid="open-collab-btn"
               title="Invite collaborators or view active members"
               aria-label={`Collaborate${collabState.members.length > 0 ? ` (${collabState.members.length})` : ''}`}
-              className="px-2.5 py-1.5 rounded bg-[#FAF0EB] dark:bg-[#2E2222] hover:bg-[#E8C8BD] dark:hover:bg-[#5C3830] text-[#B85C3A] dark:text-[#E8D7C4] border border-[#E8C8BD] dark:border-[#5C3830] text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+              className="px-2.5 py-1.5 rounded bg-accent-subtle hover:bg-[#E8C8BD] dark:hover:bg-[#5C3830] text-accent dark:text-[#E8D7C4] border border-accent-subtle text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
             >
               <Users className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Collaborate</span>
               {collabState.members.length > 0 && (
-                <span className="bg-[#B85C3A] text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold">
+                <span className="bg-[#964222] dark:bg-[#D48668] text-white dark:text-[#171517] text-[10px] px-1.5 py-0.2 rounded-full font-bold">
                   {collabState.members.length}
                 </span>
               )}
@@ -324,14 +324,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewEventWizard }) => {
                 aria-current={isActive ? 'page' : undefined}
                 className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
                   isActive
-                    ? 'bg-[#FAF0EB] dark:bg-[#2E2222] text-[#B85C3A] dark:text-[#E8D7C4] font-semibold border border-[#E8C8BD] dark:border-[#5C3830]'
+                    ? 'bg-accent-subtle text-accent dark:text-[#E8D7C4] font-semibold border border-accent-subtle'
                     : 'text-secondary hover:text-primary hover:bg-subtle'
                 }`}
               >
                 <Icon
                   className={`w-3.5 h-3.5 ${
                     isActive
-                      ? 'text-[#B85C3A] dark:text-[#E8D7C4]'
+                      ? 'text-accent dark:text-[#E8D7C4]'
                       : 'text-secondary'
                   }`}
                 />

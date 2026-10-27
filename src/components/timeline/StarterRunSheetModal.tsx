@@ -92,11 +92,11 @@ export const StarterRunSheetModal: React.FC<StarterRunSheetModalProps> = ({
                 onClick={() => setSelectedPresetId(preset.id)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition cursor-pointer flex items-center gap-1.5 ${
                   isSelected
-                    ? 'bg-[#FAF0EB] dark:bg-[#2E2222] text-[#B85C3A] dark:text-[#E8D7C4] border-[#E8C8BD] dark:border-[#5C3830] shadow-2xs'
+                    ? 'bg-accent-subtle dark:bg-[#2E2222] text-accent dark:text-[#E8D7C4] border-accent-subtle dark:border-[#5C3830] shadow-2xs'
                     : 'bg-subtle text-secondary border-subtle hover:text-primary hover:bg-muted'
                 }`}
               >
-                <Sparkles className={`w-3.5 h-3.5 ${isSelected ? 'text-[#B85C3A] dark:text-[#D48668]' : 'text-tertiary'}`} />
+                <Sparkles className={`w-3.5 h-3.5 ${isSelected ? 'text-accent dark:text-[#D48668]' : 'text-tertiary'}`} />
                 <span>{preset.name}</span>
               </button>
             );

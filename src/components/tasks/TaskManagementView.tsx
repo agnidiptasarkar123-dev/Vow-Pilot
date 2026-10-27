@@ -268,7 +268,7 @@ export const TaskManagementView: React.FC = () => {
                 key={task.id}
                 className={`p-5 rounded-xl border transition shadow-xs text-primary ${
                   isCompleted
-                    ? 'border-subtle bg-subtle/70 opacity-80'
+                    ? 'border-subtle bg-subtle/50'
                     : isBlocked
                     ? 'border-subtle bg-subtle/50'
                     : isOverdue
@@ -332,9 +332,9 @@ export const TaskManagementView: React.FC = () => {
                         <span
                           className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${
                             task.priority === 'critical'
-                              ? 'bg-rose-50 dark:bg-[#341F24] text-rose-700 dark:text-[#E58C91] border border-rose-200 dark:border-[#58333B]'
+                              ? 'bg-rose-50 dark:bg-[#341F24] text-rose-800 dark:text-[#E58C91] border border-rose-200 dark:border-[#58333B]'
                               : task.priority === 'high'
-                              ? 'bg-amber-50 dark:bg-[#332A20] text-amber-700 dark:text-[#E5BD76] border border-amber-200 dark:border-[#55462D]'
+                              ? 'bg-amber-50 dark:bg-[#332A20] text-amber-800 dark:text-[#E5BD76] border border-amber-200 dark:border-[#55462D]'
                               : 'bg-subtle text-secondary border border-subtle'
                           }`}
                         >
@@ -379,7 +379,7 @@ export const TaskManagementView: React.FC = () => {
                                 key={depId}
                                 className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono border ${
                                   isDepDone
-                                    ? 'bg-emerald-50 dark:bg-[#1E2E24] text-emerald-700 dark:text-[#91B8A0] border border-emerald-200 dark:border-[#385242]'
+                                    ? 'bg-emerald-50 dark:bg-[#1E2E24] text-emerald-800 dark:text-[#91B8A0] border border-emerald-200 dark:border-[#385242]'
                                     : 'bg-amber-50 dark:bg-[#332A20] text-amber-800 dark:text-[#E5BD76] border border-amber-200 dark:border-[#55462D] font-semibold'
                                 }`}
                               >

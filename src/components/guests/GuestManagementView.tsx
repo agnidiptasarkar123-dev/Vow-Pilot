@@ -303,8 +303,8 @@ export const GuestManagementView: React.FC = () => {
                 onClick={() => setStatusFilter(status)}
                 className={`px-2.5 py-1 rounded-md text-xs font-semibold capitalize transition cursor-pointer ${
                   statusFilter === status
-                    ? 'bg-surface text-[#B85C3A] dark:text-[#E8D7C4] shadow-xs'
-                    : 'text-tertiary hover:text-[#1C1917] dark:hover:text-[#FAF8F5]'
+                    ? 'bg-surface text-accent dark:text-[#E8D7C4] shadow-xs'
+                    : 'text-tertiary hover:text-primary'
                 }`}
               >
                 {status}

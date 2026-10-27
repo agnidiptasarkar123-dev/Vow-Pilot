@@ -250,10 +250,10 @@ export const VendorCoordinationView: React.FC = () => {
                         </p>
                       )}
                       {vendor.rating && (
-                        <p className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                        <p className="flex items-center gap-1 text-amber-800 dark:text-amber-300">
                           <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
                           <span className="font-bold">{vendor.rating}</span>
-                          <span className="text-[10px] text-muted">({vendor.ratingSource})</span>
+                          <span className="text-[10px] text-secondary">({vendor.ratingSource})</span>
                         </p>
                       )}
                     </div>

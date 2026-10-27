@@ -50,10 +50,10 @@ export const Badge: React.FC<BadgeProps> = ({
       dot: 'bg-tertiary',
     },
     accent: {
-      bg: 'bg-[#FAF0EB] dark:bg-[#2E2222]',
-      text: 'text-[#B85C3A] dark:text-[#E8D7C4]',
-      border: 'border-[#E8C8BD] dark:border-[#5C3830]',
-      dot: 'bg-[#B85C3A] dark:bg-[#D48668]',
+      bg: 'bg-accent-subtle dark:bg-[#2E2222]',
+      text: 'text-accent dark:text-[#E8D7C4]',
+      border: 'border-accent-subtle dark:border-[#5C3830]',
+      dot: 'bg-accent dark:bg-[#D48668]',
     },
   };
 

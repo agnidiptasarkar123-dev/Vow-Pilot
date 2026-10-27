@@ -415,7 +415,7 @@ export const BudgetPlannerView: React.FC = () => {
           {!isReadOnly && state.expenses.length > 0 && (
             <button
               onClick={() => handleOpenAddExpense()}
-              className="text-xs font-semibold text-[#B85C3A] dark:text-[#D48668] hover:underline flex items-center gap-1 cursor-pointer"
+              className="text-xs font-semibold text-accent dark:text-[#D48668] hover:underline flex items-center gap-1 cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add Record</span>

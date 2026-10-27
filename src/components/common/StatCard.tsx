@@ -59,7 +59,7 @@ export const StatCard: React.FC<StatCardProps> = ({
             badge.variant === 'success' ? 'text-[#047857] dark:text-[#91B8A0]' :
             badge.variant === 'warning' ? 'text-[#B45309] dark:text-[#E5BD76]' :
             badge.variant === 'error' ? 'text-[#BE123C] dark:text-[#E58C91]' :
-            badge.variant === 'accent' ? 'text-[#B85C3A] dark:text-[#D48668]' : 'text-secondary'
+            badge.variant === 'accent' ? 'text-accent dark:text-[#D48668]' : 'text-secondary'
           }`}>
             {badge.text}
           </span>
