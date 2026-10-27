@@ -117,10 +117,10 @@ export const TaskManagementView: React.FC = () => {
       {isReadOnly && (
         <div
           data-testid="viewer-readonly-banner"
-          className="p-3.5 rounded-xl bg-stone-100 border border-stone-300 flex items-center justify-between text-xs text-stone-700 shadow-2xs"
+          className="p-3.5 rounded-xl bg-subtle border border-subtle flex items-center justify-between text-xs text-secondary shadow-2xs"
         >
           <div className="flex items-center gap-2">
-            <Lock className="w-4 h-4 text-stone-500 shrink-0" />
+            <Lock className="w-4 h-4 text-tertiary shrink-0" />
             <span>
               <strong>Viewer Permissions (Read-Only):</strong> You can review the milestone graph, prerequisites, and priority rationales. Creating, reordering, or toggling tasks is restricted to Editors and Owners.
             </span>
@@ -201,8 +201,8 @@ export const TaskManagementView: React.FC = () => {
       {/* Filters Bar */}
       <Card padding="sm" className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-xs font-semibold text-[#5C554E] flex items-center gap-1 mr-1">
-            <Filter className="w-3.5 h-3.5 text-[#6E665E]" />
+          <span className="text-xs font-semibold text-secondary flex items-center gap-1 mr-1">
+            <Filter className="w-3.5 h-3.5 text-tertiary" />
             Status:
           </span>
           {['all', 'not_started', 'in_progress', 'completed', 'blocked', 'overdue'].map((st) => (
@@ -212,8 +212,8 @@ export const TaskManagementView: React.FC = () => {
               aria-pressed={statusFilter === st}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition cursor-pointer ${
                 statusFilter === st
-                  ? 'bg-[#FAF0EB] text-[#B85C3A] font-bold border border-[#E8C8BD] shadow-2xs'
-                  : 'text-[#5C554E] hover:bg-[#F4EFEA]'
+                  ? 'bg-accent-subtle text-accent font-bold border border-accent-subtle shadow-2xs'
+                  : 'text-secondary hover:text-primary hover:bg-subtle'
               }`}
             >
               {st.replace('_', ' ')}
@@ -222,14 +222,14 @@ export const TaskManagementView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 text-xs">
-          <label htmlFor="task-category-filter" className="text-[#6E665E] font-medium">
+          <label htmlFor="task-category-filter" className="text-secondary font-medium">
             Category:
           </label>
           <select
             id="task-category-filter"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-3 py-1.5 border border-[#D5CCC0] rounded-lg text-xs bg-[#FAF8F5] focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+            className="px-3 py-1.5 border border-subtle rounded-lg text-xs bg-surface text-primary focus:outline-hidden focus:ring-1 focus:ring-accent cursor-pointer"
           >
             <option value="all">All Categories</option>
             {state.categories.map((c) => (
@@ -332,10 +332,10 @@ export const TaskManagementView: React.FC = () => {
                         <span
                           className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${
                             task.priority === 'critical'
-                              ? 'bg-red-50 text-red-700 border border-red-200'
+                              ? 'bg-rose-50 dark:bg-[#341F24] text-rose-700 dark:text-[#E58C91] border border-rose-200 dark:border-[#58333B]'
                               : task.priority === 'high'
-                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                              : 'bg-neutral-100 text-neutral-600'
+                              ? 'bg-amber-50 dark:bg-[#332A20] text-amber-700 dark:text-[#E5BD76] border border-amber-200 dark:border-[#55462D]'
+                              : 'bg-subtle text-secondary border border-subtle'
                           }`}
                         >
                           {task.priority}
@@ -355,20 +355,20 @@ export const TaskManagementView: React.FC = () => {
                       </div>
 
                       {task.description && (
-                        <p className="text-xs text-[#5C554E] leading-relaxed">
+                        <p className="text-xs text-secondary leading-relaxed">
                           {task.description}
                         </p>
                       )}
 
                       {/* Priority Rationale Explanation */}
-                      <p className="text-[11px] text-[#6E665E] italic">
+                      <p className="text-[11px] text-secondary italic">
                         <strong>Why {task.priority.toUpperCase()} priority:</strong> {evalItem.priorityRationale}
                       </p>
 
                       {/* Dependencies Badges */}
                       {task.dependencies.length > 0 && (
                         <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs">
-                          <span className="text-[11px] text-[#6E665E] font-semibold">
+                          <span className="text-[11px] text-secondary font-semibold">
                             Prerequisites:
                           </span>
                           {task.dependencies.map((depId) => {
@@ -379,8 +379,8 @@ export const TaskManagementView: React.FC = () => {
                                 key={depId}
                                 className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono border ${
                                   isDepDone
-                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                    : 'bg-amber-50 text-amber-800 border-amber-200 font-semibold'
+                                    ? 'bg-emerald-50 dark:bg-[#1E2E24] text-emerald-700 dark:text-[#91B8A0] border border-emerald-200 dark:border-[#385242]'
+                                    : 'bg-amber-50 dark:bg-[#332A20] text-amber-800 dark:text-[#E5BD76] border border-amber-200 dark:border-[#55462D] font-semibold'
                                 }`}
                               >
                                 {isDepDone ? '✓' : '🔒'} {depTask?.title || depId}
@@ -392,8 +392,8 @@ export const TaskManagementView: React.FC = () => {
 
                       {/* Warnings: Cascading Downstream Risk or Unrealistic Deadline */}
                       {isUnrealistic && (
-                        <div className="p-2.5 bg-red-50 border border-red-200 rounded-lg text-[11px] text-red-900 flex items-center gap-2 mt-1">
-                          <AlertCircle className="w-3.5 h-3.5 text-[#BE123C] shrink-0" />
+                        <div className="p-2.5 bg-rose-50 dark:bg-[#341F24] border border-rose-200 dark:border-[#58333B] rounded-lg text-[11px] text-rose-900 dark:text-[#E58C91] flex items-center gap-2 mt-1">
+                          <AlertCircle className="w-3.5 h-3.5 text-[#BE123C] dark:text-[#E58C91] shrink-0" />
                           <span>
                             <strong>Unrealistic Schedule:</strong> {evalItem.risks.unrealisticReason}
                           </span>
@@ -401,8 +401,8 @@ export const TaskManagementView: React.FC = () => {
                       )}
 
                       {evalItem.risks.putsDownstreamAtRisk && (
-                        <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-[11px] text-amber-900 flex items-center gap-2 mt-1">
-                          <AlertTriangle className="w-3.5 h-3.5 text-[#B45309] shrink-0" />
+                        <div className="p-2.5 bg-amber-50 dark:bg-[#332A20] border border-amber-200 dark:border-[#55462D] rounded-lg text-[11px] text-amber-900 dark:text-[#E5BD76] flex items-center gap-2 mt-1">
+                          <AlertTriangle className="w-3.5 h-3.5 text-[#B45309] dark:text-[#E5BD76] shrink-0" />
                           <span>
                             <strong>Downstream Cascade Risk:</strong> Delays here jeopardize dependent tasks: {evalItem.risks.downstreamTaskTitles.join(', ')}.
                           </span>

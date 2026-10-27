@@ -182,10 +182,10 @@ export const BudgetPlannerView: React.FC = () => {
         </div>
 
         <div className="space-y-0.5 col-span-2 sm:col-span-1">
-          <span className="text-[11px] text-[#6E665E] font-medium uppercase tracking-wider">Remaining Runway</span>
+          <span className="text-[11px] text-tertiary font-medium uppercase tracking-wider">Remaining Runway</span>
           <p
             className={`font-mono text-base sm:text-lg font-bold ${
-              overview.isOverrun ? 'text-[#BE123C]' : 'text-[#047857]'
+              overview.isOverrun ? 'text-[#BE123C] dark:text-rose-400' : 'text-[#047857] dark:text-emerald-400'
             }`}
           >
             {formatCurrency(overview.remainingBudget, state.event.currency)}
@@ -195,14 +195,14 @@ export const BudgetPlannerView: React.FC = () => {
 
       {/* Priority Reduction Recommendations (if overrun or user seeks buffer) */}
       {recs.recommendations.length > 0 && (
-        <div className="bg-[#FAF0EB] p-5 sm:p-6 rounded-xl border border-[#E8C8BD] space-y-3.5 shadow-2xs">
-          <div className="flex items-center gap-2 text-[#B85C3A]">
+        <div className="bg-accent-subtle p-5 sm:p-6 rounded-xl border border-accent-subtle space-y-3.5 shadow-2xs">
+          <div className="flex items-center gap-2 text-accent">
             <TrendingDown className="w-4 h-4" />
             <h3 className="text-sm font-bold">
               Priority-Aware Reduction Proposals
             </h3>
           </div>
-          <p className="text-xs text-[#5C554E] leading-relaxed">
+          <p className="text-xs text-secondary leading-relaxed">
             Your top priorities (<strong>{state.event.preferences.planningPriorities.slice(0, 2).join(' & ')}</strong>) are protected. The suggestions below trim uncommitted headroom from lower-ranked categories to balance the budget:
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
@@ -217,7 +217,7 @@ export const BudgetPlannerView: React.FC = () => {
                 <p className="text-[11px] text-secondary">{rec.rationale}</p>
                 <div className="text-[11px] text-secondary pt-1 border-t border-subtle flex items-center justify-between">
                   <span>New Allocation Cap:</span>
-                  <span className="font-mono font-semibold">{formatCurrency(rec.newAllocated, state.event.currency)}</span>
+                  <span className="font-mono font-semibold text-primary">{formatCurrency(rec.newAllocated, state.event.currency)}</span>
                 </div>
               </div>
             ))}
@@ -259,20 +259,20 @@ export const BudgetPlannerView: React.FC = () => {
                   <tr key={catSummary.category.id} className="hover:bg-subtle/60 transition">
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-[#FAF0EB] text-[#B85C3A] text-[10px] font-bold flex items-center justify-center border border-[#E8C8BD]">
+                        <span className="w-5 h-5 rounded-full bg-accent-subtle text-accent text-[10px] font-bold flex items-center justify-center border border-accent-subtle">
                           {catSummary.category.priorityRank}
                         </span>
                         <div>
-                          <span className="font-semibold text-sm text-[#26221F] block">
+                          <span className="font-semibold text-sm text-primary block">
                             {catSummary.category.name}
                           </span>
                           {catSummary.category.perGuestCost && (
-                            <span className="text-[10px] text-[#6E665E]">
+                            <span className="text-[10px] text-tertiary">
                               Scales at {formatCurrency(catSummary.category.perGuestCost, state.event.currency)}/guest
                             </span>
                           )}
                           {catSummary.category.maxCapacity && (
-                            <span className="text-[10px] text-[#6E665E] block">
+                            <span className="text-[10px] text-tertiary block">
                               Max capacity: {catSummary.category.maxCapacity} guests
                             </span>
                           )}
@@ -280,24 +280,24 @@ export const BudgetPlannerView: React.FC = () => {
                       </div>
                     </td>
 
-                    <td className="py-3.5 px-4 text-right font-mono font-medium text-[#26221F]">
+                    <td className="py-3.5 px-4 text-right font-mono font-medium text-primary">
                       {formatCurrency(catSummary.allocatedAmount, state.event.currency)}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right font-mono text-[#047857] font-semibold">
+                    <td className="py-3.5 px-4 text-right font-mono text-[#047857] dark:text-emerald-400 font-semibold">
                       {formatCurrency(catSummary.committedTotal, state.event.currency)}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right font-mono text-[#5C554E]">
+                    <td className="py-3.5 px-4 text-right font-mono text-secondary">
                       {formatCurrency(catSummary.quotedAmount + catSummary.estimatedAmount, state.event.currency)}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right font-mono font-bold text-[#26221F]">
+                    <td className="py-3.5 px-4 text-right font-mono font-bold text-primary">
                       {formatCurrency(catSummary.effectiveTotal, state.event.currency)}
                     </td>
 
                     <td className="py-3.5 px-4 text-right font-mono">
-                      <span className={isOver ? 'text-[#BE123C] font-bold' : 'text-[#5C554E]'}>
+                      <span className={isOver ? 'text-[#BE123C] dark:text-rose-400 font-bold' : 'text-secondary'}>
                         {formatCurrency(catSummary.remainingAllocated, state.event.currency)}
                       </span>
                     </td>
@@ -307,7 +307,7 @@ export const BudgetPlannerView: React.FC = () => {
                         <div className="flex items-center justify-center gap-1.5">
                           <button
                             onClick={() => handleOpenEditCategory(catSummary.category)}
-                            className="p-1.5 rounded-md text-[#6E665E] hover:text-[#26221F] hover:bg-[#EAE4DB] transition cursor-pointer"
+                            className="p-1.5 rounded-md text-secondary hover:text-primary hover:bg-subtle transition cursor-pointer"
                             title="Edit Category Allocation"
                             aria-label={`Edit ${catSummary.category.name} allocation`}
                           >
@@ -315,7 +315,7 @@ export const BudgetPlannerView: React.FC = () => {
                           </button>
                           <button
                             onClick={() => handleOpenAddExpense(catSummary.category.id)}
-                            className="p-1.5 rounded-md text-[#B85C3A] hover:bg-[#FAF0EB] transition cursor-pointer"
+                            className="p-1.5 rounded-md text-accent hover:bg-accent-subtle transition cursor-pointer"
                             title="Add Expense to Category"
                             aria-label={`Add expense to ${catSummary.category.name}`}
                           >
@@ -323,7 +323,7 @@ export const BudgetPlannerView: React.FC = () => {
                           </button>
                         </div>
                       ) : (
-                        <span className="text-[11px] text-[#A8A29E] italic">Read-only</span>
+                        <span className="text-[11px] text-tertiary italic">Read-only</span>
                       )}
                     </td>
                   </tr>
@@ -334,17 +334,17 @@ export const BudgetPlannerView: React.FC = () => {
         </div>
 
         {/* Mobile View: Responsive Stacked Cards (< 768px) */}
-        <div className="block md:hidden divide-y divide-[#F4EFEA] p-4 space-y-3">
+        <div className="block md:hidden divide-y divide-subtle p-4 space-y-3">
           {overview.categories.map((catSummary) => {
             const isOver = catSummary.isOverBudget;
             return (
               <div key={catSummary.category.id} className="pt-3 first:pt-0 space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-[#FAF0EB] text-[#B85C3A] text-[10px] font-bold flex items-center justify-center border border-[#E8C8BD]">
+                    <span className="w-5 h-5 rounded-full bg-accent-subtle text-accent text-[10px] font-bold flex items-center justify-center border border-accent-subtle">
                       {catSummary.category.priorityRank}
                     </span>
-                    <span className="font-semibold text-sm text-[#26221F]">
+                    <span className="font-semibold text-sm text-primary">
                       {catSummary.category.name}
                     </span>
                   </div>
@@ -352,14 +352,14 @@ export const BudgetPlannerView: React.FC = () => {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => handleOpenEditCategory(catSummary.category)}
-                        className="p-2 rounded-md text-[#6E665E] hover:bg-[#F4EFEA] min-h-[36px] min-w-[36px] flex items-center justify-center"
+                        className="p-2 rounded-md text-secondary hover:bg-subtle min-h-[36px] min-w-[36px] flex items-center justify-center"
                         aria-label={`Edit ${catSummary.category.name} allocation`}
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => handleOpenAddExpense(catSummary.category.id)}
-                        className="p-2 rounded-md text-[#B85C3A] hover:bg-[#FAF0EB] min-h-[36px] min-w-[36px] flex items-center justify-center"
+                        className="p-2 rounded-md text-accent hover:bg-accent-subtle min-h-[36px] min-w-[36px] flex items-center justify-center"
                         aria-label={`Add expense to ${catSummary.category.name}`}
                       >
                         <Plus className="w-3.5 h-3.5" />
@@ -368,28 +368,28 @@ export const BudgetPlannerView: React.FC = () => {
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E6DFD5]">
+                <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-subtle p-2.5 rounded-lg border border-subtle">
                   <div>
-                    <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Allocated Cap</span>
-                    <span className="font-bold text-[#26221F]">
+                    <span className="text-[10px] uppercase text-tertiary block font-sans">Allocated Cap</span>
+                    <span className="font-bold text-primary">
                       {formatCurrency(catSummary.allocatedAmount, state.event.currency)}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Committed</span>
-                    <span className="font-semibold text-[#047857]">
+                    <span className="text-[10px] uppercase text-tertiary block font-sans">Committed</span>
+                    <span className="font-semibold text-[#047857] dark:text-emerald-400">
                       {formatCurrency(catSummary.committedTotal, state.event.currency)}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Effective Total</span>
-                    <span className="font-semibold text-[#26221F]">
+                    <span className="text-[10px] uppercase text-tertiary block font-sans">Effective Total</span>
+                    <span className="font-semibold text-primary">
                       {formatCurrency(catSummary.effectiveTotal, state.event.currency)}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Headroom</span>
-                    <span className={isOver ? 'text-[#BE123C] font-bold' : 'text-[#5C554E]'}>
+                    <span className="text-[10px] uppercase text-tertiary block font-sans">Headroom</span>
+                    <span className={isOver ? 'text-[#BE123C] dark:text-rose-400 font-bold' : 'text-secondary'}>
                       {formatCurrency(catSummary.remainingAllocated, state.event.currency)}
                     </span>
                   </div>
@@ -460,7 +460,7 @@ export const BudgetPlannerView: React.FC = () => {
                           {exp.notes && <span className="text-[11px] text-muted">{exp.notes}</span>}
                         </td>
 
-                        <td className="py-3 px-4 text-[#5C554E] font-medium">
+                        <td className="py-3 px-4 text-secondary font-medium">
                           {cat?.name || exp.categoryId}
                         </td>
 
@@ -468,7 +468,7 @@ export const BudgetPlannerView: React.FC = () => {
                           {statusBadge(exp.status)}
                         </td>
 
-                        <td className="py-3 px-4 text-right font-mono font-bold text-[#26221F]">
+                        <td className="py-3 px-4 text-right font-mono font-bold text-primary">
                           {formatCurrency(exp.amount, state.event.currency)}
                         </td>
 
@@ -480,14 +480,14 @@ export const BudgetPlannerView: React.FC = () => {
                                   deleteExpense(exp.id);
                                 }
                               }}
-                              className="p-1.5 rounded-md text-red-600 hover:bg-red-50 transition cursor-pointer"
+                              className="p-1.5 rounded-md text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
                               title="Delete Expense"
                               aria-label={`Delete expense: ${exp.title}`}
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           ) : (
-                            <span className="text-[11px] text-[#A8A29E] italic">—</span>
+                            <span className="text-[11px] text-tertiary italic">—</span>
                           )}
                         </td>
                       </tr>
@@ -498,17 +498,17 @@ export const BudgetPlannerView: React.FC = () => {
             </div>
 
             {/* Mobile View Stacked Cards (< 768px) */}
-            <div className="block md:hidden divide-y divide-[#F4EFEA] p-4 space-y-3">
+            <div className="block md:hidden divide-y divide-subtle p-4 space-y-3">
               {state.expenses.map((exp) => {
                 const cat = state.categories.find((c) => c.id === exp.categoryId);
                 return (
                   <div key={exp.id} className="pt-3 first:pt-0 space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <span className="font-semibold text-sm text-[#26221F] block">
+                        <span className="font-semibold text-sm text-primary block">
                           {exp.title}
                         </span>
-                        <span className="text-[11px] text-[#6E665E]">
+                        <span className="text-[11px] text-tertiary">
                           {cat?.name || exp.categoryId} {exp.notes ? `• ${exp.notes}` : ''}
                         </span>
                       </div>
@@ -521,7 +521,7 @@ export const BudgetPlannerView: React.FC = () => {
                                 deleteExpense(exp.id);
                               }
                             }}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-md min-h-[36px] min-w-[36px] flex items-center justify-center"
+                            className="p-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-md min-h-[36px] min-w-[36px] flex items-center justify-center"
                             aria-label={`Delete expense: ${exp.title}`}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -530,8 +530,8 @@ export const BudgetPlannerView: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between font-mono text-sm font-bold text-[#26221F] bg-[#FAF8F5] px-3 py-1.5 rounded-md border border-[#E6DFD5]">
-                      <span className="text-xs font-sans font-medium text-[#6E665E]">Recorded Cost</span>
+                    <div className="flex items-center justify-between font-mono text-sm font-bold text-primary bg-subtle px-3 py-1.5 rounded-md border border-subtle">
+                      <span className="text-xs font-sans font-medium text-tertiary">Recorded Cost</span>
                       <span>{formatCurrency(exp.amount, state.event.currency)}</span>
                     </div>
                   </div>

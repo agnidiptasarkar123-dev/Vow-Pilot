@@ -251,7 +251,7 @@ export const InvitationStudioView: React.FC = () => {
               onClick={handleCreateNew}
               disabled={isReadOnly}
               title="Create another invitation design"
-              className="px-2.5 py-1.5 rounded-md bg-[#FAF0EB] dark:bg-[#2B211E] hover:bg-[#E8C8BD] dark:hover:bg-[#4D332B] text-[#B85C3A] dark:text-[#E8D7C4] text-xs font-semibold flex items-center gap-1 transition cursor-pointer disabled:opacity-50"
+              className="px-2.5 py-1.5 rounded-md bg-accent-subtle hover:bg-accent-subtle/80 text-accent text-xs font-semibold flex items-center gap-1 transition cursor-pointer disabled:opacity-50"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>New</span>
@@ -260,7 +260,7 @@ export const InvitationStudioView: React.FC = () => {
               onClick={handleDuplicate}
               disabled={isReadOnly}
               title="Duplicate this design"
-              className="p-1.5 rounded-md border border-border-subtle hover:bg-[#F4EFEA] dark:hover:bg-[#26362C] text-secondary text-xs transition cursor-pointer disabled:opacity-50"
+              className="p-1.5 rounded-md border border-subtle hover:bg-subtle text-secondary text-xs transition cursor-pointer disabled:opacity-50"
             >
               <Copy className="w-3.5 h-3.5" />
             </button>
@@ -268,7 +268,7 @@ export const InvitationStudioView: React.FC = () => {
               onClick={handleDelete}
               disabled={isReadOnly || invitations.length <= 1}
               title="Delete this design"
-              className="p-1.5 rounded-md border border-border-subtle hover:bg-rose-50 dark:hover:bg-rose-950/40 text-stone-500 hover:text-rose-600 transition cursor-pointer disabled:opacity-40"
+              className="p-1.5 rounded-md border border-subtle hover:bg-rose-50 dark:hover:bg-rose-950/40 text-stone-500 hover:text-rose-600 transition cursor-pointer disabled:opacity-40"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
@@ -326,8 +326,8 @@ export const InvitationStudioView: React.FC = () => {
                       onClick={() => handleFieldChange('templateId', tpl.id as InvitationTemplateId)}
                       className={`text-left p-2.5 rounded-lg border text-xs transition cursor-pointer ${
                         draft.templateId === tpl.id
-                          ? 'border-[#B85C3A] bg-[#FAF0EB] dark:bg-[#2B211E] dark:border-[#C66B49] text-primary'
-                          : 'border-border-subtle hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] text-secondary'
+                          ? 'border-accent bg-accent-subtle text-primary font-semibold'
+                          : 'border-subtle hover:bg-subtle text-secondary'
                       }`}
                     >
                       <div className="font-semibold">{tpl.name}</div>
@@ -355,8 +355,8 @@ export const InvitationStudioView: React.FC = () => {
                       onClick={() => handleFieldChange('printSize', sz.id as PrintSize)}
                       className={`p-2 rounded-md border text-center text-xs transition cursor-pointer ${
                         draft.printSize === sz.id
-                          ? 'border-[#B85C3A] bg-[#FAF0EB] dark:bg-[#2B211E] text-[#B85C3A] dark:text-[#E8D7C4] font-semibold'
-                          : 'border-border-subtle text-secondary hover:bg-[#FAF8F5] dark:hover:bg-[#26362C]'
+                          ? 'border-accent bg-accent-subtle text-accent font-semibold'
+                          : 'border-subtle text-secondary hover:bg-subtle'
                       }`}
                     >
                       <div>{sz.label}</div>
@@ -385,8 +385,8 @@ export const InvitationStudioView: React.FC = () => {
                       onClick={() => handleFieldChange('palette', p.id as PaperPalette)}
                       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition cursor-pointer ${
                         draft.palette === p.id
-                          ? 'border-[#B85C3A] bg-[#FAF0EB] dark:bg-[#2B211E] text-[#B85C3A] dark:text-[#E8D7C4] font-semibold'
-                          : 'border-border-subtle text-secondary hover:bg-[#FAF8F5] dark:hover:bg-[#26362C]'
+                          ? 'border-accent bg-accent-subtle text-accent font-semibold'
+                          : 'border-subtle text-secondary hover:bg-subtle'
                       }`}
                     >
                       <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.dot }} />
@@ -594,7 +594,7 @@ export const InvitationStudioView: React.FC = () => {
                   type="checkbox"
                   checked={draft.isBilingual || false}
                   onChange={(e) => handleFieldChange('isBilingual', e.target.checked)}
-                  className="rounded border-[#D5CCC0] text-[#B85C3A] focus:ring-[#B85C3A]"
+                  className="rounded border-subtle text-[#B85C3A] focus:ring-[#B85C3A]"
                 />
                 <span className="text-xs font-medium text-secondary">
                   Enable Bengali (বাংলা)
@@ -603,7 +603,7 @@ export const InvitationStudioView: React.FC = () => {
             </div>
 
             {draft.isBilingual && (
-              <div className="space-y-3 pt-2 border-t border-[#F4EFEA] dark:border-[#26362C] animate-fade-in">
+              <div className="space-y-3 pt-2 border-t border-subtle animate-fade-in">
                 <div>
                   <label htmlFor={bnTitleId} className="block text-xs font-medium text-secondary mb-1">
                     Bengali Title (শিরোনাম)

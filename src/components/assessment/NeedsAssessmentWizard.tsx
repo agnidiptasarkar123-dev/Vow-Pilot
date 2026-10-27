@@ -172,12 +172,12 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-[#E6DFD5] overflow-hidden max-w-3xl mx-auto">
+    <div className="bg-surface text-primary rounded-xl shadow-lg border border-subtle overflow-hidden max-w-3xl mx-auto">
       {/* Wizard Progress Stepper */}
-      <div className="bg-[#FAF8F5] px-6 py-4 border-b border-[#E6DFD5]">
-        <div className="flex items-center justify-between text-xs text-[#78716C] mb-2">
+      <div className="bg-subtle px-6 py-4 border-b border-subtle">
+        <div className="flex items-center justify-between text-xs text-secondary mb-2">
           <span>Step {currentStep} of 5</span>
-          <span className="font-semibold text-[#26221F]">
+          <span className="font-semibold text-primary">
             {currentStep === 1 && 'Core Constraints & Budget'}
             {currentStep === 2 && 'Dining & Aesthetics'}
             {currentStep === 3 && 'Venue & Accessibility'}
@@ -185,9 +185,9 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
             {currentStep === 5 && 'Plan Review & Confirmation'}
           </span>
         </div>
-        <div className="w-full bg-[#EAE4DB] h-1.5 rounded-full overflow-hidden">
+        <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
           <div
-            className="bg-[#B85C3A] h-full transition-all duration-300 ease-out"
+            className="bg-accent h-full transition-all duration-300 ease-out"
             style={{ width: `${(currentStep / 5) * 100}%` }}
           />
         </div>
@@ -199,18 +199,18 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
         {currentStep === 1 && (
           <div className="space-y-4">
             <div>
-              <h2 className="text-xl font-bold text-[#26221F] font-serif-heading">
+              <h2 className="text-xl font-bold text-primary font-serif-heading">
                 Define Event Foundation
               </h2>
-              <p className="text-xs text-[#78716C] mt-1">
-                Fields marked with <span className="text-[#BE123C] font-bold">*</span> are required to establish valid budget boundaries.
+              <p className="text-xs text-secondary mt-1">
+                Fields marked with <span className="text-[#BE123C] dark:text-rose-400 font-bold">*</span> are required to establish valid budget boundaries.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="wizard-event-name" className="block text-xs font-semibold text-[#26221F] mb-1">
-                  Event Title <span className="text-[#BE123C]">*</span>
+                <label htmlFor="wizard-event-name" className="block text-xs font-semibold text-primary mb-1">
+                  Event Title <span className="text-[#BE123C] dark:text-rose-400">*</span>
                 </label>
                 <input
                   id="wizard-event-name"
@@ -220,26 +220,26 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   placeholder="e.g. Diya & Kabir's Wedding"
                   aria-invalid={!!errors.eventName}
                   aria-describedby={errors.eventName ? 'wizard-event-name-error' : undefined}
-                  className={`w-full text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] ${
-                    errors.eventName ? 'border-[#BE123C] bg-red-50/20' : 'border-[#D5CCC0]'
+                  className={`w-full text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary ${
+                    errors.eventName ? 'border-[#BE123C] dark:border-rose-500 bg-red-50/20 dark:bg-rose-950/20' : 'border-subtle'
                   }`}
                 />
                 {errors.eventName && (
-                  <p id="wizard-event-name-error" role="alert" className="text-xs text-[#BE123C] mt-1 font-medium">
+                  <p id="wizard-event-name-error" role="alert" className="text-xs text-[#BE123C] dark:text-rose-400 mt-1 font-medium">
                     {errors.eventName}
                   </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="wizard-event-type" className="block text-xs font-semibold text-[#26221F] mb-1">
-                  Event Type <span className="text-[#BE123C]">*</span>
+                <label htmlFor="wizard-event-type" className="block text-xs font-semibold text-primary mb-1">
+                  Event Type <span className="text-[#BE123C] dark:text-rose-400">*</span>
                 </label>
                 <select
                   id="wizard-event-type"
                   value={eventType}
                   onChange={(e) => setEventType(e.target.value as EventType)}
-                  className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full text-sm px-3 py-2 border border-subtle rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary"
                 >
                   <option value="wedding">Wedding</option>
                   <option value="anniversary">Anniversary</option>
@@ -250,8 +250,8 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label htmlFor="wizard-event-date" className="block text-xs font-semibold text-[#26221F] mb-1">
-                  Event Date <span className="text-[#BE123C]">*</span>
+                <label htmlFor="wizard-event-date" className="block text-xs font-semibold text-primary mb-1">
+                  Event Date <span className="text-[#BE123C] dark:text-rose-400">*</span>
                 </label>
                 <input
                   id="wizard-event-date"
@@ -260,20 +260,20 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   onChange={(e) => setDate(e.target.value)}
                   aria-invalid={!!errors.date}
                   aria-describedby={errors.date ? 'wizard-event-date-error' : undefined}
-                  className={`w-full text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] ${
-                    errors.date ? 'border-[#BE123C] bg-red-50/20' : 'border-[#D5CCC0]'
+                  className={`w-full text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary ${
+                    errors.date ? 'border-[#BE123C] dark:border-rose-500 bg-red-50/20 dark:bg-rose-950/20' : 'border-subtle'
                   }`}
                 />
                 {errors.date && (
-                  <p id="wizard-event-date-error" role="alert" className="text-xs text-[#BE123C] mt-1 font-medium">
+                  <p id="wizard-event-date-error" role="alert" className="text-xs text-[#BE123C] dark:text-rose-400 mt-1 font-medium">
                     {errors.date}
                   </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="wizard-event-location" className="block text-xs font-semibold text-[#26221F] mb-1">
-                  City & Destination <span className="text-[#BE123C]">*</span>
+                <label htmlFor="wizard-event-location" className="block text-xs font-semibold text-primary mb-1">
+                  City & Destination <span className="text-[#BE123C] dark:text-rose-400">*</span>
                 </label>
                 <input
                   id="wizard-event-location"
@@ -283,20 +283,20 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   placeholder="e.g. Udaipur, Rajasthan"
                   aria-invalid={!!errors.location}
                   aria-describedby={errors.location ? 'wizard-event-location-error' : undefined}
-                  className={`w-full text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] ${
-                    errors.location ? 'border-[#BE123C] bg-red-50/20' : 'border-[#D5CCC0]'
+                  className={`w-full text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary ${
+                    errors.location ? 'border-[#BE123C] dark:border-rose-500 bg-red-50/20 dark:bg-rose-950/20' : 'border-subtle'
                   }`}
                 />
                 {errors.location && (
-                  <p id="wizard-event-location-error" role="alert" className="text-xs text-[#BE123C] mt-1 font-medium">
+                  <p id="wizard-event-location-error" role="alert" className="text-xs text-[#BE123C] dark:text-rose-400 mt-1 font-medium">
                     {errors.location}
                   </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="wizard-event-guests" className="block text-xs font-semibold text-[#26221F] mb-1">
-                  Expected Guest Count <span className="text-[#BE123C]">*</span>
+                <label htmlFor="wizard-event-guests" className="block text-xs font-semibold text-primary mb-1">
+                  Expected Guest Count <span className="text-[#BE123C] dark:text-rose-400">*</span>
                 </label>
                 <input
                   id="wizard-event-guests"
@@ -306,27 +306,27 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   onChange={(e) => setGuestCount(parseInt(e.target.value, 10) || 0)}
                   aria-invalid={!!errors.guestCount}
                   aria-describedby={errors.guestCount ? 'wizard-event-guests-error' : undefined}
-                  className={`w-full text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] ${
-                    errors.guestCount ? 'border-[#BE123C] bg-red-50/20' : 'border-[#D5CCC0]'
+                  className={`w-full text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary ${
+                    errors.guestCount ? 'border-[#BE123C] dark:border-rose-500 bg-red-50/20 dark:bg-rose-950/20' : 'border-subtle'
                   }`}
                 />
                 {errors.guestCount && (
-                  <p id="wizard-event-guests-error" role="alert" className="text-xs text-[#BE123C] mt-1 font-medium">
+                  <p id="wizard-event-guests-error" role="alert" className="text-xs text-[#BE123C] dark:text-rose-400 mt-1 font-medium">
                     {errors.guestCount}
                   </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="wizard-event-budget" className="block text-xs font-semibold text-[#26221F] mb-1">
-                  Total Budget ({currency}) <span className="text-[#BE123C]">*</span>
+                <label htmlFor="wizard-event-budget" className="block text-xs font-semibold text-primary mb-1">
+                  Total Budget ({currency}) <span className="text-[#BE123C] dark:text-rose-400">*</span>
                 </label>
                 <div className="flex gap-2">
                   <select
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
                     aria-label="Select currency"
-                    className="w-24 text-xs px-2 py-2 border border-[#D5CCC0] rounded-md bg-[#FAF8F5]"
+                    className="w-24 text-xs px-2 py-2 border border-subtle rounded-md bg-subtle text-primary"
                   >
                     <option value="INR">INR (₹)</option>
                     <option value="USD">USD ($)</option>
@@ -341,13 +341,13 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                     placeholder="2500000"
                     aria-invalid={!!errors.budgetDisplay}
                     aria-describedby={errors.budgetDisplay ? 'wizard-event-budget-error' : undefined}
-                    className={`flex-1 text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] ${
-                      errors.budgetDisplay ? 'border-[#BE123C] bg-red-50/20' : 'border-[#D5CCC0]'
+                    className={`flex-1 text-sm px-3 py-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary ${
+                      errors.budgetDisplay ? 'border-[#BE123C] dark:border-rose-500 bg-red-50/20 dark:bg-rose-950/20' : 'border-subtle'
                     }`}
                   />
                 </div>
                 {errors.budgetDisplay && (
-                  <p id="wizard-event-budget-error" role="alert" className="text-xs text-[#BE123C] mt-1 font-medium">
+                  <p id="wizard-event-budget-error" role="alert" className="text-xs text-[#BE123C] dark:text-rose-400 mt-1 font-medium">
                     {errors.budgetDisplay}
                   </p>
                 )}
@@ -356,20 +356,20 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
 
             {/* Follow-up Question if Guest Count is Large (>200) */}
             {guestCount > 200 && (
-              <div className="p-3 bg-[#FAF0EB] border border-[#E8C8BD] rounded-lg text-xs space-y-2 mt-4">
-                <div className="flex items-center gap-1.5 font-semibold text-[#B85C3A]">
+              <div className="p-3 bg-accent-subtle border border-accent-subtle rounded-lg text-xs space-y-2 mt-4">
+                <div className="flex items-center gap-1.5 font-semibold text-accent">
                   <Info className="w-4 h-4" />
                   <span>Large Attendance Protocol Detected ({guestCount} Guests)</span>
                 </div>
-                <p className="text-[#5C554E]">
+                <p className="text-secondary">
                   Events with over 200 attendees usually require dedicated parking valets and separate fire exits. Would you like VowPilot to include guest transit and municipal acoustic compliance in your task plan?
                 </p>
-                <label className="flex items-center gap-2 cursor-pointer font-medium text-[#26221F]">
+                <label className="flex items-center gap-2 cursor-pointer font-medium text-primary">
                   <input
                     type="checkbox"
                     checked={hasLargeCrowdProtocol}
                     onChange={(e) => setHasLargeCrowdProtocol(e.target.checked)}
-                    className="accent-[#B85C3A]"
+                    className="accent-[#B85C3A] dark:accent-[#D48668]"
                   />
                   Yes, add large-capacity logistics milestones
                 </label>
@@ -382,18 +382,18 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
         {currentStep === 2 && (
           <div className="space-y-4">
             <div>
-              <h2 className="text-xl font-bold text-[#26221F] font-serif-heading">
+              <h2 className="text-xl font-bold text-primary font-serif-heading">
                 Dining Style & Visual Atmosphere
               </h2>
-              <p className="text-xs text-[#78716C] mt-1">
+              <p className="text-xs text-secondary mt-1">
                 Helps configure per-guest catering variables and photography requirements.
               </p>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label htmlFor="wizard-style-input" className="block text-xs font-semibold text-[#26221F] mb-1">
-                  Overall Aesthetic & Style <span className="text-[#BE123C]">*</span>
+                <label htmlFor="wizard-style-input" className="block text-xs font-semibold text-primary mb-1">
+                  Overall Aesthetic & Style <span className="text-[#BE123C] dark:text-rose-400">*</span>
                 </label>
                 <input
                   id="wizard-style-input"
@@ -401,19 +401,19 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   value={style}
                   onChange={(e) => setStyle(e.target.value)}
                   placeholder="e.g. Traditional Royal Rajputana with Contemporary Lighting"
-                  className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full text-sm px-3 py-2 border border-subtle rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary"
                 />
               </div>
 
               <div>
-                <label htmlFor="wizard-catering-select" className="block text-xs font-semibold text-[#26221F] mb-1">
-                  Catering Format <span className="text-[#BE123C]">*</span>
+                <label htmlFor="wizard-catering-select" className="block text-xs font-semibold text-primary mb-1">
+                  Catering Format <span className="text-[#BE123C] dark:text-rose-400">*</span>
                 </label>
                 <select
                   id="wizard-catering-select"
                   value={cateringType}
                   onChange={(e) => setCateringType(e.target.value)}
-                  className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full text-sm px-3 py-2 border border-subtle rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary"
                 >
                   <option value="Multi-Course Buffet & Live Counters">Multi-Course Buffet & Live Counters</option>
                   <option value="Plated Formal Sit-Down Service">Plated Formal Sit-Down Service</option>
@@ -423,7 +423,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label htmlFor="wizard-dietary-input" className="block text-xs font-semibold text-[#26221F] mb-1">
+                <label htmlFor="wizard-dietary-input" className="block text-xs font-semibold text-primary mb-1">
                   Dietary Requirements & Kitchen Specifications (Optional)
                 </label>
                 <div className="flex gap-2 mb-2">
@@ -433,12 +433,12 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                     value={newDietaryInput}
                     onChange={(e) => setNewDietaryInput(e.target.value)}
                     placeholder="e.g. Dedicated Jain Kitchen"
-                    className="flex-1 text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                    className="flex-1 text-sm px-3 py-2 border border-subtle rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary"
                   />
                   <button
                     type="button"
                     onClick={handleAddDietary}
-                    className="px-3 py-2 text-xs font-medium bg-[#F4EFEA] hover:bg-[#EAE4DB] text-[#26221F] rounded-md border border-[#D5CCC0]"
+                    className="px-3 py-2 text-xs font-medium bg-subtle hover:bg-muted text-primary rounded-md border border-subtle cursor-pointer"
                   >
                     Add
                   </button>
@@ -447,14 +447,14 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   {dietaryRequirements.map((d) => (
                     <span
                       key={d}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-[#FAF0EB] text-[#B85C3A] border border-[#E8C8BD]"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-accent-subtle text-accent border border-accent-subtle"
                     >
                       {d}
                       <button
                         type="button"
                         onClick={() => handleRemoveDietary(d)}
                         aria-label={`Remove dietary requirement: ${d}`}
-                        className="hover:text-black focus-visible:outline-2 focus-visible:outline-[#B85C3A] rounded"
+                        className="hover:text-primary focus-visible:outline-2 focus-visible:outline-[#B85C3A] rounded cursor-pointer"
                       >
                         ×
                       </button>
@@ -464,14 +464,14 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label htmlFor="wizard-photo-select" className="block text-xs font-semibold text-[#26221F] mb-1">
+                <label htmlFor="wizard-photo-select" className="block text-xs font-semibold text-primary mb-1">
                   Photography & Documentation Preference
                 </label>
                 <select
                   id="wizard-photo-select"
                   value={photographyTier}
                   onChange={(e) => setPhotographyTier(e.target.value)}
-                  className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full text-sm px-3 py-2 border border-subtle rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary"
                 >
                   <option value="Full Day Candid Photo + Cinematic Film">Full Day Candid Photo + Cinematic Film</option>
                   <option value="Traditional Photography Only">Traditional Photography Only</option>
@@ -487,17 +487,17 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
         {currentStep === 3 && (
           <div className="space-y-4">
             <div>
-              <h2 className="text-xl font-bold text-[#26221F] font-serif-heading">
+              <h2 className="text-xl font-bold text-primary font-serif-heading">
                 Venue, Decor & Accessibility Constraints
               </h2>
-              <p className="text-xs text-[#78716C] mt-1">
+              <p className="text-xs text-secondary mt-1">
                 Ensures all physical guest limitations and curfew restrictions are tracked.
               </p>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label htmlFor="wizard-venue-pref" className="block text-xs font-semibold text-[#26221F] mb-1">
+                <label htmlFor="wizard-venue-pref" className="block text-xs font-semibold text-primary mb-1">
                   Venue Setting Preference
                 </label>
                 <input
@@ -506,12 +506,12 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   value={venuePreference}
                   onChange={(e) => setVenuePreference(e.target.value)}
                   placeholder="e.g. Open-Air Lawn with Heritage Courtyard Backup"
-                  className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full text-sm px-3 py-2 border border-subtle rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary"
                 />
               </div>
 
               <div>
-                <label htmlFor="wizard-decor-pref" className="block text-xs font-semibold text-[#26221F] mb-1">
+                <label htmlFor="wizard-decor-pref" className="block text-xs font-semibold text-primary mb-1">
                   Decoration & Floral Direction
                 </label>
                 <input
@@ -520,12 +520,12 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   value={decorationPreference}
                   onChange={(e) => setDecorationPreference(e.target.value)}
                   placeholder="e.g. Marigolds, Warm Fairy Lights, Fabric Drapes"
-                  className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full text-sm px-3 py-2 border border-subtle rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary"
                 />
               </div>
 
               <div>
-                <label htmlFor="wizard-access-input" className="block text-xs font-semibold text-[#26221F] mb-1">
+                <label htmlFor="wizard-access-input" className="block text-xs font-semibold text-primary mb-1">
                   Accessibility & Inclusivity Needs
                 </label>
                 <div className="flex gap-2 mb-2">
@@ -535,12 +535,12 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                     value={newAccessInput}
                     onChange={(e) => setNewAccessInput(e.target.value)}
                     placeholder="e.g. Wheelchair Ramp at Dining Entry"
-                    className="flex-1 text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                    className="flex-1 text-sm px-3 py-2 border border-subtle rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary"
                   />
                   <button
                     type="button"
                     onClick={handleAddAccess}
-                    className="px-3 py-2 text-xs font-medium bg-[#F4EFEA] hover:bg-[#EAE4DB] text-[#26221F] rounded-md border border-[#D5CCC0]"
+                    className="px-3 py-2 text-xs font-medium bg-subtle hover:bg-muted text-primary rounded-md border border-subtle cursor-pointer"
                   >
                     Add
                   </button>
@@ -549,14 +549,14 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   {accessibilityNeeds.map((a) => (
                     <span
                       key={a}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-[#F4EFEA] text-[#26221F] border border-[#D5CCC0]"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-subtle text-primary border border-subtle"
                     >
                       {a}
                       <button
                         type="button"
                         onClick={() => handleRemoveAccess(a)}
                         aria-label={`Remove accessibility need: ${a}`}
-                        className="hover:text-red-600 focus-visible:outline-2 focus-visible:outline-[#B85C3A] rounded"
+                        className="hover:text-rose-600 dark:hover:text-rose-400 focus-visible:outline-2 focus-visible:outline-[#B85C3A] rounded cursor-pointer"
                       >
                         ×
                       </button>
@@ -566,7 +566,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               </div>
 
               <div>
-                <label htmlFor="wizard-special-constraints" className="block text-xs font-semibold text-[#26221F] mb-1">
+                <label htmlFor="wizard-special-constraints" className="block text-xs font-semibold text-primary mb-1">
                   Special Constraints or Curfews (Optional)
                 </label>
                 <input
@@ -575,7 +575,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                   value={specialConstraints}
                   onChange={(e) => setSpecialConstraints(e.target.value)}
                   placeholder="e.g. Strict outdoor sound cessation at 10:00 PM"
-                  className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full text-sm px-3 py-2 border border-subtle rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary"
                 />
               </div>
             </div>
@@ -586,10 +586,10 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
         {currentStep === 4 && (
           <div className="space-y-4">
             <div>
-              <h2 className="text-xl font-bold text-[#26221F] font-serif-heading">
+              <h2 className="text-xl font-bold text-primary font-serif-heading">
                 Rank Planning Priorities
               </h2>
-              <p className="text-xs text-[#78716C] mt-1">
+              <p className="text-xs text-secondary mt-1">
                 VowPilot will protect high-ranking categories when resolving budget overruns or recommending trade-offs. (1 = Highest Priority).
               </p>
             </div>
@@ -607,15 +607,15 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                 return (
                   <div
                     key={catKey}
-                    className="flex items-center justify-between p-3 bg-[#FAF8F5] border border-[#E6DFD5] rounded-lg text-sm"
+                    className="flex items-center justify-between p-3 bg-subtle border border-subtle rounded-lg text-sm"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-full bg-[#FAF0EB] text-[#B85C3A] font-bold text-xs flex items-center justify-center border border-[#E8C8BD]">
+                      <span className="w-6 h-6 rounded-full bg-accent-subtle text-accent font-bold text-xs flex items-center justify-center border border-accent-subtle">
                         {index + 1}
                       </span>
-                      <span className="font-semibold text-[#26221F]">{labelMap[catKey] || catKey}</span>
+                      <span className="font-semibold text-primary">{labelMap[catKey] || catKey}</span>
                       {index === 0 && (
-                        <span className="text-[10px] uppercase font-bold text-[#B85C3A] bg-[#FAF0EB] px-2 py-0.5 rounded-full border border-[#E8C8BD]">
+                        <span className="text-[10px] uppercase font-bold text-accent bg-accent-subtle px-2 py-0.5 rounded-full border border-accent-subtle">
                           Shielded from Cuts
                         </span>
                       )}
@@ -627,7 +627,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                         disabled={index === 0}
                         onClick={() => movePriority(index, 'up')}
                         aria-label={`Increase priority for ${labelMap[catKey] || catKey}`}
-                        className="p-1 rounded text-[#78716C] hover:text-[#26221F] disabled:opacity-30"
+                        className="p-1 rounded text-secondary hover:text-primary disabled:opacity-30 cursor-pointer"
                       >
                         ▲
                       </button>
@@ -636,7 +636,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                         disabled={index === planningPriorities.length - 1}
                         onClick={() => movePriority(index, 'down')}
                         aria-label={`Decrease priority for ${labelMap[catKey] || catKey}`}
-                        className="p-1 rounded text-[#78716C] hover:text-[#26221F] disabled:opacity-30"
+                        className="p-1 rounded text-secondary hover:text-primary disabled:opacity-30 cursor-pointer"
                       >
                         ▼
                       </button>
@@ -647,7 +647,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
             </div>
 
             <div>
-              <label htmlFor="wizard-additional-notes" className="block text-xs font-semibold text-[#26221F] mb-1">
+              <label htmlFor="wizard-additional-notes" className="block text-xs font-semibold text-primary mb-1">
                 Additional Notes or Specific Instructions (Optional)
               </label>
               <textarea
@@ -656,7 +656,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
                 value={optionalNotes}
                 onChange={(e) => setOptionalNotes(e.target.value)}
                 placeholder="Any special personal requests or family notes..."
-                className="w-full text-sm px-3 py-2 border border-[#D5CCC0] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
+                className="w-full text-sm px-3 py-2 border border-subtle rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] bg-surface text-primary"
               />
             </div>
           </div>
@@ -666,71 +666,71 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
         {currentStep === 5 && (
           <div className="space-y-4">
             <div>
-              <h2 className="text-xl font-bold text-[#26221F] font-serif-heading">
+              <h2 className="text-xl font-bold text-primary font-serif-heading">
                 Confirm Event Specification
               </h2>
-              <p className="text-xs text-[#78716C] mt-1">
+              <p className="text-xs text-secondary mt-1">
                 Verify constraints before generating your deterministic event plan and task graph.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#FAF8F5] p-5 rounded-xl border border-[#E6DFD5] text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-subtle p-5 rounded-xl border border-subtle text-xs">
               <div>
-                <span className="text-[#78716C]">Event Name</span>
-                <p className="font-semibold text-sm text-[#26221F]">{eventName}</p>
+                <span className="text-secondary">Event Name</span>
+                <p className="font-semibold text-sm text-primary">{eventName}</p>
               </div>
 
               <div>
-                <span className="text-[#78716C]">Type & Date</span>
-                <p className="font-semibold text-sm text-[#26221F]">
+                <span className="text-secondary">Type & Date</span>
+                <p className="font-semibold text-sm text-primary">
                   {eventType.toUpperCase()} • {date}
                 </p>
               </div>
 
               <div>
-                <span className="text-[#78716C]">Location</span>
-                <p className="font-semibold text-sm text-[#26221F]">{location}</p>
+                <span className="text-secondary">Location</span>
+                <p className="font-semibold text-sm text-primary">{location}</p>
               </div>
 
               <div>
-                <span className="text-[#78716C]">Guest Count</span>
-                <p className="font-semibold text-sm text-[#26221F]">{guestCount} Guests</p>
+                <span className="text-secondary">Guest Count</span>
+                <p className="font-semibold text-sm text-primary">{guestCount} Guests</p>
               </div>
 
               <div>
-                <span className="text-[#78716C]">Total Target Budget</span>
-                <p className="font-semibold text-sm font-mono text-[#B85C3A]">
+                <span className="text-secondary">Total Target Budget</span>
+                <p className="font-semibold text-sm font-mono text-accent">
                   {formatCurrency(parseDisplayToMinor(budgetDisplay), currency)}
                 </p>
               </div>
 
               <div>
-                <span className="text-[#78716C]">Top Priority Category</span>
-                <p className="font-semibold text-sm text-[#047857]">
+                <span className="text-secondary">Top Priority Category</span>
+                <p className="font-semibold text-sm text-[#047857] dark:text-emerald-400">
                   #{1} {planningPriorities[0].toUpperCase()}
                 </p>
               </div>
 
-              <div className="col-span-1 sm:col-span-2 border-t border-[#EAE4DB] pt-3">
-                <span className="text-[#78716C]">Dining & Catering:</span>
-                <p className="text-[#26221F]">{cateringType}</p>
+              <div className="col-span-1 sm:col-span-2 border-t border-subtle pt-3">
+                <span className="text-secondary">Dining & Catering:</span>
+                <p className="text-primary">{cateringType}</p>
                 {dietaryRequirements.length > 0 && (
-                  <p className="text-[#78716C] mt-0.5">
+                  <p className="text-secondary mt-0.5">
                     Dietary: {dietaryRequirements.join(', ')}
                   </p>
                 )}
               </div>
 
               {specialConstraints && (
-                <div className="col-span-1 sm:col-span-2 border-t border-[#EAE4DB] pt-2">
-                  <span className="text-[#78716C]">Special Constraints:</span>
-                  <p className="text-[#BE123C] font-medium">{specialConstraints}</p>
+                <div className="col-span-1 sm:col-span-2 border-t border-subtle pt-2">
+                  <span className="text-secondary">Special Constraints:</span>
+                  <p className="text-[#BE123C] dark:text-rose-400 font-medium">{specialConstraints}</p>
                 </div>
               )}
             </div>
 
-            <div className="p-3 bg-[#F4EFEA] border border-[#E6DFD5] rounded-lg text-xs text-[#5C554E] flex items-start gap-2">
-              <CheckCircle className="w-4 h-4 text-[#047857] shrink-0 mt-0.5" />
+            <div className="p-3 bg-subtle border border-subtle rounded-lg text-xs text-secondary flex items-start gap-2">
+              <CheckCircle className="w-4 h-4 text-[#047857] dark:text-emerald-400 shrink-0 mt-0.5" />
               <span>
                 You can adjust any of these constraints or fine-tune individual category allocations at any time in the <strong>Event & Data</strong> settings screen.
               </span>
@@ -740,13 +740,13 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
       </div>
 
       {/* Wizard Footer Controls */}
-      <div className="bg-[#FAF8F5] px-6 py-4 border-t border-[#E6DFD5] flex items-center justify-between">
+      <div className="bg-subtle px-6 py-4 border-t border-subtle flex items-center justify-between">
         <div>
           {currentStep > 1 ? (
             <button
               type="button"
               onClick={handleBack}
-              className="px-4 py-2 rounded-md text-xs font-semibold text-[#5C554E] hover:text-[#26221F] bg-white border border-[#D5CCC0] flex items-center gap-1 transition"
+              className="px-4 py-2 rounded-md text-xs font-semibold text-secondary hover:text-primary bg-surface border border-subtle flex items-center gap-1 transition cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
               Back
@@ -756,7 +756,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
               <button
                 type="button"
                 onClick={onCancel}
-                className="px-4 py-2 rounded-md text-xs font-medium text-[#78716C] hover:text-[#26221F] transition"
+                className="px-4 py-2 rounded-md text-xs font-medium text-secondary hover:text-primary transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -769,7 +769,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
             <button
               type="button"
               onClick={handleNext}
-              className="px-5 py-2 rounded-md text-xs font-semibold bg-[#B85C3A] hover:bg-[#9E4B2D] text-white flex items-center gap-1 transition shadow-xs"
+              className="px-5 py-2 rounded-md text-xs font-semibold bg-[#B85C3A] hover:bg-[#9E4B2D] text-white flex items-center gap-1 transition shadow-xs cursor-pointer"
             >
               Next Step
               <ChevronRight className="w-4 h-4" />
@@ -778,7 +778,7 @@ export const NeedsAssessmentWizard: React.FC<WizardProps> = ({ onComplete, onCan
             <button
               type="button"
               onClick={handleFinalSubmit}
-              className="px-6 py-2 rounded-md text-xs font-semibold bg-[#047857] hover:bg-[#065F46] text-white flex items-center gap-1.5 transition shadow-xs"
+              className="px-6 py-2 rounded-md text-xs font-semibold bg-[#047857] hover:bg-[#065F46] text-white flex items-center gap-1.5 transition shadow-xs cursor-pointer"
             >
               <CheckCircle className="w-4 h-4" />
               Generate Actionable Plan

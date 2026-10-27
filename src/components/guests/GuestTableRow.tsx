@@ -35,11 +35,11 @@ export const GuestTableRow: React.FC<GuestTableRowProps> = React.memo(
     onDelete,
   }) => {
     return (
-      <tr className="hover:bg-[#FAF8F5]/60 dark:hover:bg-[#26362C]/50 transition-colors">
+      <tr className="hover:bg-subtle transition-colors">
         <td className="py-3 px-4">
-          <div className="font-semibold text-sm">{guest.name}</div>
+          <div className="font-semibold text-sm text-primary">{guest.name}</div>
           {guest.householdGroup && (
-            <span className="inline-block px-2 py-0.5 text-[10px] rounded-full bg-[#FAF0EB] dark:bg-[#2B211E] text-[#B85C3A] dark:text-[#E8D7C4] font-medium border border-[#E8C8BD] dark:border-[#4D332B] mt-0.5">
+            <span className="inline-block px-2 py-0.5 text-[10px] rounded-full bg-accent-subtle text-accent font-medium border border-accent-subtle mt-0.5">
               {guest.householdGroup}
             </span>
           )}
@@ -64,7 +64,7 @@ export const GuestTableRow: React.FC<GuestTableRowProps> = React.memo(
           )}
         </td>
 
-        <td className="py-3 px-4 text-center font-mono font-medium">
+        <td className="py-3 px-4 text-center font-mono font-medium text-primary">
           {guest.partySize}
         </td>
 
@@ -75,8 +75,8 @@ export const GuestTableRow: React.FC<GuestTableRowProps> = React.memo(
         <td className="py-3 px-4 max-w-xs">
           <div className="space-y-0.5 text-[11px]">
             {guest.dietaryNotes && (
-              <div className="flex items-center gap-1 text-stone-600 dark:text-stone-300">
-                <Utensils className="w-3 h-3 text-[#B85C3A] shrink-0" />
+              <div className="flex items-center gap-1 text-secondary">
+                <Utensils className="w-3 h-3 text-accent shrink-0" />
                 <span className="truncate">{guest.dietaryNotes}</span>
               </div>
             )}
@@ -87,14 +87,14 @@ export const GuestTableRow: React.FC<GuestTableRowProps> = React.memo(
               </div>
             )}
             {!guest.dietaryNotes && !guest.accessibilityRequirements && (
-              <span className="text-stone-400 italic">None specified</span>
+              <span className="text-tertiary italic">None specified</span>
             )}
           </div>
         </td>
 
         <td className="py-3 px-4 text-[11px]">
-          <div>{guest.email || <span className="text-stone-400 italic">No email</span>}</div>
-          <div className="text-stone-500">{guest.phone}</div>
+          <div className="text-primary">{guest.email || <span className="text-tertiary italic">No email</span>}</div>
+          <div className="text-secondary">{guest.phone}</div>
         </td>
 
         <td className="py-3 px-4 text-right">
@@ -104,7 +104,7 @@ export const GuestTableRow: React.FC<GuestTableRowProps> = React.memo(
               onClick={() => onPreviewRsvp(guest.invitationToken)}
               title="Preview and test public RSVP form for this guest"
               aria-label={`Preview RSVP form for ${guest.name}`}
-              className="p-1 rounded text-[#B85C3A] dark:text-[#E8D7C4] hover:bg-[#FAF0EB] dark:hover:bg-[#2E2222] transition cursor-pointer"
+              className="p-1 rounded text-accent hover:bg-accent-subtle transition cursor-pointer"
             >
               <Share2 className="w-3.5 h-3.5" />
             </button>
@@ -115,7 +115,7 @@ export const GuestTableRow: React.FC<GuestTableRowProps> = React.memo(
               data-testid={`guest-qr-btn-${guest.id}`}
               title={`Generate, preview, or print RSVP QR code for ${guest.name}`}
               aria-label={`Generate RSVP QR code for ${guest.name}`}
-              className="p-1 rounded text-[#B85C3A] dark:text-[#D48668] hover:bg-[#FAF0EB] dark:hover:bg-[#2E2222] transition cursor-pointer"
+              className="p-1 rounded text-accent hover:bg-accent-subtle transition cursor-pointer"
             >
               <QrCode className="w-3.5 h-3.5" />
             </button>
@@ -125,7 +125,7 @@ export const GuestTableRow: React.FC<GuestTableRowProps> = React.memo(
               onClick={() => onCopyRsvpLink(guest)}
               title="Copy dedicated RSVP link to clipboard"
               aria-label={`Copy RSVP link for ${guest.name}`}
-              className="px-2 py-0.5 text-[10px] font-semibold rounded border border-border-subtle hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] transition cursor-pointer"
+              className="px-2 py-0.5 text-[10px] font-semibold rounded border border-subtle hover:bg-subtle text-primary transition cursor-pointer"
             >
               {isCopied ? 'Copied!' : 'Copy Link'}
             </button>
@@ -136,7 +136,7 @@ export const GuestTableRow: React.FC<GuestTableRowProps> = React.memo(
               disabled={isReadOnly}
               title="Edit guest information"
               aria-label={`Edit ${guest.name}`}
-              className="p-1 rounded text-tertiary hover:text-[#1C1917] dark:hover:text-[#FAF8F5] hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] transition cursor-pointer disabled:opacity-40"
+              className="p-1 rounded text-tertiary hover:text-primary hover:bg-subtle transition cursor-pointer disabled:opacity-40"
             >
               <Edit2 className="w-3.5 h-3.5" />
             </button>

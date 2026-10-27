@@ -99,15 +99,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </div>
 
         {/* Mode Toggle Tabs */}
-        <div className="flex border-b border-[#E6DFD5]">
+        <div className="flex border-b border-subtle">
           <button
             type="button"
             onClick={() => switchMode('login')}
             data-testid="auth-tab-login"
-            className={`flex-1 py-2 text-center font-medium border-b-2 transition ${
+            className={`flex-1 py-2 text-center font-medium border-b-2 transition cursor-pointer ${
               mode === 'login'
-                ? 'border-[#B85C3A] text-[#B85C3A] font-bold'
-                : 'border-transparent text-[#78716C] hover:text-[#1C1917]'
+                ? 'border-[#B85C3A] dark:border-[#D48668] text-[#B85C3A] dark:text-[#D48668] font-bold'
+                : 'border-transparent text-secondary hover:text-primary'
             }`}
           >
             Sign In
@@ -116,10 +116,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             type="button"
             onClick={() => switchMode('register')}
             data-testid="auth-tab-register"
-            className={`flex-1 py-2 text-center font-medium border-b-2 transition ${
+            className={`flex-1 py-2 text-center font-medium border-b-2 transition cursor-pointer ${
               mode === 'register'
-                ? 'border-[#B85C3A] text-[#B85C3A] font-bold'
-                : 'border-transparent text-[#78716C] hover:text-[#1C1917]'
+                ? 'border-[#B85C3A] dark:border-[#D48668] text-[#B85C3A] dark:text-[#D48668] font-bold'
+                : 'border-transparent text-secondary hover:text-primary'
             }`}
           >
             Create Account
@@ -127,29 +127,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </div>
 
         {/* Server Endpoint Notice */}
-        <div className="p-2.5 rounded-md bg-[#FAF8F5] border border-[#E6DFD5] text-[11px] text-[#5C554E] flex items-center justify-between gap-2">
+        <div className="p-2.5 rounded-md bg-subtle border border-subtle text-[11px] text-secondary flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 truncate">
-            <Server className="w-3.5 h-3.5 text-[#B85C3A] shrink-0" />
+            <Server className="w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668] shrink-0" />
             <span className="truncate">
-              Connecting to: <strong className="font-mono text-[#1C1917]">{serverUrl}</strong>
+              Connecting to: <strong className="font-mono text-primary">{serverUrl}</strong>
             </span>
           </div>
-          <span className="shrink-0 px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px] uppercase">
+          <span className="shrink-0 px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-bold text-[9px] uppercase border border-emerald-200 dark:border-emerald-800">
             Backend Ready
           </span>
         </div>
 
         {/* Alert Messages */}
         {error && (
-          <div role="alert" className="p-3 rounded-md bg-rose-50 border border-rose-200 text-rose-800 flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
+          <div role="alert" className="p-3 rounded-md bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-800 dark:text-rose-200 flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
             <span className="leading-tight">{error}</span>
           </div>
         )}
 
         {successMsg && (
-          <div role="status" aria-live="polite" className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center gap-2">
-            <Check className="w-4 h-4 shrink-0 text-emerald-600" />
+          <div role="status" aria-live="polite" className="p-3 rounded-md bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-200 flex items-center gap-2">
+            <Check className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
             <span>{successMsg}</span>
           </div>
         )}
@@ -158,11 +158,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-3.5">
           {mode === 'register' && (
             <div>
-              <label htmlFor="auth-name-input" className="block font-medium text-[#1C1917] mb-1">
+              <label htmlFor="auth-name-input" className="block font-medium text-primary mb-1">
                 Full Name
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-[#78716C]">
+                <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-tertiary">
                   <UserIcon className="w-3.5 h-3.5" />
                 </div>
                 <input
@@ -173,18 +173,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   placeholder="e.g. Maya Sharma"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-8 pr-3 py-2 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#26221F] focus:outline-hidden focus:border-[#B85C3A]"
+                  className="w-full pl-8 pr-3 py-2 rounded border border-subtle bg-surface text-primary focus:outline-hidden focus:border-[#B85C3A] dark:focus:border-[#D48668]"
                 />
               </div>
             </div>
           )}
 
           <div>
-            <label htmlFor="auth-email-input" className="block font-medium text-[#1C1917] mb-1">
+            <label htmlFor="auth-email-input" className="block font-medium text-primary mb-1">
               Email Address
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-[#78716C]">
+              <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-tertiary">
                 <Mail className="w-3.5 h-3.5" />
               </div>
               <input
@@ -195,17 +195,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-8 pr-3 py-2 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#26221F] focus:outline-hidden focus:border-[#B85C3A]"
+                className="w-full pl-8 pr-3 py-2 rounded border border-subtle bg-surface text-primary focus:outline-hidden focus:border-[#B85C3A] dark:focus:border-[#D48668]"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="auth-password-input" className="block font-medium text-[#1C1917] mb-1">
-              Password {mode === 'register' && <span className="text-[#78716C] font-normal">(min. 8 characters)</span>}
+            <label htmlFor="auth-password-input" className="block font-medium text-primary mb-1">
+              Password {mode === 'register' && <span className="text-tertiary font-normal">(min. 8 characters)</span>}
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-[#78716C]">
+              <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-tertiary">
                 <Lock className="w-3.5 h-3.5" />
               </div>
               <input
@@ -217,7 +217,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-8 pr-3 py-2 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#1C1917] focus:outline-hidden focus:border-[#B85C3A]"
+                className="w-full pl-8 pr-3 py-2 rounded border border-subtle bg-surface text-primary focus:outline-hidden focus:border-[#B85C3A] dark:focus:border-[#D48668]"
               />
             </div>
           </div>
@@ -239,7 +239,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </button>
         </form>
 
-        <p className="text-[11px] text-center text-[#78716C] pt-2 border-t border-[#F4EFEA]">
+        <p className="text-[11px] text-center text-tertiary pt-2 border-t border-subtle">
           Passwords are protected using OWASP-compliant Argon2id & scrypt hashing with per-user salt.
         </p>
       </div>

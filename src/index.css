@@ -16,9 +16,13 @@
 @utility bg-accent { background-color: var(--accent); }
 @utility bg-accent-subtle { background-color: var(--accent-subtle); }
 @utility border-accent-subtle { border-color: var(--accent-border); }
+.divide-subtle > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--border-subtle);
+}
 
 @layer base {
   :root {
+    color-scheme: light;
     --bg-canvas: #FAF8F5;
     --bg-surface: #FFFFFF;
     --bg-elevated: #FFFFFF;
@@ -42,6 +46,7 @@
 
   /* Premium Low-Glare Midnight Cocoa & Muted Rose Palette */
   .dark {
+    color-scheme: dark;
     --bg-canvas: #171517;
     --bg-surface: #211E21;
     --bg-elevated: #292429;
@@ -74,6 +79,26 @@
     color: var(--text-primary);
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  /* Consistent semantic form control theming and native select/option handling */
+  input,
+  select,
+  textarea {
+    color: var(--text-primary);
+    background-color: var(--bg-surface);
+    border-color: var(--border-subtle);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-tertiary);
+    opacity: 1;
+  }
+
+  option {
+    color: var(--text-primary);
+    background-color: var(--bg-surface);
   }
 
   /* High-contrast WCAG 2.2 AA visible focus indicators */

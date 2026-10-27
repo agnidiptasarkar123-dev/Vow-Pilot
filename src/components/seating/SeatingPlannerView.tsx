@@ -261,9 +261,9 @@ export const SeatingPlannerView: React.FC = () => {
 
       {/* Unassigned Guests Tray (No Print) */}
       {unassignedGuests.length > 0 && (
-        <div className="no-print bg-[#FAF0EB] dark:bg-[#2B211E] border border-[#E8C8BD] dark:border-[#4D332B] rounded-xl p-4 mb-6 shadow-xs">
+        <div className="no-print bg-accent-subtle border border-accent-subtle rounded-xl p-4 mb-6 shadow-xs">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-serif-heading text-xs font-bold uppercase tracking-wider text-[#B85C3A] dark:text-[#E8D7C4] flex items-center gap-1.5">
+            <h3 className="font-serif-heading text-xs font-bold uppercase tracking-wider text-accent flex items-center gap-1.5">
               <UserPlus className="w-4 h-4" />
               Unassigned Guests Awaiting Seating ({unassignedGuests.length})
             </h3>
@@ -395,13 +395,13 @@ export const SeatingPlannerView: React.FC = () => {
                   )}
 
                   {/* Seated Guests List */}
-                  <div className="space-y-1.5 my-3 border-t border-[#F4EFEA] dark:border-[#26362C] pt-3">
-                    <span className="text-[10px] uppercase tracking-wider font-semibold text-stone-500 block mb-1">
+                  <div className="space-y-1.5 my-3 border-t border-subtle pt-3">
+                    <span className="text-[10px] uppercase tracking-wider font-semibold text-secondary block mb-1">
                       Seated Guests ({seatedCount})
                     </span>
 
                     {table.assignedGuestIds.length === 0 ? (
-                      <p className="text-xs text-stone-400 italic py-2">No guests seated at this table.</p>
+                      <p className="text-xs text-tertiary italic py-2">No guests seated at this table.</p>
                     ) : (
                       table.assignedGuestIds.map((guestId) => {
                         const guest = guestMap.get(guestId);
@@ -416,7 +416,7 @@ export const SeatingPlannerView: React.FC = () => {
                               <span className="font-medium text-primary block">
                                 {guest.name}
                               </span>
-                              <span className="text-[10px] text-stone-500">
+                              <span className="text-[10px] text-tertiary">
                                 Party of {guest.partySize} {guest.dietaryNotes ? `• ${guest.dietaryNotes}` : ''}
                               </span>
                             </div>
@@ -434,7 +434,7 @@ export const SeatingPlannerView: React.FC = () => {
                                 }}
                                 defaultValue=""
                                 title={`Move ${guest.name} to another table`}
-                                className="bg-surface border border-border-strong rounded text-[10px] px-1 py-0.5 cursor-pointer"
+                                className="bg-surface border border-subtle text-primary rounded text-[10px] px-1 py-0.5 cursor-pointer"
                               >
                                 <option value="" disabled>
                                   Move...
@@ -454,7 +454,7 @@ export const SeatingPlannerView: React.FC = () => {
                                 disabled={isReadOnly}
                                 aria-label={`Remove ${guest.name} from ${table.name}`}
                                 title={`Remove ${guest.name} from ${table.name}`}
-                                className="p-1 rounded text-stone-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                                className="p-1 rounded text-tertiary hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
                               >
                                 <UserMinus className="w-3 h-3" />
                               </button>
@@ -467,11 +467,11 @@ export const SeatingPlannerView: React.FC = () => {
                 </div>
 
                 {/* Table Footer Controls (No Print) */}
-                <div className="no-print pt-3 border-t border-[#F4EFEA] dark:border-[#26362C] flex items-center justify-between">
+                <div className="no-print pt-3 border-t border-subtle flex items-center justify-between">
                   <button
                     onClick={() => handleOpenEdit(table)}
                     disabled={isReadOnly}
-                    className="text-xs text-tertiary hover:text-[#1C1917] dark:hover:text-[#FAF8F5] flex items-center gap-1 transition cursor-pointer"
+                    className="text-xs text-tertiary hover:text-primary flex items-center gap-1 transition cursor-pointer"
                   >
                     <Edit2 className="w-3 h-3" />
                     <span>Edit</span>
@@ -499,7 +499,7 @@ export const SeatingPlannerView: React.FC = () => {
           aria-modal="true"
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
         >
-          <div className="w-full max-w-md bg-canvas border border-border-subtle rounded-2xl shadow-xl p-6 text-primary">
+          <div className="w-full max-w-md bg-surface border border-subtle rounded-2xl shadow-xl p-6 text-primary">
             <h3 className="font-serif-heading text-lg font-bold mb-4">Add Reception Table</h3>
             <form onSubmit={handleSaveAdd} className="space-y-3 text-xs">
               <div>
@@ -512,7 +512,7 @@ export const SeatingPlannerView: React.FC = () => {
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
                   placeholder="e.g. Table 1 — High Table"
-                  className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
+                  className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] text-primary"
                 />
               </div>
 
@@ -528,7 +528,7 @@ export const SeatingPlannerView: React.FC = () => {
                     required
                     value={formCapacity}
                     onChange={(e) => setFormCapacity(parseInt(e.target.value, 10) || 8)}
-                    className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 font-mono focus:ring-1 focus:ring-[#B85C3A] text-primary"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 font-mono focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] text-primary"
                   />
                 </div>
                 <div>
@@ -538,7 +538,7 @@ export const SeatingPlannerView: React.FC = () => {
                   <select
                     value={formShape}
                     onChange={(e) => setFormShape(e.target.value as 'round' | 'rectangular' | 'oval')}
-                    className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] cursor-pointer text-primary"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] cursor-pointer text-primary"
                   >
                     <option value="round">Round</option>
                     <option value="oval">Oval</option>
@@ -556,7 +556,7 @@ export const SeatingPlannerView: React.FC = () => {
                   value={formNotes}
                   onChange={(e) => setFormNotes(e.target.value)}
                   placeholder="e.g. Near stage, reserved for immediate family"
-                  className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
+                  className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] text-primary"
                 />
               </div>
 
@@ -564,7 +564,7 @@ export const SeatingPlannerView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddTableOpen(false)}
-                  className="px-3.5 py-1.5 border border-border-strong rounded-lg text-secondary hover:bg-subtle transition cursor-pointer"
+                  className="px-3.5 py-1.5 border border-subtle rounded-lg text-secondary hover:text-primary hover:bg-subtle transition cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -587,7 +587,7 @@ export const SeatingPlannerView: React.FC = () => {
           aria-modal="true"
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
         >
-          <div className="w-full max-w-md bg-canvas border border-border-subtle rounded-2xl shadow-xl p-6 text-primary">
+          <div className="w-full max-w-md bg-surface border border-subtle rounded-2xl shadow-xl p-6 text-primary">
             <h3 className="font-serif-heading text-lg font-bold mb-4">Edit Table</h3>
             <form onSubmit={handleSaveEdit} className="space-y-3 text-xs">
               <div>
@@ -599,7 +599,7 @@ export const SeatingPlannerView: React.FC = () => {
                   required
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
-                  className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
+                  className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] text-primary"
                 />
               </div>
 
@@ -615,7 +615,7 @@ export const SeatingPlannerView: React.FC = () => {
                     required
                     value={formCapacity}
                     onChange={(e) => setFormCapacity(parseInt(e.target.value, 10) || 8)}
-                    className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 font-mono focus:ring-1 focus:ring-[#B85C3A] text-primary"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 font-mono focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] text-primary"
                   />
                 </div>
                 <div>
@@ -625,7 +625,7 @@ export const SeatingPlannerView: React.FC = () => {
                   <select
                     value={formShape}
                     onChange={(e) => setFormShape(e.target.value as 'round' | 'rectangular' | 'oval')}
-                    className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] cursor-pointer text-primary"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] cursor-pointer text-primary"
                   >
                     <option value="round">Round</option>
                     <option value="oval">Oval</option>
@@ -642,7 +642,7 @@ export const SeatingPlannerView: React.FC = () => {
                   type="text"
                   value={formNotes}
                   onChange={(e) => setFormNotes(e.target.value)}
-                  className="w-full bg-surface border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
+                  className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] text-primary"
                 />
               </div>
 
@@ -650,7 +650,7 @@ export const SeatingPlannerView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setEditingTable(null)}
-                  className="px-3.5 py-1.5 border border-border-strong rounded-lg text-secondary hover:bg-subtle transition cursor-pointer"
+                  className="px-3.5 py-1.5 border border-subtle rounded-lg text-secondary hover:text-primary hover:bg-subtle transition cursor-pointer"
                 >
                   Cancel
                 </button>

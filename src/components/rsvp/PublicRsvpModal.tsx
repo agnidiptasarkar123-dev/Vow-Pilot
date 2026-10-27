@@ -62,12 +62,12 @@ export const PublicRsvpModal: React.FC<PublicRsvpModalProps> = ({
       aria-labelledby="rsvp-modal-title"
       className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
     >
-      <div className="relative w-full max-w-lg bg-canvas border border-border-subtle rounded-2xl shadow-2xl p-6 sm:p-8 animate-fade-in text-primary">
+      <div className="relative w-full max-w-lg bg-surface border border-subtle rounded-2xl shadow-2xl p-6 sm:p-8 animate-fade-in text-primary">
         {/* Close Button */}
         <button
           onClick={onClose}
           aria-label="Close RSVP form"
-          className="absolute top-4 right-4 text-tertiary hover:text-[#1C1917] dark:hover:text-[#FAF8F5] p-2 rounded-full hover:bg-[#F4EFEA] dark:hover:bg-[#26362C] transition cursor-pointer"
+          className="absolute top-4 right-4 text-tertiary hover:text-primary p-2 rounded-full hover:bg-subtle transition cursor-pointer"
         >
           ✕
         </button>
@@ -77,7 +77,7 @@ export const PublicRsvpModal: React.FC<PublicRsvpModalProps> = ({
           <div className="flex justify-center mb-2">
             <VowPilotLogo variant="mark" size="md" />
           </div>
-          <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#B85C3A] dark:text-[#E8D7C4]">
+          <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-accent">
             Celebration Invitation Response
           </span>
           <h2 id="rsvp-modal-title" className="font-serif-heading text-2xl font-bold tracking-tight mt-1 text-primary">
@@ -85,7 +85,7 @@ export const PublicRsvpModal: React.FC<PublicRsvpModalProps> = ({
           </h2>
 
           {/* Strict Privacy: Public Event Card showing ONLY Date & Venue */}
-          <div className="mt-3 py-2 px-4 bg-[#FFFFFF] dark:bg-[#26362C] rounded-lg border border-border-subtle inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-secondary">
+          <div className="mt-3 py-2 px-4 bg-subtle rounded-lg border border-subtle inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-secondary">
             <span className="flex items-center gap-1.5 font-medium">
               <Calendar className="w-3.5 h-3.5 text-[#B85C3A]" />
               {state.event.date}
@@ -108,7 +108,7 @@ export const PublicRsvpModal: React.FC<PublicRsvpModalProps> = ({
             </p>
             <button
               onClick={onClose}
-              className="mt-4 px-4 py-2 bg-[#FAF0EB] dark:bg-[#2B211E] text-[#B85C3A] dark:text-[#E8D7C4] text-xs font-semibold rounded-lg hover:bg-[#E8C8BD] transition cursor-pointer"
+              className="mt-4 px-4 py-2 bg-accent-subtle text-accent border border-accent-subtle text-xs font-semibold rounded-lg hover:bg-accent-subtle/80 transition cursor-pointer"
             >
               Close
             </button>
@@ -123,7 +123,7 @@ export const PublicRsvpModal: React.FC<PublicRsvpModalProps> = ({
             </p>
             <button
               onClick={onClose}
-              className="mt-4 px-4 py-2 bg-[#FAF0EB] dark:bg-[#2B211E] text-[#B85C3A] dark:text-[#E8D7C4] text-xs font-semibold rounded-lg hover:bg-[#E8C8BD] transition cursor-pointer"
+              className="mt-4 px-4 py-2 bg-accent-subtle text-accent border border-accent-subtle text-xs font-semibold rounded-lg hover:bg-accent-subtle/80 transition cursor-pointer"
             >
               Close
             </button>
@@ -138,7 +138,7 @@ export const PublicRsvpModal: React.FC<PublicRsvpModalProps> = ({
             </p>
             <button
               onClick={onClose}
-              className="mt-4 px-4 py-2 bg-[#FAF0EB] dark:bg-[#2B211E] text-[#B85C3A] dark:text-[#E8D7C4] text-xs font-semibold rounded-lg hover:bg-[#E8C8BD] transition cursor-pointer"
+              className="mt-4 px-4 py-2 bg-accent-subtle text-accent border border-accent-subtle text-xs font-semibold rounded-lg hover:bg-accent-subtle/80 transition cursor-pointer"
             >
               Close
             </button>
@@ -168,23 +168,23 @@ export const PublicRsvpModal: React.FC<PublicRsvpModalProps> = ({
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Guest Banner */}
-            <div className="p-3.5 bg-[#FAF0EB] dark:bg-[#2B211E] border border-[#E8C8BD] dark:border-[#4D332B] rounded-xl flex items-center justify-between">
+            <div className="p-3.5 bg-accent-subtle border border-accent-subtle rounded-xl flex items-center justify-between">
               <div>
-                <span className="text-[10px] uppercase font-semibold text-[#B85C3A] dark:text-[#E8D7C4] block">
+                <span className="text-[10px] uppercase font-semibold text-accent block">
                   Invited Guest
                 </span>
                 <span className="font-semibold text-sm text-primary">
                   {guest.name}
                 </span>
                 {guest.householdGroup && (
-                  <span className="text-xs text-[#78716C] dark:text-[#C5D1C8] block">
+                  <span className="text-xs text-secondary block">
                     {guest.householdGroup}
                   </span>
                 )}
               </div>
               <div className="text-right">
-                <span className="text-xs font-medium text-[#78716C] dark:text-[#C5D1C8]">Party Size</span>
-                <span className="block text-base font-bold text-[#B85C3A] dark:text-[#E8D7C4]">
+                <span className="text-xs font-medium text-secondary">Party Size</span>
+                <span className="block text-base font-bold text-accent">
                   Up to {guest.partySize} {guest.partySize === 1 ? 'person' : 'people'}
                 </span>
               </div>
@@ -202,7 +202,7 @@ export const PublicRsvpModal: React.FC<PublicRsvpModalProps> = ({
                   className={`p-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-semibold transition cursor-pointer ${
                     rsvpStatus === 'accepted'
                       ? 'border-[#047857] bg-emerald-50 dark:bg-emerald-950/50 text-[#047857] dark:text-emerald-300 ring-2 ring-emerald-500/20'
-                      : 'border-border-subtle hover:bg-[#F4EFEA] dark:hover:bg-[#26362C] text-secondary'
+                      : 'border-subtle hover:bg-subtle text-secondary'
                   }`}
                 >
                   <CheckCircle className="w-4 h-4" />
@@ -215,7 +215,7 @@ export const PublicRsvpModal: React.FC<PublicRsvpModalProps> = ({
                   className={`p-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-semibold transition cursor-pointer ${
                     rsvpStatus === 'declined'
                       ? 'border-[#BE123C] bg-rose-50 dark:bg-rose-950/50 text-[#BE123C] dark:text-rose-300 ring-2 ring-rose-500/20'
-                      : 'border-border-subtle hover:bg-[#F4EFEA] dark:hover:bg-[#26362C] text-secondary'
+                      : 'border-subtle hover:bg-subtle text-secondary'
                   }`}
                 >
                   <XCircle className="w-4 h-4" />
@@ -234,7 +234,7 @@ export const PublicRsvpModal: React.FC<PublicRsvpModalProps> = ({
                   <select
                     value={confirmedCount}
                     onChange={(e) => setConfirmedCount(parseInt(e.target.value, 10))}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-2 text-xs font-semibold text-primary focus:ring-1 focus:ring-[#B85C3A] cursor-pointer"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-2 text-xs font-semibold text-primary focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] cursor-pointer"
                   >
                     {Array.from({ length: guest.partySize }, (_, i) => i + 1).map((num) => (
                       <option key={num} value={num}>
@@ -253,7 +253,7 @@ export const PublicRsvpModal: React.FC<PublicRsvpModalProps> = ({
                     value={dietaryNotes}
                     onChange={(e) => setDietaryNotes(e.target.value)}
                     placeholder="e.g. Vegetarian, Jain (no onion/garlic), Nut allergy, Vegan"
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-2 text-xs text-primary focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-2 text-xs text-primary focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                   />
                 </div>
 
@@ -266,7 +266,7 @@ export const PublicRsvpModal: React.FC<PublicRsvpModalProps> = ({
                     value={accessibility}
                     onChange={(e) => setAccessibility(e.target.value)}
                     placeholder="e.g. Wheelchair ramp, step-free seating, quiet zone"
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-2 text-xs text-primary focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-2 text-xs text-primary focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                   />
                 </div>
               </div>
@@ -283,7 +283,7 @@ export const PublicRsvpModal: React.FC<PublicRsvpModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 border border-border-strong text-secondary text-xs font-medium rounded-lg hover:bg-[#F4EFEA] dark:hover:bg-[#26362C] transition cursor-pointer"
+                className="px-4 py-2 border border-subtle text-secondary text-xs font-medium rounded-lg hover:text-primary hover:bg-subtle transition cursor-pointer"
               >
                 Cancel
               </button>

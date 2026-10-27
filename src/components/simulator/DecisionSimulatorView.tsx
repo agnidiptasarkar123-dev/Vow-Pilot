@@ -118,10 +118,10 @@ export const DecisionSimulatorView: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#26221F] font-serif-heading tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary font-serif-heading tracking-tight">
             Decision Impact Simulator
           </h1>
-          <p className="text-xs text-[#6E665E] mt-1">
+          <p className="text-xs text-secondary mt-1">
             Stress-test changes in guest count and category spending without touching your confirmed plan.
           </p>
         </div>
@@ -152,11 +152,11 @@ export const DecisionSimulatorView: React.FC = () => {
           <Card padding="md" className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-[#26221F] font-serif-heading flex items-center gap-2">
-                  <Users className="w-4 h-4 text-[#B85C3A]" />
+                <h3 className="text-base font-bold text-primary font-serif-heading flex items-center gap-2">
+                  <Users className="w-4 h-4 text-[#B85C3A] dark:text-[#D48668]" />
                   Simulate Guest Count ({sandboxGuestCount} Guests)
                 </h3>
-                <p className="text-xs text-[#6E665E]">
+                <p className="text-xs text-secondary">
                   Baseline confirmed count: <strong>{state.event.guestCount}</strong> guests.
                 </p>
               </div>
@@ -165,10 +165,10 @@ export const DecisionSimulatorView: React.FC = () => {
                 <span
                   className={`text-xs font-bold font-mono px-2.5 py-1 rounded-lg ${
                     sandboxGuestCount > state.event.guestCount
-                      ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                      ? 'bg-amber-50 dark:bg-[#332A20] text-amber-800 dark:text-[#E5BD76] border border-amber-200 dark:border-[#55462D]'
                       : sandboxGuestCount < state.event.guestCount
-                      ? 'bg-blue-50 text-blue-800 border border-blue-200'
-                      : 'bg-neutral-100 text-neutral-700'
+                      ? 'bg-blue-50 dark:bg-[#202833] text-blue-800 dark:text-[#90CDF4] border border-blue-200 dark:border-[#2D4355]'
+                      : 'bg-subtle text-secondary border border-subtle'
                   }`}
                 >
                   {sandboxGuestCount - state.event.guestCount >= 0 ? '+' : ''}
@@ -188,13 +188,13 @@ export const DecisionSimulatorView: React.FC = () => {
               aria-valuemin={20}
               aria-valuemax={capacityLimit ? capacityLimit + 50 : 300}
               aria-valuetext={`${sandboxGuestCount} guests`}
-              className="w-full h-2 bg-[#EAE4DB] rounded-lg appearance-none cursor-pointer accent-[#B85C3A]"
+              className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
             />
 
             {/* Capacity Warning Banner */}
             {isCapacityExceeded && (
-              <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-900 flex items-start gap-2 shadow-2xs">
-                <AlertCircle className="w-4 h-4 text-[#BE123C] shrink-0 mt-0.5" />
+              <div role="alert" className="p-3 bg-rose-50 dark:bg-[#341F24] border border-rose-200 dark:border-[#58333B] rounded-xl text-xs text-rose-900 dark:text-[#E58C91] flex items-start gap-2 shadow-2xs">
+                <AlertCircle className="w-4 h-4 text-[#BE123C] dark:text-[#E58C91] shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold">Venue Overcrowding Alert:</span> Modeled count of{' '}
                   <span className="font-bold">{sandboxGuestCount} guests</span> exceeds {venueCat?.name} max capacity of{' '}
@@ -206,14 +206,14 @@ export const DecisionSimulatorView: React.FC = () => {
 
           {/* Category Budget Adjusters */}
           <Card padding="md" className="space-y-4">
-            <h3 className="text-base font-bold text-[#26221F] font-serif-heading">
+            <h3 className="text-base font-bold text-primary font-serif-heading">
               Simulate Category Reallocations
             </h3>
-            <p className="text-xs text-[#6E665E]">
+            <p className="text-xs text-secondary">
               Adjust caps to see how trade-offs between categories affect your bottom line.
             </p>
 
-            <div className="space-y-4 divide-y divide-[#F4EFEA]">
+            <div className="space-y-4 divide-y divide-subtle">
               {state.categories.map((cat) => {
                 const currentMinor = sandboxAllocations[cat.id] ?? cat.allocatedAmount;
                 const baselineMinor = cat.allocatedAmount;
@@ -224,23 +224,23 @@ export const DecisionSimulatorView: React.FC = () => {
                   <div key={cat.id} className="pt-3.5 first:pt-0 space-y-2">
                     <div className="flex items-center justify-between text-xs">
                       <div>
-                        <span className="font-semibold text-sm text-[#26221F] block">
+                        <span className="font-semibold text-sm text-primary block">
                           {cat.name}
                         </span>
-                        <span className="text-[11px] text-[#6E665E]">
+                        <span className="text-[11px] text-secondary">
                           Baseline: {formatCurrency(baselineMinor, state.event.currency)}
                           {cat.perGuestCost && ` • Scaling: ${formatCurrency(cat.perGuestCost, state.event.currency)}/guest`}
                         </span>
                       </div>
 
                       <div className="text-right">
-                        <span className="font-mono font-bold text-sm text-[#26221F]">
+                        <span className="font-mono font-bold text-sm text-primary">
                           {formatCurrency(currentMinor, state.event.currency)}
                         </span>
                         {deltaMinor !== 0 && (
                           <span
                             className={`text-[10px] font-mono font-semibold block ${
-                              deltaMinor > 0 ? 'text-[#BE123C]' : 'text-[#047857]'
+                              deltaMinor > 0 ? 'text-[#BE123C] dark:text-[#E58C91]' : 'text-[#047857] dark:text-[#91B8A0]'
                             }`}
                           >
                             {deltaMinor > 0 ? '+' : ''}
@@ -264,7 +264,7 @@ export const DecisionSimulatorView: React.FC = () => {
                       aria-valuemin={0}
                       aria-valuemax={maxRange}
                       aria-valuetext={formatCurrency(currentMinor, state.event.currency)}
-                      className="w-full h-1.5 bg-[#EAE4DB] rounded-lg appearance-none cursor-pointer accent-[#B85C3A]"
+                      className="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-[#B85C3A] dark:accent-[#D48668]"
                     />
                   </div>
                 );
@@ -275,36 +275,36 @@ export const DecisionSimulatorView: React.FC = () => {
 
         {/* Right Column: Real-Time Impact Evaluation Card */}
         <div className="space-y-6">
-          <div className="bg-[#FAF8F5] p-5 sm:p-6 rounded-2xl border border-[#E6DFD5] shadow-xs space-y-5 sticky top-24">
+          <div className="bg-surface p-5 sm:p-6 rounded-2xl border border-subtle shadow-xs space-y-5 sticky top-24">
             <div>
-              <span className="text-xs font-semibold text-[#B85C3A] uppercase tracking-wider">
+              <span className="text-xs font-semibold text-accent uppercase tracking-wider">
                 Simulated Impact
               </span>
-              <h3 className="text-xl font-bold text-[#26221F] font-serif-heading mt-0.5">
+              <h3 className="text-xl font-bold text-primary font-serif-heading mt-0.5">
                 Variance vs Baseline
               </h3>
             </div>
 
-            <div className="space-y-3 divide-y divide-[#EAE4DB] text-xs">
+            <div className="space-y-3 divide-y divide-subtle text-xs">
               <div className="flex justify-between items-center pt-2">
-                <span className="text-[#5C554E]">Baseline Spend</span>
-                <span className="font-mono font-semibold text-[#26221F]">
+                <span className="text-secondary">Baseline Spend</span>
+                <span className="font-mono font-semibold text-primary">
                   {formatCurrency(baselineOverview.effectiveProjectedTotal, state.event.currency)}
                 </span>
               </div>
 
               <div className="flex justify-between items-center pt-2">
-                <span className="text-[#5C554E]">Simulated Total</span>
-                <span className="font-mono font-bold text-sm text-[#26221F]">
+                <span className="text-secondary">Simulated Total</span>
+                <span className="font-mono font-bold text-sm text-primary">
                   {formatCurrency(evaluation.scenarioTotal, state.event.currency)}
                 </span>
               </div>
 
               <div className="flex justify-between items-center pt-2">
-                <span className="font-semibold text-[#26221F]">Net Difference</span>
+                <span className="font-semibold text-primary">Net Difference</span>
                 <span
                   className={`font-mono font-bold text-sm ${
-                    evaluation.deltaFromBaseline > 0 ? 'text-[#BE123C]' : 'text-[#047857]'
+                    evaluation.deltaFromBaseline > 0 ? 'text-[#BE123C] dark:text-[#E58C91]' : 'text-[#047857] dark:text-[#91B8A0]'
                   }`}
                 >
                   {evaluation.deltaFromBaseline >= 0 ? '+' : ''}
@@ -313,10 +313,10 @@ export const DecisionSimulatorView: React.FC = () => {
               </div>
 
               <div className="flex justify-between items-center pt-2">
-                <span className="text-[#5C554E]">Projected Remaining Runway</span>
+                <span className="text-secondary">Projected Remaining Runway</span>
                 <span
                   className={`font-mono font-bold text-sm ${
-                    evaluation.remainingBudget < 0 ? 'text-[#BE123C]' : 'text-[#047857]'
+                    evaluation.remainingBudget < 0 ? 'text-[#BE123C] dark:text-[#E58C91]' : 'text-[#047857] dark:text-[#91B8A0]'
                   }`}
                 >
                   {formatCurrency(evaluation.remainingBudget, state.event.currency)}
@@ -326,8 +326,8 @@ export const DecisionSimulatorView: React.FC = () => {
 
             {/* Overrun Alert */}
             {evaluation.isOverrun && (
-              <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-900 space-y-1 shadow-2xs">
-                <div className="font-bold flex items-center gap-1.5 text-[#BE123C]">
+              <div className="p-3.5 bg-rose-50 dark:bg-[#341F24] border border-rose-200 dark:border-[#58333B] rounded-xl text-xs text-rose-900 dark:text-[#E58C91] space-y-1 shadow-2xs">
+                <div className="font-bold flex items-center gap-1.5 text-[#BE123C] dark:text-[#E58C91]">
                   <AlertCircle className="w-4 h-4" />
                   <span>Exceeds Target Budget</span>
                 </div>
@@ -352,10 +352,10 @@ export const DecisionSimulatorView: React.FC = () => {
       {/* Saved Scenarios Comparison Matrix */}
       <Card padding="md" className="space-y-4">
         <div>
-          <h3 className="text-base font-bold text-[#26221F] font-serif-heading">
+          <h3 className="text-base font-bold text-primary font-serif-heading">
             Saved Scenarios Comparison ({state.scenarios.length})
           </h3>
-          <p className="text-xs text-[#6E665E]">
+          <p className="text-xs text-secondary">
             Compare alternatives side-by-side or commit a vetted scenario to become the official plan.
           </p>
         </div>
@@ -363,7 +363,7 @@ export const DecisionSimulatorView: React.FC = () => {
         {/* Desktop Table View */}
         <div className="overflow-x-auto hidden md:block">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#FAF8F5] text-[#5C554E] uppercase font-semibold border-b border-[#E6DFD5]">
+            <thead className="bg-subtle text-secondary uppercase font-semibold border-b border-subtle">
               <tr>
                 <th scope="col" className="py-3 px-4">Scenario Name</th>
                 <th scope="col" className="py-3 px-4 text-center">Guest Count</th>
@@ -373,11 +373,11 @@ export const DecisionSimulatorView: React.FC = () => {
                 <th scope="col" className="py-3 px-4 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#F4EFEA]">
+            <tbody className="divide-y divide-subtle">
               {state.scenarios.map((scen) => {
                 const scenEval = evaluateScenario(state, scen);
                 return (
-                  <tr key={scen.id} className="hover:bg-[#FAF8F5]/60 transition">
+                  <tr key={scen.id} className="hover:bg-subtle/60 transition">
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-2">
                         {scen.isBaseline && (
@@ -386,25 +386,25 @@ export const DecisionSimulatorView: React.FC = () => {
                           </Badge>
                         )}
                         <div>
-                          <span className="font-semibold text-sm text-[#26221F] block">
+                          <span className="font-semibold text-sm text-primary block">
                             {scen.name}
                           </span>
-                          <span className="text-[11px] text-[#6E665E]">{scen.description}</span>
+                          <span className="text-[11px] text-secondary">{scen.description}</span>
                         </div>
                       </div>
                     </td>
 
-                    <td className="py-3.5 px-4 text-center font-mono font-medium text-[#26221F]">
+                    <td className="py-3.5 px-4 text-center font-mono font-medium text-primary">
                       {scen.modifiedGuestCount}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right font-mono font-bold text-[#26221F]">
+                    <td className="py-3.5 px-4 text-right font-mono font-bold text-primary">
                       {formatCurrency(scenEval.scenarioTotal, state.event.currency)}
                     </td>
 
                     <td className="py-3.5 px-4 text-right font-mono font-semibold">
                       <span
-                        className={scenEval.deltaFromBaseline > 0 ? 'text-[#BE123C]' : 'text-[#047857]'}
+                        className={scenEval.deltaFromBaseline > 0 ? 'text-[#BE123C] dark:text-[#E58C91]' : 'text-[#047857] dark:text-[#91B8A0]'}
                       >
                         {scenEval.deltaFromBaseline >= 0 ? '+' : ''}
                         {formatCurrency(scenEval.deltaFromBaseline, state.event.currency)}
@@ -412,7 +412,7 @@ export const DecisionSimulatorView: React.FC = () => {
                     </td>
 
                     <td className="py-3.5 px-4 text-right font-mono font-semibold">
-                      <span className={scenEval.isOverrun ? 'text-[#BE123C]' : 'text-[#047857]'}>
+                      <span className={scenEval.isOverrun ? 'text-[#BE123C] dark:text-[#E58C91]' : 'text-[#047857] dark:text-[#91B8A0]'}>
                         {formatCurrency(scenEval.remainingBudget, state.event.currency)}
                       </span>
                     </td>
@@ -421,7 +421,7 @@ export const DecisionSimulatorView: React.FC = () => {
                       <div className="flex items-center justify-center gap-2">
                         <button
                           onClick={() => handleLoadScenarioIntoSandbox(scen)}
-                          className="px-2.5 py-1 rounded-md bg-[#F4EFEA] hover:bg-[#EAE4DB] text-[#26221F] font-medium text-[11px] transition cursor-pointer"
+                          className="px-2.5 py-1 rounded-md bg-subtle hover:bg-muted text-primary font-medium text-[11px] border border-subtle transition cursor-pointer"
                         >
                           Load Sandbox
                         </button>
@@ -442,7 +442,7 @@ export const DecisionSimulatorView: React.FC = () => {
                                   deleteScenario(scen.id);
                                 }
                               }}
-                              className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition cursor-pointer"
+                              className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-md transition cursor-pointer"
                               title="Delete Scenario"
                               aria-label={`Delete scenario "${scen.name}"`}
                             >
@@ -460,7 +460,7 @@ export const DecisionSimulatorView: React.FC = () => {
         </div>
 
         {/* Mobile View Stacked Scenario Cards (< 768px) */}
-        <div className="block md:hidden divide-y divide-[#F4EFEA] space-y-3">
+        <div className="block md:hidden divide-y divide-subtle space-y-3">
           {state.scenarios.map((scen) => {
             const scenEval = evaluateScenario(state, scen);
             return (
@@ -470,19 +470,19 @@ export const DecisionSimulatorView: React.FC = () => {
                     {scen.isBaseline && (
                       <Badge variant="accent" size="sm">Active</Badge>
                     )}
-                    <span className="font-semibold text-sm text-[#26221F]">{scen.name}</span>
+                    <span className="font-semibold text-sm text-primary">{scen.name}</span>
                   </div>
-                  <span className="font-mono text-xs text-[#5C554E]">{scen.modifiedGuestCount} guests</span>
+                  <span className="font-mono text-xs text-secondary">{scen.modifiedGuestCount} guests</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E6DFD5]">
+                <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-subtle p-2.5 rounded-lg border border-subtle">
                   <div>
-                    <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Projected Spend</span>
-                    <span className="font-bold text-[#26221F]">{formatCurrency(scenEval.scenarioTotal, state.event.currency)}</span>
+                    <span className="text-[10px] uppercase text-secondary block font-sans">Projected Spend</span>
+                    <span className="font-bold text-primary">{formatCurrency(scenEval.scenarioTotal, state.event.currency)}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase text-[#6E665E] block font-sans">Variance</span>
-                    <span className={scenEval.deltaFromBaseline > 0 ? 'text-[#BE123C]' : 'text-[#047857]'}>
+                    <span className="text-[10px] uppercase text-secondary block font-sans">Variance</span>
+                    <span className={scenEval.deltaFromBaseline > 0 ? 'text-[#BE123C] dark:text-[#E58C91]' : 'text-[#047857] dark:text-[#91B8A0]'}>
                       {scenEval.deltaFromBaseline >= 0 ? '+' : ''}{formatCurrency(scenEval.deltaFromBaseline, state.event.currency)}
                     </span>
                   </div>
@@ -491,7 +491,7 @@ export const DecisionSimulatorView: React.FC = () => {
                 <div className="flex items-center justify-end gap-2 pt-1">
                   <button
                     onClick={() => handleLoadScenarioIntoSandbox(scen)}
-                    className="px-3 py-1.5 rounded-md bg-[#F4EFEA] text-[#26221F] font-medium text-xs"
+                    className="px-3 py-1.5 rounded-md bg-subtle text-primary font-medium text-xs border border-subtle"
                   >
                     Load Sandbox
                   </button>
@@ -519,43 +519,43 @@ export const DecisionSimulatorView: React.FC = () => {
       >
         <div className="space-y-4 text-xs">
           <div>
-            <label htmlFor="save-scenario-name" className="block font-semibold text-[#26221F] mb-1">Scenario Name</label>
+            <label htmlFor="save-scenario-name" className="block font-semibold text-primary mb-1">Scenario Name</label>
             <input
               id="save-scenario-name"
               type="text"
               value={scenarioNameInput}
               onChange={(e) => setScenarioNameInput(e.target.value)}
               placeholder="e.g. Scaled 180 Guests + Drone Cinema Upgrade"
-              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
+              className="w-full text-sm px-3.5 py-2 border border-subtle rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-surface text-primary"
             />
           </div>
 
           <div>
-            <label htmlFor="save-scenario-desc" className="block font-semibold text-[#26221F] mb-1">Description / Rationale</label>
+            <label htmlFor="save-scenario-desc" className="block font-semibold text-primary mb-1">Description / Rationale</label>
             <textarea
               id="save-scenario-desc"
               rows={2}
               value={scenarioDescriptionInput}
               onChange={(e) => setScenarioDescriptionInput(e.target.value)}
               placeholder="e.g. Explores expanding guest list by trimming decor contingency..."
-              className="w-full text-sm px-3.5 py-2 border border-[#D5CCC0] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-[#FAF8F5]"
+              className="w-full text-sm px-3.5 py-2 border border-subtle rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#B85C3A] bg-surface text-primary"
             />
           </div>
 
-          <div className="p-3.5 bg-[#FAF8F5] border border-[#E6DFD5] rounded-xl space-y-1">
-            <span className="font-semibold text-[#26221F]">Snapshot Highlights:</span>
-            <p className="text-[#5C554E]">
+          <div className="p-3.5 bg-subtle border border-subtle rounded-xl space-y-1">
+            <span className="font-semibold text-primary">Snapshot Highlights:</span>
+            <p className="text-secondary">
               • {sandboxGuestCount} Guests ({sandboxGuestCount - state.event.guestCount >= 0 ? '+' : ''}{sandboxGuestCount - state.event.guestCount} delta)
             </p>
-            <p className="text-[#5C554E]">
+            <p className="text-secondary">
               • Total Projected: {formatCurrency(evaluation.scenarioTotal, state.event.currency)}
             </p>
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-[#F4EFEA]">
+          <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
             <button
               onClick={() => setIsSaveModalOpen(false)}
-              className="px-4 py-2 border border-[#D5CCC0] rounded-lg text-[#5C554E] hover:bg-[#F4EFEA] text-xs font-semibold cursor-pointer"
+              className="px-4 py-2 border border-subtle rounded-lg text-secondary hover:bg-subtle text-xs font-semibold cursor-pointer"
             >
               Cancel
             </button>
@@ -577,17 +577,17 @@ export const DecisionSimulatorView: React.FC = () => {
         description="Are you sure you want to apply this scenario to your official confirmed plan?"
       >
         <div className="space-y-4 text-xs">
-          <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 flex items-start gap-2.5 shadow-2xs">
-            <AlertTriangle className="w-4 h-4 text-[#B45309] shrink-0 mt-0.5" />
+          <div className="p-3.5 bg-amber-50 dark:bg-[#332A20] border border-amber-200 dark:border-[#55462D] rounded-xl text-amber-900 dark:text-[#E5BD76] flex items-start gap-2.5 shadow-2xs">
+            <AlertTriangle className="w-4 h-4 text-[#B45309] dark:text-[#E5BD76] shrink-0 mt-0.5" />
             <div>
               <span className="font-bold">Consequential State Change:</span> Applying this scenario will update your confirmed guest count and category allocations. Existing contracts and signed vendor records will remain intact.
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-[#F4EFEA]">
+          <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
             <button
               onClick={() => setConfirmApplyScenarioId(null)}
-              className="px-4 py-2 border border-[#D5CCC0] rounded-lg text-[#5C554E] hover:bg-[#F4EFEA] text-xs font-semibold cursor-pointer"
+              className="px-4 py-2 border border-subtle rounded-lg text-secondary hover:bg-subtle text-xs font-semibold cursor-pointer"
             >
               Cancel
             </button>

@@ -296,20 +296,20 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
         )}
 
         {/* Status & Active Role Overview */}
-        <div className="bg-[#FAF8F5] p-3.5 rounded-lg border border-[#E6DFD5] flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="bg-subtle p-3.5 rounded-lg border border-subtle flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
             <VowPilotLogo variant="mark" size="xs" />
             <div>
-              <span className="text-[#78716C]">Your Active Role: </span>
-              <span className="font-semibold uppercase px-2 py-0.5 rounded text-[10px] bg-[#FAF0EB] text-[#B85C3A] border border-[#E8C8BD]">
+              <span className="text-secondary">Your Active Role: </span>
+              <span className="font-semibold uppercase px-2 py-0.5 rounded text-[10px] bg-accent-subtle text-accent border border-accent-subtle">
                 {collabState.role || 'Coordinator'}
               </span>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <div>
-              <span className="text-[#78716C]">Plan Version: </span>
-              <span className="font-mono font-bold text-[#1C1917]">v{collabState.serverVersion}</span>
+              <span className="text-secondary">Plan Version: </span>
+              <span className="font-mono font-bold text-primary">v{collabState.serverVersion}</span>
             </div>
             <div className="flex items-center gap-1.5 font-medium">
               <span
@@ -328,33 +328,33 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
 
         {/* Active Members List */}
         <div>
-          <h4 className="text-xs font-semibold text-[#1C1917] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <Users className="w-3.5 h-3.5 text-[#78716C]" />
+          <h4 className="text-xs font-semibold text-primary uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <Users className="w-3.5 h-3.5 text-secondary" />
             <span>Celebration Collaborators ({collabState.members.length})</span>
           </h4>
 
-          <div className="divide-y divide-[#F4EFEA] border border-[#E6DFD5] rounded-lg bg-[#FFFFFF] overflow-hidden text-xs">
+          <div className="divide-y divide-subtle border border-subtle rounded-lg bg-surface overflow-hidden text-xs">
             {collabState.members.length === 0 ? (
-              <p className="p-4 text-center text-[#78716C]">No collaborators added yet.</p>
+              <p className="p-4 text-center text-secondary">No collaborators added yet.</p>
             ) : (
               collabState.members.map((member) => (
-                <div key={member.userId} className="p-3 flex items-center justify-between gap-2 hover:bg-[#FAF8F5] transition">
+                <div key={member.userId} className="p-3 flex items-center justify-between gap-2 hover:bg-subtle transition">
                   <div className="space-y-0.5 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-[#1C1917] truncate">{member.userName}</span>
+                      <span className="font-semibold text-primary truncate">{member.userName}</span>
                       <span
                         className={`text-[10px] px-1.5 py-0.2 rounded font-medium ${
                           member.role === 'owner'
-                            ? 'bg-amber-100 text-amber-800'
+                            ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
                             : member.role === 'editor'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-zinc-100 text-zinc-700'
+                            ? 'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+                            : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700'
                         }`}
                       >
                         {member.role.toUpperCase()}
                       </span>
                     </div>
-                    <p className="text-[11px] text-[#78716C] truncate">{member.userEmail}</p>
+                    <p className="text-[11px] text-secondary truncate">{member.userEmail}</p>
                   </div>
 
                   {isOwner && member.role !== 'owner' && (
@@ -370,7 +370,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                           )
                         }
                         disabled={isLoading}
-                        className="text-[11px] py-1 px-1.5 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#1C1917] focus:outline-hidden focus:border-[#B85C3A]"
+                        className="text-[11px] py-1 px-1.5 rounded border border-subtle bg-surface text-primary focus:outline-hidden focus:border-[#B85C3A] dark:focus:border-[#D48668]"
                       >
                         <option value="editor">Editor</option>
                         <option value="viewer">Viewer</option>
@@ -379,7 +379,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
 
                       <button
                         onClick={() => handleRemoveMember(member.userId, member.userName)}
-                        className="p-1 rounded text-[#78716C] hover:text-rose-700 hover:bg-rose-50 transition"
+                        className="p-1 rounded text-secondary hover:text-rose-700 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
                         title="Revoke access"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -394,20 +394,20 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
 
         {/* Generate Invitation (Owner and Editor) */}
         {canInvite && (
-          <div className="border border-[#E6DFD5] rounded-lg p-4 bg-[#FAF8F5] space-y-3">
-            <h4 className="text-xs font-semibold text-[#1C1917] uppercase tracking-wider flex items-center gap-1.5">
-              <UserPlus className="w-3.5 h-3.5 text-[#B85C3A]" />
+          <div className="border border-subtle rounded-lg p-4 bg-subtle space-y-3">
+            <h4 className="text-xs font-semibold text-primary uppercase tracking-wider flex items-center gap-1.5">
+              <UserPlus className="w-3.5 h-3.5 text-[#B85C3A] dark:text-[#D48668]" />
               <span>Invite New Collaborator</span>
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="collab-role-select" className="block text-[11px] font-medium text-[#78716C] mb-1">Collaborator Role</label>
+                <label htmlFor="collab-role-select" className="block text-[11px] font-medium text-secondary mb-1">Collaborator Role</label>
                 <select
                   id="collab-role-select"
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value as 'owner' | 'editor' | 'viewer')}
-                  className="w-full text-xs p-2 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#1C1917] focus:outline-hidden focus:border-[#B85C3A]"
+                  className="w-full text-xs p-2 rounded border border-subtle bg-surface text-primary focus:outline-hidden focus:border-[#B85C3A] dark:focus:border-[#D48668]"
                 >
                   <option value="editor">Editor (Can edit budget, tasks & vendors)</option>
                   <option value="viewer">Viewer (Read-only observation)</option>
@@ -416,12 +416,12 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
               </div>
 
               <div>
-                <label htmlFor="invite-duration" className="block text-[11px] font-medium text-[#78716C] mb-1">Link Expiration</label>
+                <label htmlFor="invite-duration" className="block text-[11px] font-medium text-secondary mb-1">Link Expiration</label>
                 <select
                   id="invite-duration"
                   value={inviteExpiresHours}
                   onChange={(e) => setInviteExpiresHours(parseInt(e.target.value, 10))}
-                  className="w-full text-xs p-2 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#1C1917] focus:outline-hidden focus:border-[#B85C3A]"
+                  className="w-full text-xs p-2 rounded border border-subtle bg-surface text-primary focus:outline-hidden focus:border-[#B85C3A] dark:focus:border-[#D48668]"
                 >
                   <option value={24}>24 Hours</option>
                   <option value={48}>48 Hours (Standard)</option>
@@ -433,7 +433,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
             <button
               onClick={handleCreateInvite}
               disabled={isLoading}
-              className="w-full py-2 px-3 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-medium rounded transition flex items-center justify-center gap-1.5 shadow-xs"
+              className="w-full py-2 px-3 bg-[#B85C3A] hover:bg-[#9E4B2D] text-white text-xs font-medium rounded transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
             >
               <Link className="w-3.5 h-3.5" />
               <span>Generate Single-Use Secure Invite Link</span>
@@ -441,13 +441,13 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
 
             {/* Generated Invite Display */}
             {generatedInvite && (
-              <div className="p-3 bg-white border border-[#E6DFD5] rounded-md space-y-2 mt-2">
-                <div className="flex items-center justify-between text-xs text-[#78716C]">
+              <div className="p-3 bg-surface border border-subtle rounded-md space-y-2 mt-2">
+                <div className="flex items-center justify-between text-xs text-secondary">
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     Expires {new Date(generatedInvite.expiresAt).toLocaleDateString()}
                   </span>
-                  <span className="font-semibold text-emerald-700 uppercase">{generatedInvite.role} Invite</span>
+                  <span className="font-semibold text-emerald-700 dark:text-emerald-400 uppercase">{generatedInvite.role} Invite</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <input
@@ -455,11 +455,11 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                     readOnly
                     value={`${window.location.origin}?inviteToken=${generatedInvite.token}`}
                     aria-label="Generated invitation link"
-                    className="flex-1 text-xs p-1.5 bg-[#FAF8F5] border border-[#E6DFD5] rounded font-mono truncate select-all"
+                    className="flex-1 text-xs p-1.5 bg-subtle border border-subtle rounded font-mono truncate select-all text-primary"
                   />
                   <button
                     onClick={handleCopyLink}
-                    className="px-2.5 py-1.5 bg-[#1C1917] hover:bg-black text-white text-xs font-medium rounded flex items-center gap-1 transition"
+                    className="px-2.5 py-1.5 bg-[#1C1917] hover:bg-black dark:bg-[#3D353B] dark:hover:bg-[#4D434B] text-white dark:text-[#F1E9E3] text-xs font-medium rounded flex items-center gap-1 transition cursor-pointer"
                   >
                     {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copied ? 'Copied' : 'Copy'}</span>
@@ -473,22 +473,22 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
         {/* Active Invitations List (Owner only) */}
         {isOwner && invites.length > 0 && (
           <div>
-            <h4 className="text-xs font-semibold text-[#1C1917] uppercase tracking-wider mb-2">
+            <h4 className="text-xs font-semibold text-primary uppercase tracking-wider mb-2">
               Pending Invitations ({invites.filter((i) => !i.used && !i.revoked).length})
             </h4>
-            <div className="divide-y divide-[#F4EFEA] border border-[#E6DFD5] rounded-lg bg-[#FFFFFF] text-xs max-h-36 overflow-y-auto">
+            <div className="divide-y divide-subtle border border-subtle rounded-lg bg-surface text-xs max-h-36 overflow-y-auto">
               {invites.map((inv) => (
                 <div key={inv.tokenHash} className="p-2.5 flex items-center justify-between gap-2">
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-[#1C1917]">{inv.token}</span>
-                      <span className="text-[10px] px-1 rounded bg-[#FAF0EB] text-[#B85C3A] font-medium">
+                      <span className="font-mono text-[11px] text-primary">{inv.token}</span>
+                      <span className="text-[10px] px-1 rounded bg-accent-subtle text-accent border border-accent-subtle font-medium">
                         {inv.role}
                       </span>
                       {inv.used && <span className="text-[10px] text-zinc-500 font-medium">Consumed</span>}
                       {inv.revoked && <span className="text-[10px] text-rose-500 font-medium">Revoked</span>}
                     </div>
-                    <span className="text-[10px] text-[#78716C]">
+                    <span className="text-[10px] text-secondary">
                       Expires {new Date(inv.expiresAt).toLocaleDateString()}
                     </span>
                   </div>
@@ -496,7 +496,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                   {!inv.used && !inv.revoked && (
                     <button
                       onClick={() => handleRevokeInvite(inv.tokenHash)}
-                      className="text-rose-700 hover:text-rose-900 text-[11px] font-medium flex items-center gap-1"
+                      className="text-rose-700 dark:text-rose-400 hover:text-rose-900 dark:hover:text-rose-300 text-[11px] font-medium flex items-center gap-1 cursor-pointer"
                     >
                       <XCircle className="w-3 h-3" />
                       <span>Revoke</span>
@@ -509,8 +509,8 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
         )}
 
         {/* Join Event via Token Section */}
-        <div className="border-t border-[#E6DFD5] pt-4 space-y-3">
-          <h4 className="text-xs font-semibold text-[#1C1917] uppercase tracking-wider">
+        <div className="border-t border-subtle pt-4 space-y-3">
+          <h4 className="text-xs font-semibold text-primary uppercase tracking-wider">
             Redeem / Preview Invitation Token
           </h4>
 
@@ -523,12 +523,12 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
               aria-label="Invitation token"
               value={joinTokenInput}
               onChange={(e) => setJoinTokenInput(e.target.value)}
-              className="flex-1 text-xs p-2 rounded border border-[#D6CFC7] bg-[#FFFFFF] text-[#1C1917] font-mono focus:outline-hidden focus:border-[#B85C3A]"
+              className="flex-1 text-xs p-2 rounded border border-subtle bg-surface text-primary font-mono focus:outline-hidden focus:border-[#B85C3A] dark:focus:border-[#D48668]"
             />
             <button
               onClick={handleInspectJoinToken}
               disabled={isLoading || !joinTokenInput.trim()}
-              className="px-3 py-2 bg-[#FAF0EB] hover:bg-[#E8C8BD] text-[#B85C3A] text-xs font-medium rounded border border-[#E8C8BD] transition flex items-center gap-1"
+              className="px-3 py-2 bg-accent-subtle hover:bg-accent-subtle/80 text-accent text-xs font-medium rounded border border-accent-subtle transition flex items-center gap-1 cursor-pointer"
             >
               <Eye className="w-3.5 h-3.5" />
               <span>Inspect</span>
@@ -537,16 +537,16 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
 
           {/* Invitation Preview Card */}
           {invitePreview && (
-            <div className="p-3 bg-white border border-[#E6DFD5] rounded-md space-y-2 text-xs">
-              <div className="flex items-center justify-between font-semibold text-[#1C1917]">
+            <div className="p-3 bg-surface border border-subtle rounded-md space-y-2 text-xs">
+              <div className="flex items-center justify-between font-semibold text-primary">
                 <span>{invitePreview.eventName}</span>
-                <span className="uppercase text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-800">
+                <span className="uppercase text-[10px] px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                   {invitePreview.role}
                 </span>
               </div>
-              <p className="text-[11px] text-[#78716C]">
-                Invited by <span className="font-medium text-[#1C1917]">{invitePreview.inviterName}</span> • Status:{' '}
-                <strong className={invitePreview.status === 'valid' ? 'text-emerald-700' : 'text-rose-700'}>
+              <p className="text-[11px] text-secondary">
+                Invited by <span className="font-medium text-primary">{invitePreview.inviterName}</span> • Status:{' '}
+                <strong className={invitePreview.status === 'valid' ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'}>
                   {invitePreview.status.toUpperCase()}
                 </strong>
               </p>
@@ -556,7 +556,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                   <button
                     onClick={handleAcceptJoin}
                     disabled={isLoading}
-                    className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded transition flex items-center justify-center gap-1"
+                    className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded transition flex items-center justify-center gap-1 cursor-pointer"
                   >
                     <Check className="w-3.5 h-3.5" />
                     <span>Accept & Join Event</span>
@@ -564,13 +564,13 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                   <button
                     onClick={handleDeclineJoin}
                     disabled={isLoading}
-                    className="py-1.5 px-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-medium rounded transition"
+                    className="py-1.5 px-3 bg-subtle hover:bg-muted text-secondary text-xs font-medium rounded border border-subtle transition cursor-pointer"
                   >
                     Decline
                   </button>
                 </div>
               ) : (
-                <p className="text-[11px] text-rose-600 font-medium">
+                <p className="text-[11px] text-rose-600 dark:text-rose-400 font-medium">
                   This invitation cannot be accepted because it has been {invitePreview.status}.
                 </p>
               )}

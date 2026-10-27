@@ -114,8 +114,8 @@ export const AssistantView: React.FC = () => {
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
                     isUser
-                      ? 'bg-[#26221F] text-white'
-                      : 'bg-[#B85C3A] text-white font-serif'
+                      ? 'bg-[#26221F] dark:bg-[#3D353B] text-white dark:text-[#F1E9E3]'
+                      : 'bg-[#B85C3A] dark:bg-[#D48668] text-white font-serif'
                   }`}
                 >
                   {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
@@ -125,8 +125,8 @@ export const AssistantView: React.FC = () => {
                 <div
                   className={`max-w-[85%] rounded-xl p-4 text-xs space-y-3 ${
                     isUser
-                      ? 'bg-[#26221F] text-white'
-                      : 'bg-[#FAF8F5] text-[#26221F] border border-[#E6DFD5]'
+                      ? 'bg-[#26221F] dark:bg-[#3D353B] text-white dark:text-[#F1E9E3] border border-transparent dark:border-subtle'
+                      : 'bg-subtle text-primary border border-subtle'
                   }`}
                 >
                   {/* Markdown formatted text (rendered safely without dangerouslySetInnerHTML) */}
@@ -134,14 +134,14 @@ export const AssistantView: React.FC = () => {
                     {msg.content.split('\n\n').map((paragraph, pIdx) => {
                       if (paragraph.startsWith('### ')) {
                         return (
-                          <h4 key={pIdx} className="font-bold text-sm text-[#26221F] pt-1">
+                          <h4 key={pIdx} className="font-bold text-sm text-primary pt-1 font-serif-heading">
                             {paragraph.replace('### ', '')}
                           </h4>
                         );
                       }
                       if (paragraph.startsWith('#### ')) {
                         return (
-                          <h5 key={pIdx} className="font-bold text-xs text-[#5C554E] pt-1">
+                          <h5 key={pIdx} className="font-bold text-xs text-secondary pt-1">
                             {paragraph.replace('#### ', '')}
                           </h5>
                         );
@@ -168,7 +168,7 @@ export const AssistantView: React.FC = () => {
 
                   {/* Rationale Footer */}
                   {msg.rationale && (
-                    <div className="pt-2 border-t border-[#EAE4DB] text-[10px] text-[#78716C] italic">
+                    <div className="pt-2 border-t border-subtle text-[10px] text-tertiary italic">
                       Basis: {msg.rationale}
                     </div>
                   )}
@@ -293,7 +293,7 @@ function renderSafeInline(text: string): React.ReactNode[] {
     const token = match[0];
     if (token.startsWith('**') && token.endsWith('**')) {
       tokens.push(
-        <strong key={`b-${lastIndex}`} className="font-semibold text-primary">
+        <strong key={`b-${lastIndex}`} className="font-semibold">
           {token.slice(2, -2)}
         </strong>
       );

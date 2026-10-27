@@ -209,13 +209,13 @@ export const EventTimelineView: React.FC = () => {
         <div
           role="alert"
           aria-live="polite"
-          className="mb-6 p-4 rounded-xl bg-amber-50 dark:bg-[#332A20] border border-amber-300 dark:border-[#55462D] text-xs text-amber-900 dark:text-[#E5BD76]"
+          className="mb-6 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200"
         >
           <div className="flex items-center gap-2 font-bold mb-1">
-            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-[#E5BD76] shrink-0" />
+            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <span>Timeline Overlaps & Schedule Warnings ({conflicts.length})</span>
           </div>
-          <ul className="list-disc list-inside space-y-1 pl-1 text-[11px] text-amber-800 dark:text-[#C5B9B3]">
+          <ul className="list-disc list-inside space-y-1 pl-1 text-[11px] text-amber-800 dark:text-amber-300">
             {conflicts.map((msg, idx) => (
               <li key={idx}>{msg}</li>
             ))}
@@ -224,10 +224,10 @@ export const EventTimelineView: React.FC = () => {
       )}
 
       {/* Timeline Schedule Cards / Table */}
-      <div className="bg-surface border border-border-subtle rounded-xl overflow-hidden shadow-xs">
+      <div className="bg-surface border border-subtle rounded-xl overflow-hidden shadow-xs">
         {timeline.length === 0 ? (
           <div className="text-center py-12 px-6 space-y-4 max-w-lg mx-auto">
-            <div className="w-12 h-12 rounded-2xl bg-[#FAF0EB] dark:bg-[#2E2222] text-[#B85C3A] dark:text-[#E8D7C4] flex items-center justify-center mx-auto border border-[#E8C8BD]/80 dark:border-[#5C3830] shadow-2xs">
+            <div className="w-12 h-12 rounded-2xl bg-accent-subtle text-accent flex items-center justify-center mx-auto border border-accent-subtle shadow-2xs">
               <Clock className="w-6 h-6" />
             </div>
             <div className="space-y-1">
@@ -261,7 +261,7 @@ export const EventTimelineView: React.FC = () => {
             )}
           </div>
         ) : (
-          <div className="divide-y divide-[#F4EFEA] dark:divide-[#26362C]">
+          <div className="divide-y divide-subtle">
             {timeline.map((item, index) => {
               const endTime = calculateEndTime(item.time, item.durationMinutes);
               const vendorName = item.vendorId ? vendorMap.get(item.vendorId) : undefined;
@@ -269,7 +269,7 @@ export const EventTimelineView: React.FC = () => {
               return (
                 <div
                   key={item.id}
-                  className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-[#FAF8F5]/60 dark:hover:bg-[#26362C]/40 transition"
+                  className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-subtle transition"
                 >
                   {/* Left: Time & Duration Column */}
                   <div className="flex items-center gap-3 shrink-0">
@@ -283,7 +283,7 @@ export const EventTimelineView: React.FC = () => {
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#FAF0EB] dark:bg-[#2B211E] text-[#B85C3A] dark:text-[#E8D7C4] border border-[#E8C8BD] dark:border-[#4D332B]">
+                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-accent-subtle text-accent border border-accent-subtle">
                       {item.durationMinutes} min
                     </span>
                   </div>
@@ -303,13 +303,13 @@ export const EventTimelineView: React.FC = () => {
                       )}
                       {item.assignedPerson && (
                         <span className="flex items-center gap-1">
-                          <User className="w-3 h-3 text-stone-500" />
+                          <User className="w-3 h-3 text-secondary" />
                           <span>Lead: {item.assignedPerson}</span>
                         </span>
                       )}
                       {vendorName && (
-                        <span className="flex items-center gap-1 px-1.5 py-0.2 bg-stone-100 dark:bg-stone-800 rounded text-[11px]">
-                          Vendor: <strong>{vendorName}</strong>
+                        <span className="flex items-center gap-1 px-1.5 py-0.5 bg-subtle border border-subtle rounded text-[11px] text-secondary">
+                          Vendor: <strong className="text-primary">{vendorName}</strong>
                         </span>
                       )}
                     </div>
@@ -327,7 +327,7 @@ export const EventTimelineView: React.FC = () => {
                       onClick={() => handleMoveUp(index)}
                       disabled={isReadOnly || index === 0}
                       title="Move up"
-                      className="p-1 rounded text-tertiary hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] transition cursor-pointer disabled:opacity-30"
+                      className="p-1 rounded text-tertiary hover:text-primary hover:bg-subtle transition cursor-pointer disabled:opacity-30"
                     >
                       <ArrowUp className="w-3.5 h-3.5" />
                     </button>
@@ -335,7 +335,7 @@ export const EventTimelineView: React.FC = () => {
                       onClick={() => handleMoveDown(index)}
                       disabled={isReadOnly || index === timeline.length - 1}
                       title="Move down"
-                      className="p-1 rounded text-tertiary hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] transition cursor-pointer disabled:opacity-30"
+                      className="p-1 rounded text-tertiary hover:text-primary hover:bg-subtle transition cursor-pointer disabled:opacity-30"
                     >
                       <ArrowDown className="w-3.5 h-3.5" />
                     </button>
@@ -343,7 +343,7 @@ export const EventTimelineView: React.FC = () => {
                       onClick={() => handleOpenEditModal(item)}
                       disabled={isReadOnly}
                       title="Edit activity"
-                      className="p-1 rounded text-tertiary hover:text-[#1C1917] dark:hover:text-[#FAF8F5] hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] transition cursor-pointer disabled:opacity-40"
+                      className="p-1 rounded text-tertiary hover:text-primary hover:bg-subtle transition cursor-pointer disabled:opacity-40"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
@@ -370,7 +370,7 @@ export const EventTimelineView: React.FC = () => {
           aria-modal="true"
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
         >
-          <div className="w-full max-w-md bg-canvas border border-border-subtle rounded-2xl shadow-xl p-6 text-primary">
+          <div className="w-full max-w-md bg-surface border border-subtle rounded-2xl shadow-xl p-6 text-primary">
             <h3 className="font-serif-heading text-lg font-bold mb-4">Add Schedule Activity</h3>
             <form onSubmit={handleSaveAdd} className="space-y-3 text-xs">
               <div>
@@ -383,7 +383,7 @@ export const EventTimelineView: React.FC = () => {
                   value={formActivity}
                   onChange={(e) => setFormActivity(e.target.value)}
                   placeholder="e.g. Baraat Procession & Welcome Ceremony"
-                  className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full bg-surface border border-subtle text-primary rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                 />
               </div>
 
@@ -397,7 +397,7 @@ export const EventTimelineView: React.FC = () => {
                     required
                     value={formTime}
                     onChange={(e) => setFormTime(e.target.value)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 font-mono focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle text-primary rounded-md px-3 py-1.5 font-mono focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                   />
                 </div>
                 <div>
@@ -412,7 +412,7 @@ export const EventTimelineView: React.FC = () => {
                     required
                     value={formDuration}
                     onChange={(e) => setFormDuration(parseInt(e.target.value, 10) || 30)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 font-mono focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle text-primary rounded-md px-3 py-1.5 font-mono focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                   />
                 </div>
               </div>
@@ -427,7 +427,7 @@ export const EventTimelineView: React.FC = () => {
                     value={formLocation}
                     onChange={(e) => setFormLocation(e.target.value)}
                     placeholder="e.g. Courtyard Mandap"
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle text-primary rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                   />
                 </div>
                 <div>
@@ -439,7 +439,7 @@ export const EventTimelineView: React.FC = () => {
                     value={formAssigned}
                     onChange={(e) => setFormAssigned(e.target.value)}
                     placeholder="e.g. Wedding Coordinator"
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle text-primary rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                   />
                 </div>
               </div>
@@ -452,7 +452,7 @@ export const EventTimelineView: React.FC = () => {
                   <select
                     value={formVendorId}
                     onChange={(e) => setFormVendorId(e.target.value)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] cursor-pointer"
+                    className="w-full bg-surface border border-subtle text-primary rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A] cursor-pointer"
                   >
                     <option value="">None</option>
                     {state.vendors.map((v) => (
@@ -473,7 +473,7 @@ export const EventTimelineView: React.FC = () => {
                   value={formNotes}
                   onChange={(e) => setFormNotes(e.target.value)}
                   placeholder="e.g. Audio cues, equipment arrival notes..."
-                  className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full bg-surface border border-subtle text-primary rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                 />
               </div>
 
@@ -481,7 +481,7 @@ export const EventTimelineView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-3.5 py-1.5 border border-border-strong rounded-lg text-stone-600 dark:text-stone-300 hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] transition cursor-pointer"
+                  className="px-3.5 py-1.5 border border-subtle rounded-lg text-secondary hover:text-primary hover:bg-subtle transition cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -504,7 +504,7 @@ export const EventTimelineView: React.FC = () => {
           aria-modal="true"
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
         >
-          <div className="w-full max-w-md bg-canvas border border-border-subtle rounded-2xl shadow-xl p-6 text-primary">
+          <div className="w-full max-w-md bg-surface border border-subtle rounded-2xl shadow-xl p-6 text-primary">
             <h3 className="font-serif-heading text-lg font-bold mb-4">Edit Activity</h3>
             <form onSubmit={handleSaveEdit} className="space-y-3 text-xs">
               <div>
@@ -516,7 +516,7 @@ export const EventTimelineView: React.FC = () => {
                   required
                   value={formActivity}
                   onChange={(e) => setFormActivity(e.target.value)}
-                  className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full bg-surface border border-subtle text-primary rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                 />
               </div>
 
@@ -530,7 +530,7 @@ export const EventTimelineView: React.FC = () => {
                     required
                     value={formTime}
                     onChange={(e) => setFormTime(e.target.value)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 font-mono focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle text-primary rounded-md px-3 py-1.5 font-mono focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                   />
                 </div>
                 <div>
@@ -545,7 +545,7 @@ export const EventTimelineView: React.FC = () => {
                     required
                     value={formDuration}
                     onChange={(e) => setFormDuration(parseInt(e.target.value, 10) || 30)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 font-mono focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle text-primary rounded-md px-3 py-1.5 font-mono focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                   />
                 </div>
               </div>
@@ -559,7 +559,7 @@ export const EventTimelineView: React.FC = () => {
                     type="text"
                     value={formLocation}
                     onChange={(e) => setFormLocation(e.target.value)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle text-primary rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                   />
                 </div>
                 <div>
@@ -570,7 +570,7 @@ export const EventTimelineView: React.FC = () => {
                     type="text"
                     value={formAssigned}
                     onChange={(e) => setFormAssigned(e.target.value)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle text-primary rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                   />
                 </div>
               </div>
@@ -583,7 +583,7 @@ export const EventTimelineView: React.FC = () => {
                   rows={2}
                   value={formNotes}
                   onChange={(e) => setFormNotes(e.target.value)}
-                  className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full bg-surface border border-subtle text-primary rounded-md px-3 py-1.5 focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
                 />
               </div>
 
@@ -591,7 +591,7 @@ export const EventTimelineView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setEditingItem(null)}
-                  className="px-3.5 py-1.5 border border-border-strong rounded-lg text-stone-600 dark:text-stone-300 hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] transition cursor-pointer"
+                  className="px-3.5 py-1.5 border border-subtle rounded-lg text-secondary hover:text-primary hover:bg-subtle transition cursor-pointer"
                 >
                   Cancel
                 </button>

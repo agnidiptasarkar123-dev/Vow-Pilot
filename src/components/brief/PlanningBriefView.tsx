@@ -93,13 +93,13 @@ export const PlanningBriefView: React.FC = () => {
         </div>
 
         {/* Section Inclusion Checkboxes */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs pt-2 border-t border-[#F4EFEA] dark:border-[#26362C]">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs pt-2 border-t border-subtle">
           <label className="flex items-center gap-2 cursor-pointer text-secondary">
             <input
               type="checkbox"
               checked={includeFoundation}
               onChange={(e) => setIncludeFoundation(e.target.checked)}
-              className="rounded border-[#D5CCC0] text-[#B85C3A] focus:ring-[#B85C3A]"
+              className="rounded border-subtle text-[#B85C3A] focus:ring-[#B85C3A]"
             />
             <span>1. Foundation</span>
           </label>
@@ -109,7 +109,7 @@ export const PlanningBriefView: React.FC = () => {
               type="checkbox"
               checked={includeBudget}
               onChange={(e) => setIncludeBudget(e.target.checked)}
-              className="rounded border-[#D5CCC0] text-[#B85C3A] focus:ring-[#B85C3A]"
+              className="rounded border-subtle text-[#B85C3A] focus:ring-[#B85C3A]"
             />
             <span>2. Budget</span>
           </label>
@@ -119,7 +119,7 @@ export const PlanningBriefView: React.FC = () => {
               type="checkbox"
               checked={includeTasks}
               onChange={(e) => setIncludeTasks(e.target.checked)}
-              className="rounded border-[#D5CCC0] text-[#B85C3A] focus:ring-[#B85C3A]"
+              className="rounded border-subtle text-[#B85C3A] focus:ring-[#B85C3A]"
             />
             <span>3. Tasks & Risks</span>
           </label>
@@ -129,7 +129,7 @@ export const PlanningBriefView: React.FC = () => {
               type="checkbox"
               checked={includeVendors}
               onChange={(e) => setIncludeVendors(e.target.checked)}
-              className="rounded border-[#D5CCC0] text-[#B85C3A] focus:ring-[#B85C3A]"
+              className="rounded border-subtle text-[#B85C3A] focus:ring-[#B85C3A]"
             />
             <span>4. Vendors</span>
           </label>
@@ -139,7 +139,7 @@ export const PlanningBriefView: React.FC = () => {
               type="checkbox"
               checked={includeGuests}
               onChange={(e) => setIncludeGuests(e.target.checked)}
-              className="rounded border-[#D5CCC0] text-[#B85C3A] focus:ring-[#B85C3A]"
+              className="rounded border-subtle text-[#B85C3A] focus:ring-[#B85C3A]"
             />
             <span>5. Guest Attendance</span>
           </label>
@@ -149,14 +149,14 @@ export const PlanningBriefView: React.FC = () => {
               type="checkbox"
               checked={includeTimeline}
               onChange={(e) => setIncludeTimeline(e.target.checked)}
-              className="rounded border-[#D5CCC0] text-[#B85C3A] focus:ring-[#B85C3A]"
+              className="rounded border-subtle text-[#B85C3A] focus:ring-[#B85C3A]"
             />
             <span>6. Run Sheet</span>
           </label>
         </div>
 
         {/* Custom Coordinator Notes Field */}
-        <div className="mt-4 pt-3 border-t border-[#F4EFEA] dark:border-[#26362C]">
+        <div className="mt-4 pt-3 border-t border-subtle">
           <label className="block text-xs font-medium text-secondary mb-1">
             Executive Coordinator Notes / Special Instructions
           </label>
@@ -165,13 +165,13 @@ export const PlanningBriefView: React.FC = () => {
             value={coordinatorNotes}
             onChange={(e) => setCoordinatorNotes(e.target.value)}
             placeholder="Add specific instructions for on-site staff or vendors..."
-            className="w-full bg-subtle border border-border-strong rounded-md px-3 py-1.5 text-xs text-primary focus:ring-1 focus:ring-[#B85C3A]"
+            className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 text-xs text-primary focus:outline-hidden focus:ring-1 focus:ring-[#B85C3A]"
           />
         </div>
       </div>
 
       {/* The Printable Executive Brief Document Container */}
-      <div className="bg-surface border border-border-subtle rounded-2xl p-6 sm:p-12 shadow-sm space-y-8 text-primary">
+      <div className="bg-surface border border-subtle rounded-2xl p-6 sm:p-12 shadow-sm space-y-8 text-primary">
         {/* Document Header */}
         <div className="border-b border-border-subtle pb-6 flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -199,7 +199,7 @@ export const PlanningBriefView: React.FC = () => {
         {/* 1. Foundation & Scope */}
         {includeFoundation && (
           <section className="space-y-3">
-            <h2 className="font-serif-heading text-base font-bold text-[#B85C3A] dark:text-[#E8D7C4] border-b border-[#F4EFEA] dark:border-[#26362C] pb-1 flex items-center gap-2">
+            <h2 className="font-serif-heading text-base font-bold text-accent border-b border-subtle pb-1 flex items-center gap-2">
               <Calendar className="w-4 h-4" />
               1. Event Foundation & Operating Constraints
             </h2>
@@ -229,7 +229,7 @@ export const PlanningBriefView: React.FC = () => {
         {/* 2. Budget Summary & Variances */}
         {includeBudget && (
           <section className="space-y-3">
-            <h2 className="font-serif-heading text-base font-bold text-[#B85C3A] dark:text-[#E8D7C4] border-b border-[#F4EFEA] dark:border-[#26362C] pb-1 flex items-center gap-2">
+            <h2 className="font-serif-heading text-base font-bold text-accent border-b border-subtle pb-1 flex items-center gap-2">
               <DollarSign className="w-4 h-4" />
               2. Financial Budget & Cost Breakdown
             </h2>
@@ -258,14 +258,14 @@ export const PlanningBriefView: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-border-subtle text-tertiary">
+                  <tr className="border-b border-subtle text-tertiary">
                     <th className="py-2">Category</th>
                     <th className="py-2 text-right">Allocated</th>
                     <th className="py-2 text-right">Committed</th>
                     <th className="py-2 text-right">Variance</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#F4EFEA] dark:divide-[#26362C]">
+                <tbody className="divide-y divide-subtle">
                   {overview.categories.map((c) => (
                     <tr key={c.category.id}>
                       <td className="py-1.5 font-medium">{c.category.name}</td>
@@ -289,7 +289,7 @@ export const PlanningBriefView: React.FC = () => {
         {/* 3. Tasks & Operational Deadlines */}
         {includeTasks && (
           <section className="space-y-3">
-            <h2 className="font-serif-heading text-base font-bold text-[#B85C3A] dark:text-[#E8D7C4] border-b border-[#F4EFEA] dark:border-[#26362C] pb-1 flex items-center gap-2">
+            <h2 className="font-serif-heading text-base font-bold text-accent border-b border-subtle pb-1 flex items-center gap-2">
               <CheckSquare className="w-4 h-4" />
               3. Critical Action Items & Milestone Schedule
             </h2>
@@ -297,18 +297,18 @@ export const PlanningBriefView: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-border-subtle text-tertiary">
+                  <tr className="border-b border-subtle text-tertiary">
                     <th className="py-2">Task Title</th>
                     <th className="py-2">Due Date</th>
                     <th className="py-2">Priority</th>
                     <th className="py-2">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#F4EFEA] dark:divide-[#26362C]">
+                <tbody className="divide-y divide-subtle">
                   {state.tasks.map((task) => (
                     <tr key={task.id}>
                       <td className="py-1.5 font-medium">{task.title}</td>
-                      <td className="py-1.5 text-stone-600 dark:text-stone-300 font-mono">{task.dueDate}</td>
+                      <td className="py-1.5 text-secondary font-mono">{task.dueDate}</td>
                       <td className="py-1.5 uppercase text-[10px] font-bold tracking-wider">{task.priority}</td>
                       <td className="py-1.5 capitalize">{task.status.replace('_', ' ')}</td>
                     </tr>
@@ -322,7 +322,7 @@ export const PlanningBriefView: React.FC = () => {
         {/* 4. Vendors & Quotations */}
         {includeVendors && (
           <section className="space-y-3">
-            <h2 className="font-serif-heading text-base font-bold text-[#B85C3A] dark:text-[#E8D7C4] border-b border-[#F4EFEA] dark:border-[#26362C] pb-1 flex items-center gap-2">
+            <h2 className="font-serif-heading text-base font-bold text-accent border-b border-subtle pb-1 flex items-center gap-2">
               <Users className="w-4 h-4" />
               4. Vendor Directory & Contact Roster
             </h2>
@@ -330,18 +330,18 @@ export const PlanningBriefView: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-border-subtle text-tertiary">
+                  <tr className="border-b border-subtle text-tertiary">
                     <th className="py-2">Vendor Name</th>
                     <th className="py-2">Category</th>
                     <th className="py-2">Contact Person</th>
                     <th className="py-2">Phone / Email</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#F4EFEA] dark:divide-[#26362C]">
+                <tbody className="divide-y divide-subtle">
                   {state.vendors.map((v) => (
                     <tr key={v.id}>
                       <td className="py-1.5 font-semibold">{v.name}</td>
-                      <td className="py-1.5 capitalize text-stone-600 dark:text-stone-300">{v.categoryId}</td>
+                      <td className="py-1.5 capitalize text-secondary">{v.categoryId}</td>
                       <td className="py-1.5">{v.contactName || 'Primary Coordinator'}</td>
                       <td className="py-1.5 font-mono text-[11px]">{v.phone} • {v.email}</td>
                     </tr>
@@ -355,7 +355,7 @@ export const PlanningBriefView: React.FC = () => {
         {/* 5. Guest Attendance & Dietary Summary */}
         {includeGuests && (
           <section className="space-y-3">
-            <h2 className="font-serif-heading text-base font-bold text-[#B85C3A] dark:text-[#E8D7C4] border-b border-[#F4EFEA] dark:border-[#26362C] pb-1 flex items-center gap-2">
+            <h2 className="font-serif-heading text-base font-bold text-accent border-b border-subtle pb-1 flex items-center gap-2">
               <UserCheck className="w-4 h-4" />
               5. Guest RSVP Attendance & Dietary Requirements
             </h2>
@@ -384,20 +384,20 @@ export const PlanningBriefView: React.FC = () => {
         {/* 6. Event-Day Timeline Run Sheet */}
         {includeTimeline && (
           <section className="space-y-3">
-            <h2 className="font-serif-heading text-base font-bold text-[#B85C3A] dark:text-[#E8D7C4] border-b border-[#F4EFEA] dark:border-[#26362C] pb-1 flex items-center gap-2">
+            <h2 className="font-serif-heading text-base font-bold text-accent border-b border-subtle pb-1 flex items-center gap-2">
               <Clock className="w-4 h-4" />
               6. Master Event-Day Run Sheet Schedule
             </h2>
 
-            <div className="divide-y divide-[#F4EFEA] dark:divide-[#26362C]">
+            <div className="divide-y divide-subtle">
               {timelineSorted.map((item) => (
                 <div key={item.id} className="py-2 flex items-start gap-4 text-xs">
-                  <span className="font-mono font-bold w-16 text-[#B85C3A] shrink-0">
+                  <span className="font-mono font-bold w-16 text-accent shrink-0">
                     {item.time}
                   </span>
                   <div className="flex-1">
                     <span className="font-semibold block">{item.activity}</span>
-                    <div className="text-[11px] text-stone-500 flex gap-3 mt-0.5">
+                    <div className="text-[11px] text-tertiary flex gap-3 mt-0.5">
                       {item.location && <span>Location: {item.location}</span>}
                       {item.assignedPerson && <span>Lead: {item.assignedPerson}</span>}
                       <span>Duration: {item.durationMinutes}m</span>

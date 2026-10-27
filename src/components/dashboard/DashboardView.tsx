@@ -60,14 +60,14 @@ export const DashboardView: React.FC = () => {
           <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
             <button
               onClick={() => setActiveTab('simulator')}
-              className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-[#FAF0EB] hover:bg-[#F5E8E0] text-[#B85C3A] text-xs font-semibold border border-[#E8C8BD] flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
+              className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-accent-subtle hover:bg-accent-subtle/80 text-accent text-xs font-semibold border border-accent-subtle flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
             >
               <Sliders className="w-3.5 h-3.5" />
               <span>Model Decision What-Ifs</span>
             </button>
             <button
               onClick={() => setActiveTab('assistant')}
-              className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-[#26221F] hover:bg-[#3D3732] text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
+              className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-[#26221F] hover:bg-[#3D3732] dark:bg-[#3D353B] dark:hover:bg-[#4D434B] text-white dark:text-[#F1E9E3] border border-transparent dark:border-subtle text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-[0.98]"
             >
               <MessageSquare className="w-3.5 h-3.5" />
               <span>Ask Coordinator</span>
@@ -82,10 +82,10 @@ export const DashboardView: React.FC = () => {
           {overview.isOverrun && (
             <div
               role="alert"
-              className="p-4 bg-red-50 border border-red-200 rounded-xl text-xs flex items-start justify-between gap-3 text-red-900 shadow-2xs"
+              className="p-4 bg-red-50 dark:bg-rose-950/50 border border-red-200 dark:border-rose-900 rounded-xl text-xs flex items-start justify-between gap-3 text-red-900 dark:text-rose-200 shadow-2xs"
             >
               <div className="flex items-start gap-2.5">
-                <AlertCircle className="w-4 h-4 text-[#BE123C] shrink-0 mt-0.5" />
+                <AlertCircle className="w-4 h-4 text-[#BE123C] dark:text-rose-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold">Budget Overrun Detected:</span> Projected spend exceeds the total budget by{' '}
                   <span className="font-mono font-bold">
@@ -96,7 +96,7 @@ export const DashboardView: React.FC = () => {
               </div>
               <button
                 onClick={() => setActiveTab('budget')}
-                className="font-bold underline text-[#B85C3A] hover:text-[#9E4B2D] shrink-0 cursor-pointer"
+                className="font-bold underline text-accent hover:text-[#9E4B2D] dark:hover:text-[#E89D82] shrink-0 cursor-pointer"
               >
                 Review Reductions
               </button>
@@ -106,10 +106,10 @@ export const DashboardView: React.FC = () => {
           {overdueTasks.length > 0 && (
             <div
               role="alert"
-              className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs flex items-start justify-between gap-3 text-amber-900 shadow-2xs"
+              className="p-4 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900 rounded-xl text-xs flex items-start justify-between gap-3 text-amber-900 dark:text-amber-200 shadow-2xs"
             >
               <div className="flex items-start gap-2.5">
-                <AlertTriangle className="w-4 h-4 text-[#B45309] shrink-0 mt-0.5" />
+                <AlertTriangle className="w-4 h-4 text-[#B45309] dark:text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold">{overdueTasks.length} Milestone Deadlines Overdue:</span> Tasks like{' '}
                   <span className="font-semibold">"{overdueTasks[0].task.title}"</span> have passed target dates and risk downstream deliveries.
@@ -117,7 +117,7 @@ export const DashboardView: React.FC = () => {
               </div>
               <button
                 onClick={() => setActiveTab('tasks')}
-                className="font-bold underline text-[#B45309] hover:text-amber-950 shrink-0 cursor-pointer"
+                className="font-bold underline text-[#B45309] dark:text-amber-400 hover:text-amber-950 dark:hover:text-amber-300 shrink-0 cursor-pointer"
               >
                 Inspect Tasks
               </button>
@@ -253,23 +253,23 @@ export const DashboardView: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1: Projected Total Spend */}
         <Card padding="md" className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-[#6E665E] font-medium">
+          <div className="flex items-center justify-between text-xs text-secondary font-medium">
             <span>Projected Spend</span>
-            <div className="w-7 h-7 rounded-lg bg-[#FAF0EB] text-[#B85C3A] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-accent-subtle text-accent flex items-center justify-center">
               <PieChart className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold font-mono tracking-tight text-[#1C1917]">
+          <div className="text-2xl font-bold font-mono tracking-tight text-primary">
             {formatCurrency(overview.effectiveProjectedTotal, state.event.currency)}
           </div>
-          <div className="text-xs text-[#5C554E] flex items-center justify-between pt-0.5">
+          <div className="text-xs text-secondary flex items-center justify-between pt-0.5">
             <span>Budget: {formatCurrency(overview.totalBudget, state.event.currency)}</span>
-            <span className="font-semibold">{overview.utilizationPercentage}% used</span>
+            <span className="font-semibold text-primary">{overview.utilizationPercentage}% used</span>
           </div>
-          <div className="w-full bg-[#EAE4DB] h-1.5 rounded-full overflow-hidden mt-1.5">
+          <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden mt-1.5">
             <div
               className={`h-full ${
-                overview.isOverrun ? 'bg-[#BE123C]' : 'bg-[#B85C3A]'
+                overview.isOverrun ? 'bg-[#BE123C] dark:bg-rose-500' : 'bg-accent'
               } transition-all duration-300`}
               style={{ width: `${Math.min(overview.utilizationPercentage, 100)}%` }}
             />
@@ -278,63 +278,63 @@ export const DashboardView: React.FC = () => {
 
         {/* Metric 2: Committed Actuals vs Runway */}
         <Card padding="md" className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-[#6E665E] font-medium">
+          <div className="flex items-center justify-between text-xs text-secondary font-medium">
             <span>Remaining Runway</span>
-            <div className="w-7 h-7 rounded-lg bg-emerald-50 text-[#047857] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-[#047857] dark:text-emerald-400 flex items-center justify-center">
               <TrendingDown className="w-4 h-4" />
             </div>
           </div>
           <div
             className={`text-2xl font-bold font-mono tracking-tight ${
-              overview.isOverrun ? 'text-[#BE123C]' : 'text-[#047857]'
+              overview.isOverrun ? 'text-[#BE123C] dark:text-rose-400' : 'text-[#047857] dark:text-emerald-400'
             }`}
           >
             {formatCurrency(overview.remainingBudget, state.event.currency)}
           </div>
-          <div className="text-xs text-[#5C554E] pt-0.5">
-            Committed Actuals: {formatCurrency(overview.committedTotal, state.event.currency)}
+          <div className="text-xs text-secondary pt-0.5">
+            Committed Actuals: <span className="text-primary font-mono">{formatCurrency(overview.committedTotal, state.event.currency)}</span>
           </div>
-          <p className="text-[11px] text-[#6E665E]">
+          <p className="text-[11px] text-tertiary">
             {overview.remainingBudget >= 0 ? 'Uncommitted contingency intact' : 'Action required to balance'}
           </p>
         </Card>
 
         {/* Metric 3: Task & Dependency Health */}
         <Card padding="md" className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-[#6E665E] font-medium">
+          <div className="flex items-center justify-between text-xs text-secondary font-medium">
             <span>Milestones Progress</span>
-            <div className="w-7 h-7 rounded-lg bg-[#FAF0EB] text-[#B85C3A] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-accent-subtle text-accent flex items-center justify-center">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold tracking-tight text-[#1C1917]">
-            {completedTasks.length} <span className="text-sm font-normal text-[#6E665E]">/ {state.tasks.length} Done</span>
+          <div className="text-2xl font-bold tracking-tight text-primary">
+            {completedTasks.length} <span className="text-sm font-normal text-tertiary">/ {state.tasks.length} Done</span>
           </div>
-          <div className="text-xs text-[#5C554E] flex items-center gap-2 pt-0.5">
-            <span className="text-[#B45309] font-medium">{inProgressTasks.length} In Progress</span>
-            <span>•</span>
-            <span className="text-[#BE123C] font-medium">{blockedTasks.length} Blocked</span>
+          <div className="text-xs text-secondary flex items-center gap-2 pt-0.5">
+            <span className="text-[#B45309] dark:text-amber-400 font-medium">{inProgressTasks.length} In Progress</span>
+            <span className="text-tertiary">•</span>
+            <span className="text-[#BE123C] dark:text-rose-400 font-medium">{blockedTasks.length} Blocked</span>
           </div>
-          <p className="text-[11px] text-[#6E665E]">
+          <p className="text-[11px] text-tertiary">
             {blockedTasks.length > 0 ? `${blockedTasks.length} await prerequisite completion` : 'No dependency deadlocks'}
           </p>
         </Card>
 
         {/* Metric 4: Vendor Quotation Status */}
         <Card padding="md" className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-[#6E665E] font-medium">
+          <div className="flex items-center justify-between text-xs text-secondary font-medium">
             <span>Vendor Quotations</span>
-            <div className="w-7 h-7 rounded-lg bg-[#FAF0EB] text-[#B85C3A] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-accent-subtle text-accent flex items-center justify-center">
               <Users className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold tracking-tight text-[#1C1917]">
-            {selectedQuotes.length} <span className="text-sm font-normal text-[#6E665E]">/ {state.vendors.length} Selected</span>
+          <div className="text-2xl font-bold tracking-tight text-primary">
+            {selectedQuotes.length} <span className="text-sm font-normal text-tertiary">/ {state.vendors.length} Selected</span>
           </div>
-          <div className="text-xs text-[#5C554E] pt-0.5 flex items-center justify-between">
+          <div className="text-xs text-secondary pt-0.5 flex items-center justify-between">
             <span>{pendingQuotes.length} proposals under review</span>
           </div>
-          <p className="text-[11px] text-[#6E665E]">
+          <p className="text-[11px] text-tertiary">
             Verified quotation contract terms
           </p>
         </Card>
@@ -347,23 +347,23 @@ export const DashboardView: React.FC = () => {
           <Card padding="md" className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-[#1C1917] font-serif-heading">
+                <h3 className="text-base font-bold text-primary font-serif-heading">
                   High-Priority Milestones
                 </h3>
-                <p className="text-xs text-[#6E665E]">
+                <p className="text-xs text-secondary">
                   Active tasks driving critical path deadlines.
                 </p>
               </div>
               <button
                 onClick={() => setActiveTab('tasks')}
-                className="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs font-semibold text-accent hover:underline flex items-center gap-1 cursor-pointer"
               >
                 View Full Graph
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="divide-y divide-[#F4EFEA]">
+            <div className="divide-y divide-subtle">
               {evaluations
                 .filter((e) => e.task.status !== 'completed')
                 .slice(0, 4)
@@ -374,7 +374,7 @@ export const DashboardView: React.FC = () => {
                     <div key={evalItem.task.id} className="py-3.5 flex items-start justify-between gap-4">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-[#1C1917]">
+                          <span className="text-sm font-semibold text-primary">
                             {evalItem.task.title}
                           </span>
                           {isBlocked && (
@@ -389,25 +389,25 @@ export const DashboardView: React.FC = () => {
                             </Badge>
                           )}
                         </div>
-                        <p className="text-xs text-[#6E665E] leading-snug">
+                        <p className="text-xs text-secondary leading-snug">
                           {evalItem.priorityRationale}
                         </p>
                         {isBlocked && (
-                          <p className="text-[11px] text-[#B85C3A]">
+                          <p className="text-[11px] text-accent">
                             Awaiting: {evalItem.risks.missingPrerequisites.join(', ')}
                           </p>
                         )}
                       </div>
 
                       <div className="text-right shrink-0">
-                        <span className="text-xs font-mono text-[#5C554E] block">
+                        <span className="text-xs font-mono text-secondary block">
                           Due {evalItem.task.dueDate}
                         </span>
                         <span
                           className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ${
                             evalItem.task.priority === 'critical'
-                              ? 'bg-red-50 text-red-700'
-                              : 'bg-amber-50 text-amber-700'
+                              ? 'bg-red-50 text-red-700 dark:bg-[#341F24] dark:text-[#E58C91] border border-red-200 dark:border-[#4A2D2D]'
+                              : 'bg-amber-50 text-amber-700 dark:bg-[#332A20] dark:text-[#E5BD76] border border-amber-200 dark:border-[#4D3F28]'
                           }`}
                         >
                           {evalItem.task.priority}
@@ -423,16 +423,16 @@ export const DashboardView: React.FC = () => {
           <Card padding="md" className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-[#1C1917] font-serif-heading">
+                <h3 className="text-base font-bold text-primary font-serif-heading">
                   Category Allocations & Commitments
                 </h3>
-                <p className="text-xs text-[#6E665E]">
+                <p className="text-xs text-secondary">
                   Committed expenses compared against baseline category budgets.
                 </p>
               </div>
               <button
                 onClick={() => setActiveTab('budget')}
-                className="text-xs font-semibold text-[#B85C3A] hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs font-semibold text-accent hover:underline flex items-center gap-1 cursor-pointer"
               >
                 Open Budget Planner
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -447,25 +447,25 @@ export const DashboardView: React.FC = () => {
                 return (
                   <div key={catSummary.category.id} className="space-y-1.5">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-[#1C1917]">
+                      <span className="font-semibold text-primary">
                         {catSummary.category.name}
                       </span>
                       <div className="font-mono text-xs flex items-center gap-2">
-                        <span className="text-[#5C554E]">
+                        <span className="text-primary font-medium">
                           {formatCurrency(catSummary.effectiveTotal, state.event.currency)}
                         </span>
-                        <span className="text-[#6E665E]">/</span>
-                        <span className="text-[#6E665E]">
+                        <span className="text-tertiary">/</span>
+                        <span className="text-secondary">
                           {formatCurrency(catSummary.allocatedAmount, state.event.currency)}
                         </span>
-                        <span className={`text-[10px] font-bold ${pct > 100 ? 'text-[#BE123C]' : 'text-[#5C554E]'}`}>
+                        <span className={`text-[10px] font-bold ${pct > 100 ? 'text-[#BE123C] dark:text-rose-400' : 'text-secondary'}`}>
                           ({pct}%)
                         </span>
                       </div>
                     </div>
-                    <div className="w-full bg-[#EAE4DB] h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
                       <div
-                        className={`h-full ${pct > 100 ? 'bg-[#BE123C]' : 'bg-[#B85C3A]'} transition-all duration-300`}
+                        className={`h-full ${pct > 100 ? 'bg-[#BE123C] dark:bg-rose-500' : 'bg-accent'} transition-all duration-300`}
                         style={{ width: `${Math.min(pct, 100)}%` }}
                       />
                     </div>
@@ -479,12 +479,12 @@ export const DashboardView: React.FC = () => {
         {/* Right Column: Recent Planning Changes & Simulator Promo */}
         <div className="space-y-6">
           {/* Decision Simulator Prompt */}
-          <div className="bg-[#FAF0EB] p-5 sm:p-6 rounded-xl border border-[#E8C8BD] space-y-3 shadow-2xs">
-            <div className="flex items-center gap-2 text-[#B85C3A] font-bold text-sm">
+          <div className="bg-accent-subtle p-5 sm:p-6 rounded-xl border border-accent-subtle space-y-3 shadow-2xs">
+            <div className="flex items-center gap-2 text-accent font-bold text-sm">
               <Sliders className="w-4 h-4" />
               <span>Simulate Planning Changes</span>
             </div>
-            <p className="text-xs text-[#5C554E] leading-relaxed">
+            <p className="text-xs text-secondary leading-relaxed">
               Evaluating a higher guest count or shifting funds from decor to photography? Use the simulator to calculate the ripple effect on remaining runway and venue limits before altering your confirmed plan.
             </p>
             <button
@@ -497,19 +497,19 @@ export const DashboardView: React.FC = () => {
 
           {/* Audit Log / Change Records */}
           <Card padding="md" className="space-y-4">
-            <h3 className="text-base font-bold text-[#1C1917] font-serif-heading">
+            <h3 className="text-base font-bold text-primary font-serif-heading">
               Recent Planning Changes
             </h3>
             <div className="space-y-3">
               {state.changeLog.slice(0, 5).map((log) => (
-                <div key={log.id} className="text-xs border-l-2 border-[#B85C3A] pl-3 py-1 space-y-0.5">
-                  <span className="text-[#6E665E] text-[10px] block">
+                <div key={log.id} className="text-xs border-l-2 border-accent pl-3 py-1 space-y-0.5">
+                  <span className="text-tertiary text-[10px] block">
                     {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} •{' '}
                     {new Date(log.timestamp).toLocaleDateString()}
                   </span>
-                  <p className="font-medium text-[#1C1917]">{log.description}</p>
+                  <p className="font-medium text-primary">{log.description}</p>
                   {log.deltaSummary && (
-                    <p className="text-[11px] text-[#5C554E]">{log.deltaSummary}</p>
+                    <p className="text-[11px] text-secondary">{log.deltaSummary}</p>
                   )}
                 </div>
               ))}

@@ -44,27 +44,27 @@ export const ConflictModal: React.FC<ConflictModalProps> = ({
         </div>
 
         {/* Remote State Summary */}
-        <div className="bg-[#FAF8F5] p-3 rounded-md border border-[#E6DFD5] text-xs space-y-2">
-          <div className="font-semibold text-[#1C1917] flex items-center justify-between">
+        <div className="bg-subtle p-3 rounded-md border border-subtle text-xs space-y-2">
+          <div className="font-semibold text-primary flex items-center justify-between">
             <span>Remote Version {conflict.currentVersion} Details:</span>
-            <span className="text-[#78716C]">Modified by {conflict.lastModifiedBy}</span>
+            <span className="text-secondary">Modified by {conflict.lastModifiedBy}</span>
           </div>
-          <div className="grid grid-cols-2 gap-2 text-[#57534E]">
+          <div className="grid grid-cols-2 gap-2 text-secondary">
             <div>
-              <span className="text-[#A8A29E]">Event Name:</span>{' '}
-              <span className="font-medium text-[#1C1917]">{conflict.serverState.event.name}</span>
+              <span className="text-tertiary">Event Name:</span>{' '}
+              <span className="font-medium text-primary">{conflict.serverState.event.name}</span>
             </div>
             <div>
-              <span className="text-[#A8A29E]">Guest Count:</span>{' '}
-              <span className="font-medium text-[#1C1917]">{conflict.serverState.event.guestCount}</span>
+              <span className="text-tertiary">Guest Count:</span>{' '}
+              <span className="font-medium text-primary">{conflict.serverState.event.guestCount}</span>
             </div>
             <div>
-              <span className="text-[#A8A29E]">Total Expenses:</span>{' '}
-              <span className="font-medium text-[#1C1917]">{conflict.serverState.expenses.length} items</span>
+              <span className="text-tertiary">Total Expenses:</span>{' '}
+              <span className="font-medium text-primary">{conflict.serverState.expenses.length} items</span>
             </div>
             <div>
-              <span className="text-[#A8A29E]">Total Tasks:</span>{' '}
-              <span className="font-medium text-[#1C1917]">{conflict.serverState.tasks.length} items</span>
+              <span className="text-tertiary">Total Tasks:</span>{' '}
+              <span className="font-medium text-primary">{conflict.serverState.tasks.length} items</span>
             </div>
           </div>
         </div>
@@ -73,26 +73,26 @@ export const ConflictModal: React.FC<ConflictModalProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
           <button
             onClick={onAcceptServer}
-            className="flex flex-col items-start p-3 rounded-lg border-2 border-emerald-500 bg-emerald-50/50 hover:bg-emerald-50 text-left transition group"
+            className="flex flex-col items-start p-3 rounded-lg border-2 border-emerald-500 bg-emerald-50/50 hover:bg-emerald-50 dark:bg-emerald-950/30 dark:hover:bg-emerald-950/50 text-left transition group cursor-pointer"
           >
-            <div className="flex items-center gap-1.5 font-semibold text-emerald-800 text-xs mb-1">
-              <RefreshCw className="w-4 h-4 text-emerald-600 group-hover:rotate-45 transition" />
+            <div className="flex items-center gap-1.5 font-semibold text-emerald-800 dark:text-emerald-300 text-xs mb-1">
+              <RefreshCw className="w-4 h-4 text-emerald-600 dark:text-emerald-400 group-hover:rotate-45 transition" />
               <span>Accept Server Version (Recommended)</span>
             </div>
-            <p className="text-[11px] text-emerald-700">
+            <p className="text-[11px] text-emerald-700 dark:text-emerald-400">
               Discard your unsaved local edits and synchronize with {conflict.lastModifiedBy}'s newest plan.
             </p>
           </button>
 
           <button
             onClick={onKeepLocal}
-            className="flex flex-col items-start p-3 rounded-lg border border-[#E6DFD5] hover:border-[#B85C3A] bg-[#FFFFFF] hover:bg-[#FAF0EB]/30 text-left transition group"
+            className="flex flex-col items-start p-3 rounded-lg border border-subtle hover:border-[#B85C3A] dark:hover:border-[#D48668] bg-surface hover:bg-accent-subtle/30 text-left transition group cursor-pointer"
           >
-            <div className="flex items-center gap-1.5 font-semibold text-[#26221F] text-xs mb-1">
-              <Check className="w-4 h-4 text-[#B85C3A]" />
+            <div className="flex items-center gap-1.5 font-semibold text-primary text-xs mb-1">
+              <Check className="w-4 h-4 text-accent" />
               <span>Re-apply My Changes</span>
             </div>
-            <p className="text-[11px] text-[#78716C]">
+            <p className="text-[11px] text-secondary">
               Advance past version {conflict.currentVersion} and save your local modifications on top.
             </p>
           </button>

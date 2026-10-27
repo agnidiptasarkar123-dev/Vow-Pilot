@@ -390,7 +390,7 @@ export const GuestManagementView: React.FC = () => {
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#F4EFEA] dark:divide-[#26362C] text-primary">
+              <tbody className="divide-y divide-subtle text-primary">
                 {paginatedGuests.map((guest) => (
                   <GuestTableRow
                     key={guest.id}
@@ -505,7 +505,7 @@ export const GuestManagementView: React.FC = () => {
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
                   placeholder="e.g. Mr. & Mrs. Rajesh Mukherjee"
-                  className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                 />
               </div>
 
@@ -519,7 +519,7 @@ export const GuestManagementView: React.FC = () => {
                     value={formHousehold}
                     onChange={(e) => setFormHousehold(e.target.value)}
                     placeholder="e.g. Groom Family"
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                   />
                 </div>
                 <div>
@@ -532,7 +532,7 @@ export const GuestManagementView: React.FC = () => {
                     max={20}
                     value={formPartySize}
                     onChange={(e) => setFormPartySize(parseInt(e.target.value, 10) || 1)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                   />
                 </div>
               </div>
@@ -547,7 +547,7 @@ export const GuestManagementView: React.FC = () => {
                     value={formEmail}
                     onChange={(e) => setFormEmail(e.target.value)}
                     placeholder="guest@example.com"
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                   />
                 </div>
                 <div>
@@ -559,7 +559,7 @@ export const GuestManagementView: React.FC = () => {
                     value={formPhone}
                     onChange={(e) => setFormPhone(e.target.value)}
                     placeholder="+91 98000 00000"
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                   />
                 </div>
               </div>
@@ -573,7 +573,7 @@ export const GuestManagementView: React.FC = () => {
                   value={formDietary}
                   onChange={(e) => setFormDietary(e.target.value)}
                   placeholder="e.g. Vegetarian, Jain counter, Peanut allergy"
-                  className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                 />
               </div>
 
@@ -586,7 +586,7 @@ export const GuestManagementView: React.FC = () => {
                   value={formAccessibility}
                   onChange={(e) => setFormAccessibility(e.target.value)}
                   placeholder="e.g. Wheelchair access, ground-floor seating"
-                  className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                 />
               </div>
 
@@ -594,7 +594,7 @@ export const GuestManagementView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-3.5 py-1.5 border border-border-strong rounded-lg text-stone-600 dark:text-stone-300 hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] transition cursor-pointer"
+                  className="px-3.5 py-1.5 border border-subtle rounded-lg text-secondary hover:bg-subtle transition cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -629,7 +629,7 @@ export const GuestManagementView: React.FC = () => {
                   required
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
-                  className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                 />
               </div>
 
@@ -641,7 +641,7 @@ export const GuestManagementView: React.FC = () => {
                   <select
                     value={formStatus}
                     onChange={(e) => setFormStatus(e.target.value as RsvpStatus)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] cursor-pointer"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary cursor-pointer"
                   >
                     <option value="pending">Pending</option>
                     <option value="accepted">Accepted</option>
@@ -658,7 +658,7 @@ export const GuestManagementView: React.FC = () => {
                     max={20}
                     value={formPartySize}
                     onChange={(e) => setFormPartySize(parseInt(e.target.value, 10) || 1)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                   />
                 </div>
               </div>
@@ -672,7 +672,7 @@ export const GuestManagementView: React.FC = () => {
                     type="text"
                     value={formHousehold}
                     onChange={(e) => setFormHousehold(e.target.value)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                   />
                 </div>
                 <div>
@@ -683,7 +683,7 @@ export const GuestManagementView: React.FC = () => {
                     type="email"
                     value={formEmail}
                     onChange={(e) => setFormEmail(e.target.value)}
-                    className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                    className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                   />
                 </div>
               </div>
@@ -696,7 +696,7 @@ export const GuestManagementView: React.FC = () => {
                   type="text"
                   value={formDietary}
                   onChange={(e) => setFormDietary(e.target.value)}
-                  className="w-full bg-[#FFFFFF] dark:bg-[#26362C] border border-border-strong rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A]"
+                  className="w-full bg-surface border border-subtle rounded-md px-3 py-1.5 focus:ring-1 focus:ring-[#B85C3A] text-primary"
                 />
               </div>
 
@@ -704,7 +704,7 @@ export const GuestManagementView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setEditingGuest(null)}
-                  className="px-3.5 py-1.5 border border-border-strong rounded-lg text-stone-600 dark:text-stone-300 hover:bg-[#FAF8F5] dark:hover:bg-[#26362C] transition cursor-pointer"
+                  className="px-3.5 py-1.5 border border-subtle rounded-lg text-secondary hover:bg-subtle transition cursor-pointer"
                 >
                   Cancel
                 </button>
