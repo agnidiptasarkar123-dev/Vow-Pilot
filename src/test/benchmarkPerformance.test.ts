@@ -211,7 +211,7 @@ describe('Phase 9: Rigorous Algorithmic Performance Benchmarks', () => {
     expect(totalInvitedSeats).toBeGreaterThan(4000);
     expect(confirmedSeats).toBeGreaterThan(1000);
     expect(paginatedSlice.length).toBeLessThanOrEqual(50);
-    // Entire 2,000-guest KPI + filter + windowed slice must execute in < 8ms
-    expect(durationMs).toBeLessThan(8);
+    const maxAllowedMs = process.env.NODE_V8_COVERAGE ? 60 : 8;
+    expect(durationMs).toBeLessThan(maxAllowedMs);
   });
 });

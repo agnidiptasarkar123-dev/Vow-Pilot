@@ -60,6 +60,21 @@ export function detectInputLanguage(raw: string): 'en' | 'bn' | 'benglish' {
   return 'en';
 }
 
+const RE_PROTECT_KEYWORDS = /(?:protect|shield|bachao|bachiye|surakha|রক্ষা|বাঁচাও|সুরক্ষা)/i;
+const RE_PRIORITY_CATEGORY = /priorit.*(?:category|venue|catering|decor|top)|(?:category|venue|catering|decor|top).*priorit/i;
+const RE_BN_PRIORITY_PROTECT = /(?:অগ্রাধিকার|গুরুত্বপূর্ণ|শীর্ষ).*(?:রক্ষা|ক্যাটাগরি|বাঁচাও|protect)|(?:রক্ষা|ক্যাটাগরি|বাঁচাও|protect).*(?:অগ্রাধিকার|গুরুত্বপূর্ণ|শীর্ষ)/;
+
+/**
+ * Determines whether a user query conveys the intent to protect a priority category.
+ */
+export function isProtectPriorityIntent(text: string): boolean {
+  return (
+    RE_PROTECT_KEYWORDS.test(text) ||
+    RE_PRIORITY_CATEGORY.test(text) ||
+    RE_BN_PRIORITY_PROTECT.test(text)
+  );
+}
+
 /**
  * Normalizes user input for deterministic intent classification:
  * - Trims whitespace
@@ -300,18 +315,7 @@ function computeUserIntent(input: string): IntentParseResult {
   }
 
   // 7. Protect priority
-  if (
-    text.includes('protect') ||
-    text.includes('shield') ||
-    text.includes('bachao') ||
-    text.includes('bachiye') ||
-    text.includes('surakha') ||
-    text.includes('রক্ষা') ||
-    text.includes('বাঁচাও') ||
-    text.includes('সুরক্ষা') ||
-    (text.includes('priorit') && (text.includes('category') || text.includes('venue') || text.includes('catering') || text.includes('decor') || text.includes('top'))) ||
-    ((text.includes('অগ্রাধিকার') || text.includes('গুরুত্বপূর্ণ') || text.includes('শীর্ষ')) && (text.includes('রক্ষা') || text.includes('ক্যাটাগরি') || text.includes('বাঁচাও') || text.includes('protect')))
-  ) {
+  if (isProtectPriorityIntent(text)) {
     return { intent: 'protect_priority' };
   }
 

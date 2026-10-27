@@ -330,3 +330,61 @@ export interface AppState {
   tables?: SeatingTable[];
 }
 
+// ==========================================
+// REMOTE COLLABORATION & EMAIL AUDIT TYPES
+// ==========================================
+
+export interface RemoteEventSummary {
+  id: string;
+  name: string;
+  role: 'owner' | 'editor' | 'viewer';
+  version: number;
+  updatedAt: string;
+}
+
+export interface RemoteEventRecord {
+  id: string;
+  ownerId: string;
+  version: number;
+  state: AppState;
+  members: Array<{
+    userId: string;
+    userName: string;
+    userEmail: string;
+    role: 'owner' | 'editor' | 'viewer';
+    joinedAt: string;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+  lastModifiedBy: string;
+  role?: 'owner' | 'editor' | 'viewer';
+  success?: boolean;
+}
+
+export type EmailDeliveryStatus =
+  | 'queued'
+  | 'sent'
+  | 'simulated'
+  | 'delivered'
+  | 'failed'
+  | 'rejected';
+
+export interface EmailDeliveryRecord {
+  id: string;
+  eventId: string;
+  vendorId: string;
+  recipientEmail: string;
+  subject: string;
+  status: EmailDeliveryStatus;
+  provider: string;
+  providerMessageId?: string;
+  previewUrl?: string;
+  dispatchedAt: string;
+  dispatchedBy: string;
+  idempotencyKey?: string;
+  attempts: number;
+  replyTo?: string;
+  htmlBody?: string;
+  error?: string;
+}
+

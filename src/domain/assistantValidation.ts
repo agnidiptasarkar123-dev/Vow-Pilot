@@ -11,6 +11,7 @@ export interface SecurityAnalysisResult {
   riskCategory?: 'instruction_override' | 'data_exfiltration' | 'privilege_escalation' | 'code_injection' | 'unauthorized_deletion';
   sanitizedText: string;
 }
+export const MAX_SAFE_GUEST_COUNT = 5000;
 
 /**
  * Validates any assistant-proposed action against domain invariants,
@@ -53,7 +54,7 @@ export function validateProposedAction(
       if (count <= 0) {
         return { isValid: false, error: 'Guest count must be strictly greater than 0.' };
       }
-      if (count > 5000) {
+      if (count > MAX_SAFE_GUEST_COUNT) {
         return { isValid: false, error: 'Guest count exceeds maximum safe operational limit (5,000).' };
       }
       break;

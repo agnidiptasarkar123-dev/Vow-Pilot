@@ -1,5 +1,5 @@
 import { VowPilotDatabase } from '../connection';
-import { EmailDeliveryRecord } from '../../types';
+import { EmailDeliveryRecord, EmailDeliveryStatus } from '../../types';
 import { EmailAuditRow } from '../types';
 
 export class EmailAuditRepository {
@@ -168,7 +168,7 @@ export class EmailAuditRepository {
       vendorId: row.vendor_id,
       recipientEmail: row.recipient_email,
       subject: row.subject,
-      status: row.status as any,
+      status: row.status as EmailDeliveryStatus,
       provider: row.provider,
       providerMessageId: row.provider_message_id ?? undefined,
       previewUrl: row.preview_url ?? undefined,

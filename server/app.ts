@@ -511,8 +511,9 @@ export function createServerApp(
         try {
           const preview = eventStore.inspectPublicRsvp(targetToken);
           sendJson(200, preview);
-        } catch (err: any) {
-          sendJson(404, { error: err.message || 'Invitation token not found.' });
+        } catch (err: unknown) {
+          const message = err instanceof Error ? err.message : 'Invitation token not found.';
+          sendJson(404, { error: message });
         }
         return;
       }
@@ -559,8 +560,9 @@ export function createServerApp(
             accessibilityRequirements: body.accessibilityRequirements,
           });
           sendJson(200, result);
-        } catch (err: any) {
-          sendJson(400, { error: err.message || 'Failed to submit RSVP response.' });
+        } catch (err: unknown) {
+          const message = err instanceof Error ? err.message : 'Failed to submit RSVP response.';
+          sendJson(400, { error: message });
         }
         return;
       }

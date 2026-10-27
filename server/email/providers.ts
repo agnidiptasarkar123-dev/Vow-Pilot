@@ -284,7 +284,7 @@ export class EtherealTestProvider implements EmailProvider {
   public async verifyConnection(): Promise<{ ok: boolean; error?: string }> {
     try {
       const transporter = await this.ensureInitialized();
-      if ((transporter as any).options?.jsonTransport) {
+      if ((transporter as { options?: { jsonTransport?: boolean } }).options?.jsonTransport) {
         return { ok: true };
       }
       const verifyPromise = transporter.verify();

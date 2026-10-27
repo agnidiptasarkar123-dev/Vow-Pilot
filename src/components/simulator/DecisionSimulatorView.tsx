@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEvent } from '../../context/EventContext';
-import { calculateBudgetOverview, evaluateScenario } from '../../domain/budgetEngine';
+import { calculateBudgetOverview, evaluateScenario, DEFAULT_VENUE_CAPACITY_LIMIT } from '../../domain/budgetEngine';
 import { formatCurrency } from '../../domain/currency';
 import { BudgetScenario } from '../../types';
 import { Modal } from '../common/Modal';
@@ -60,8 +60,8 @@ export const DecisionSimulatorView: React.FC = () => {
 
   // Check venue capacity constraint
   const venueCat = state.categories.find((c) => c.id === 'venue');
-  const capacityLimit = venueCat?.maxCapacity;
-  const isCapacityExceeded = capacityLimit ? sandboxGuestCount > capacityLimit : false;
+  const capacityLimit = venueCat?.maxCapacity ?? DEFAULT_VENUE_CAPACITY_LIMIT;
+  const isCapacityExceeded = sandboxGuestCount > capacityLimit;
 
   const handleAllocationChange = (catId: string, newMajorAmount: number) => {
     const minorVal = Math.round(newMajorAmount * 100);

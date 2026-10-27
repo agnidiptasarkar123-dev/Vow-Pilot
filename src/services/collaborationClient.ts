@@ -1,4 +1,4 @@
-import { AppState } from '../types';
+import { AppState, RemoteEventRecord, RemoteEventSummary } from '../types';
 
 export type SyncStatus = 'local_only' | 'connecting' | 'synced' | 'syncing' | 'conflict' | 'offline_queued' | 'error';
 
@@ -80,7 +80,7 @@ export class CollaborationClient {
       if (!customServerUrl) {
         // Resolve backend server URL: custom localStorage override > Vite env variable > default origin
         const storedUrl = localStorage.getItem('vowpilot_server_url');
-        const envUrl = (import.meta as any).env?.VITE_API_URL;
+        const envUrl = import.meta.env?.VITE_API_URL;
         const origin = window.location.origin;
 
         if (storedUrl && storedUrl.trim()) {
@@ -641,7 +641,7 @@ export class CollaborationClient {
     eventId: string,
     targetUserId: string,
     newRole: 'owner' | 'editor' | 'viewer'
-  ): Promise<{ success: boolean; error?: string; event?: any }> {
+  ): Promise<{ success: boolean; error?: string; event?: RemoteEventRecord }> {
     if (!this.authToken) return { success: false, error: 'Authentication required' };
 
     try {
@@ -718,7 +718,7 @@ export class CollaborationClient {
   /**
    * Retrieves all events associated with the authenticated user.
    */
-  public async listUserEvents(): Promise<{ success: boolean; events?: any[]; error?: string }> {
+  public async listUserEvents(): Promise<{ success: boolean; events?: RemoteEventSummary[]; error?: string }> {
     if (!this.authToken) return { success: false, error: 'Authentication required' };
 
     try {

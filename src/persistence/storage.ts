@@ -1,4 +1,20 @@
-import { AppState, BudgetCategory, EventDetails } from '../types';
+import {
+  AppState,
+  BudgetCategory,
+  BudgetScenario,
+  ChangeRecord,
+  EventDetails,
+  EventPreferences,
+  Expense,
+  GuestRecord,
+  InvitationDesign,
+  PlanningMessage,
+  SeatingTable,
+  Task,
+  TimelineItem,
+  Vendor,
+  VendorQuote,
+} from '../types';
 import { DEMO_STATE } from './demoData';
 import { initializeCategoriesForBudget } from '../domain/budgetEngine';
 
@@ -226,18 +242,18 @@ export function migrateState(rawState: Record<string, unknown> | AppState): AppS
   return {
     ...(rawState as unknown as AppState),
     schemaVersion: CURRENT_SCHEMA_VERSION,
-    categories: Array.isArray(s.categories) ? s.categories as any : [],
-    tasks: Array.isArray(s.tasks) ? s.tasks as any : [],
-    expenses: Array.isArray(s.expenses) ? s.expenses as any : [],
-    vendors: Array.isArray(s.vendors) ? s.vendors as any : [],
-    quotes: Array.isArray(s.quotes) ? s.quotes as any : [],
-    scenarios: Array.isArray(s.scenarios) ? s.scenarios as any : [],
-    messages: Array.isArray(s.messages) ? s.messages as any : [],
-    changeLog: Array.isArray(s.changeLog) ? s.changeLog as any : [],
-    invitations: Array.isArray(s.invitations) ? s.invitations as any : [],
-    guests: Array.isArray(s.guests) ? s.guests as any : [],
-    timeline: Array.isArray(s.timeline) ? s.timeline as any : [],
-    tables: Array.isArray(s.tables) ? s.tables as any : [],
+    categories: Array.isArray(s.categories) ? (s.categories as unknown as BudgetCategory[]) : [],
+    tasks: Array.isArray(s.tasks) ? (s.tasks as unknown as Task[]) : [],
+    expenses: Array.isArray(s.expenses) ? (s.expenses as unknown as Expense[]) : [],
+    vendors: Array.isArray(s.vendors) ? (s.vendors as unknown as Vendor[]) : [],
+    quotes: Array.isArray(s.quotes) ? (s.quotes as unknown as VendorQuote[]) : [],
+    scenarios: Array.isArray(s.scenarios) ? (s.scenarios as unknown as BudgetScenario[]) : [],
+    messages: Array.isArray(s.messages) ? (s.messages as unknown as PlanningMessage[]) : [],
+    changeLog: Array.isArray(s.changeLog) ? (s.changeLog as unknown as ChangeRecord[]) : [],
+    invitations: Array.isArray(s.invitations) ? (s.invitations as unknown as InvitationDesign[]) : [],
+    guests: Array.isArray(s.guests) ? (s.guests as unknown as GuestRecord[]) : [],
+    timeline: Array.isArray(s.timeline) ? (s.timeline as unknown as TimelineItem[]) : [],
+    tables: Array.isArray(s.tables) ? (s.tables as unknown as SeatingTable[]) : [],
   };
 }
 
@@ -295,23 +311,28 @@ export function loadPersistedState(): StorageResult {
   }
 }
 
+export type InitialEventInput = Partial<EventDetails> & {
+  city?: string;
+  planningPriorities?: string[];
+};
+
 /**
  * Creates an isolated initial AppState for a brand new event.
  * Guarantees event isolation: allocates fresh categories matching the event budget,
  * initializes empty expenses/tasks/vendors/etc., and gives the event a stable unique ID.
  */
 export function createInitialEventState(
-  event: EventDetails,
+  event: InitialEventInput,
   initialCategories?: BudgetCategory[]
 ): AppState {
-  const safeBudget = Math.max(0, Number.isFinite(event.totalBudget) ? event.totalBudget : 0);
+  const safeBudget = Math.max(0, Number.isFinite(event.totalBudget) ? event.totalBudget! : 0);
   const location = (typeof event.location === 'string' && event.location.trim())
     ? event.location.trim()
-    : ((event as any).city && typeof (event as any).city === 'string' && (event as any).city.trim())
-      ? (event as any).city.trim()
+    : (typeof event.city === 'string' && event.city.trim())
+      ? event.city.trim()
       : 'Kolkata, West Bengal';
 
-  const defaultPreferences = {
+  const defaultPreferences: EventPreferences = {
     style: 'Classic',
     cateringType: 'Multi-Cuisine Buffet',
     dietaryRequirements: [],
@@ -319,7 +340,7 @@ export function createInitialEventState(
     venuePreference: 'Banquet Hall',
     decorationPreference: 'Floral & Ambient',
     accessibilityNeeds: [],
-    planningPriorities: (event as any).planningPriorities || ['venue', 'catering'],
+    planningPriorities: event.planningPriorities || ['venue', 'catering'],
     specialConstraints: [],
     optionalNotes: '',
   };
@@ -327,6 +348,7 @@ export function createInitialEventState(
   const safeEvent: EventDetails = {
     ...event,
     id: event.id || `evt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    name: (typeof event.name === 'string' && event.name.trim()) ? event.name.trim() : 'New Event',
     eventType: (event.eventType && VALID_EVENT_TYPES.has(event.eventType)) ? event.eventType : 'wedding',
     currency: (event.currency && VALID_CURRENCIES.has(event.currency)) ? event.currency : 'INR',
     date: (typeof event.date === 'string' && event.date.trim()) ? event.date.trim() : '2027-12-15',
@@ -336,7 +358,7 @@ export function createInitialEventState(
       ? event.preferences
       : defaultPreferences,
     totalBudget: safeBudget,
-    guestCount: Math.max(0, Number.isFinite(event.guestCount) ? event.guestCount : 0),
+    guestCount: Math.max(0, typeof event.guestCount === 'number' && Number.isFinite(event.guestCount) ? event.guestCount : 0),
     createdAt: event.createdAt || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };

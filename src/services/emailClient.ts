@@ -1,4 +1,5 @@
 import { collaborationClient } from './collaborationClient';
+import { EmailDeliveryRecord } from '../types';
 
 export interface DispatchEmailPayload {
   eventId: string;
@@ -160,7 +161,7 @@ export async function checkEmailProviderHealth(): Promise<{ ok: boolean; provide
 /**
  * Retrieves audit logs for the specified event.
  */
-export async function getEmailAuditLogs(eventId?: string): Promise<any[]> {
+export async function getEmailAuditLogs(eventId?: string): Promise<EmailDeliveryRecord[]> {
   const token = collaborationClient.getToken();
   const serverUrl = collaborationClient.getState().serverUrl;
 

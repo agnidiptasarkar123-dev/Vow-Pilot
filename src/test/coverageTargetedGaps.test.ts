@@ -1532,13 +1532,13 @@ describe('VowPilot Targeted Coverage Gap Remediation Suite', () => {
       expect(stateWithCity.event.currency).toBe('INR');
       expect(stateWithCity.event.eventType).toBe('wedding');
 
-      // 2. Default location fallback when city is also absent
-      const minimalEvent: any = {
-        name: 'Minimal Event',
+      // 2. Default location and name fallback when name and city are absent
+      const minimalEvent = {
         totalBudget: 1000000,
         guestCount: 50,
       };
       const stateMinimal = createInitialEventState(minimalEvent);
+      expect(stateMinimal.event.name).toBe('New Event');
       expect(stateMinimal.event.location).toBe('Kolkata, West Bengal');
 
       // 3. Custom initialCategories

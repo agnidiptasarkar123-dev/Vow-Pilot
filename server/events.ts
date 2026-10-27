@@ -289,10 +289,11 @@ export class EventStore {
             },
           };
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (
-          err.message === 'This invitation token has been revoked by the event organizer.' ||
-          err.message === 'This invitation token has expired.'
+          err instanceof Error &&
+          (err.message === 'This invitation token has been revoked by the event organizer.' ||
+            err.message === 'This invitation token has expired.')
         ) {
           throw err;
         }

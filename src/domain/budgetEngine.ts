@@ -6,6 +6,12 @@ import {
   FinancialImpact,
 } from '../types';
 
+/** Named domain constants for capacity limits and tiered calculation rules */
+export const DEFAULT_VENUE_CAPACITY_LIMIT = 200;
+export const CAPACITY_TIER_OVERFLOW_BLOCK_SIZE = 50;
+export const CAPACITY_TIER_SURCHARGE_RATE = 0.20;
+export const MAX_CATEGORY_REDUCTION_RATIO = 0.45;
+
 export interface CategorySummary {
   category: BudgetCategory;
   allocatedAmount: number;
@@ -233,7 +239,7 @@ export function calculateCategoryGuestAdjustments(
     let variableDelta = 0;
     let capacityTierDelta = 0;
     let isCapacityExceeded = false;
-    const capacityLimit = cat.maxCapacity ?? (costType === 'capacity_tier' ? 200 : undefined);
+    const capacityLimit = cat.maxCapacity ?? (costType === 'capacity_tier' ? DEFAULT_VENUE_CAPACITY_LIMIT : undefined);
 
     if (costType === 'variable') {
       if (cat.perGuestCost !== undefined && cat.perGuestCost > 0) {
@@ -254,9 +260,9 @@ export function calculateCategoryGuestAdjustments(
       if (capacityLimit !== undefined && safeSimulatedGuests > capacityLimit) {
         isCapacityExceeded = true;
         const overflow = safeSimulatedGuests - capacityLimit;
-        const tierBlocks = Math.ceil(overflow / 50);
+        const tierBlocks = Math.ceil(overflow / CAPACITY_TIER_OVERFLOW_BLOCK_SIZE);
         // Capacity tier surcharge: 20% of baseline allocation per 50-guest overflow block
-        const blockCost = Math.round(baseAlloc * 0.20);
+        const blockCost = Math.round(baseAlloc * CAPACITY_TIER_SURCHARGE_RATE);
         capacityTierDelta = tierBlocks * blockCost;
       }
     }
@@ -434,7 +440,7 @@ export function generatePriorityAwareRecommendations(
     if (flexibleBudget <= 0) continue;
 
     // Limit cut to at most 45% of flexible allocation to preserve viability, or whatever needed
-    const maxReduction = Math.min(flexibleBudget, Math.ceil(flexibleBudget * 0.45));
+    const maxReduction = Math.min(flexibleBudget, Math.ceil(flexibleBudget * MAX_CATEGORY_REDUCTION_RATIO));
     const cut = Math.min(remainingToReduce, maxReduction);
     remainingToReduce -= cut;
     const rank = priorityIndexMap.has(catSummary.category.id)
